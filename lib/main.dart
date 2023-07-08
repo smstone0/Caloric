@@ -35,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = Placeholder();
+        page = const TodayPage();
         break;
       case 1:
         page = Placeholder();
@@ -74,6 +74,75 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class TodayPage extends StatelessWidget {
+  const TodayPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var timeOfDay;
+    var month;
+
+    DateTime time = DateTime.parse(DateTime.now().toString());
+
+    if (time.hour > 0 && time.hour < 12) {
+      timeOfDay = "morning";
+    } else if (time.hour > 12 && time.hour < 17) {
+      timeOfDay = "afternoon";
+    } else {
+      timeOfDay = "evening";
+    }
+
+    switch (time.month) {
+      case 1:
+        month = "January";
+        break;
+      case 2:
+        month = "February";
+        break;
+      case 3:
+        month = "March";
+        break;
+      case 4:
+        month = "April";
+        break;
+      case 5:
+        month = "May";
+        break;
+      case 6:
+        month = "June";
+        break;
+      case 7:
+        month = "July";
+        break;
+      case 8:
+        month = "August";
+        break;
+      case 9:
+        month = "September";
+        break;
+      case 10:
+        month = "October";
+        break;
+      case 11:
+        month = "November";
+        break;
+      default:
+        month = "December";
+    }
+
+    return SafeArea(
+      child: Center(
+        child: Column(
+          children: [
+            Text("Good $timeOfDay!"),
+            Text("Today is ${time.day} $month"),
+          ],
+        ),
       ),
     );
   }
