@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             child: Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Colors.white,
               child: page,
             ),
           ),
@@ -139,8 +139,24 @@ class TodayPage extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
-            Text("Good $timeOfDay!"),
-            Text("Today is ${time.day} $month"),
+            Card(
+              elevation: 0,
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: SizedBox(
+                width: double.infinity,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: Column(
+                      children: [
+                        Text("Good $timeOfDay!"),
+                        Text("Today is ${time.day} $month"),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
