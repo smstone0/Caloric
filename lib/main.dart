@@ -84,8 +84,8 @@ class TodayPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var timeOfDay;
-    var month;
+    String timeOfDay;
+    String month;
 
     DateTime time = DateTime.parse(DateTime.now().toString());
 
@@ -135,30 +135,26 @@ class TodayPage extends StatelessWidget {
         month = "December";
     }
 
-    return SafeArea(
-      child: Center(
-        child: Column(
-          children: [
-            Card(
-              elevation: 0,
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: SizedBox(
-                width: double.infinity,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: Column(
-                      children: [
-                        Text("Good $timeOfDay!"),
-                        Text("Today is ${time.day} $month"),
-                      ],
-                    ),
+    return Center(
+      child: Column(
+        children: [
+          Container(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      Text("Good $timeOfDay!"),
+                      Text("Today is ${time.day} $month"),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
