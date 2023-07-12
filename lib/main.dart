@@ -157,63 +157,17 @@ class TodayPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: Column(
               children: [
-                Card(
-                  elevation: 0,
-                  color: const Color.fromRGBO(217, 217, 217, 175),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-                      child: Column(
-                        children: [
-                          const Text("Nutrition for today"),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  print("Placeholder 1");
-                                },
-                                child: const Text("Add"),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  print("Placeholder 2");
-                                },
-                                child: const Text("View"),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  print("Placeholder 3");
-                                },
-                                child: const Text("Remove"),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                GreyCard(
+                  child: ButtonCard(),
                 ),
-                const SizedBox(height: 20),
-                Card(
-                    elevation: 0,
-                    color: Color.fromRGBO(217, 217, 217, 175),
-                    child: SizedBox(
-                        width: double.infinity,
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                          //...
-                          child: Column(
-                            children: [
-                              Text("Your weight is"),
-                            ],
-                          ),
-                        ))),
+                SizedBox(height: 20),
+                GreyCard(
+                  child: StatsCard(),
+                ),
               ],
             ),
           ),
@@ -223,22 +177,76 @@ class TodayPage extends StatelessWidget {
   }
 }
 
-// class GreyCard extends StatelessWidget {
-//   const GreyCard({
-//     super.key,
-//   });
+class StatsCard extends StatelessWidget {
+  const StatsCard({
+    super.key,
+  });
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//       elevation: 0,
-//       color: const Color.fromRGBO(217, 217, 217, 175),
-//       child: SizedBox(
-//         width: double.infinity,
-//         child: Padding(
-//           padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-//         ),
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text("Your weight is"),
+      ],
+    );
+  }
+}
+
+class ButtonCard extends StatelessWidget {
+  const ButtonCard({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text("Nutrition for today"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                print("Placeholder 1");
+              },
+              child: const Text("Add"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                print("Placeholder 2");
+              },
+              child: const Text("View"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                print("Placeholder 3");
+              },
+              child: const Text("Remove"),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class GreyCard extends StatelessWidget {
+  const GreyCard({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      color: const Color.fromRGBO(217, 217, 217, 175),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
