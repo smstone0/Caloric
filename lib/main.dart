@@ -148,10 +148,73 @@ class TodayPage extends StatelessWidget {
                     children: [
                       Text("Good $timeOfDay!"),
                       Text("Today is ${time.day} $month"),
+                      const SizedBox(height: 10),
+                      Text("Placeholder"),
                     ],
                   ),
                 ),
               ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Column(
+              children: [
+                Card(
+                  elevation: 0,
+                  color: const Color.fromRGBO(217, 217, 217, 175),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                      child: Column(
+                        children: [
+                          const Text("Nutrition for today"),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  print("Placeholder 1");
+                                },
+                                child: const Text("Add"),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  print("Placeholder 2");
+                                },
+                                child: const Text("View"),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  print("Placeholder 3");
+                                },
+                                child: const Text("Remove"),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Card(
+                    elevation: 0,
+                    color: Color.fromRGBO(217, 217, 217, 175),
+                    child: SizedBox(
+                        width: double.infinity,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                          //...
+                          child: Column(
+                            children: [
+                              Text("Your weight is"),
+                            ],
+                          ),
+                        ))),
+              ],
             ),
           ),
         ],
@@ -159,3 +222,23 @@ class TodayPage extends StatelessWidget {
     );
   }
 }
+
+// class GreyCard extends StatelessWidget {
+//   const GreyCard({
+//     super.key,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Card(
+//       elevation: 0,
+//       color: const Color.fromRGBO(217, 217, 217, 175),
+//       child: SizedBox(
+//         width: double.infinity,
+//         child: Padding(
+//           padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+//         ),
+//       ),
+//     );
+//   }
+// }
