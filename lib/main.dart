@@ -205,27 +205,65 @@ class ButtonCard extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
+            CustomButton(
+              text: "Add",
               onPressed: () {
                 print("Placeholder 1");
               },
-              child: const Text("Add"),
+              colour: const Color.fromRGBO(205, 255, 182, 1),
             ),
-            ElevatedButton(
+            CustomButton(
+              text: "View",
               onPressed: () {
                 print("Placeholder 2");
               },
-              child: const Text("View"),
+              colour: const Color.fromRGBO(255, 212, 161, 1),
             ),
-            ElevatedButton(
+            CustomButton(
+              text: "Remove",
               onPressed: () {
                 print("Placeholder 3");
               },
-              child: const Text("Remove"),
-            )
+              colour: const Color.fromRGBO(229, 139, 139, 1),
+            ),
           ],
         ),
       ],
+    );
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  const CustomButton(
+      {super.key,
+      required this.text,
+      required this.onPressed,
+      required this.colour});
+
+  final String text;
+  final VoidCallback onPressed;
+  final Color colour;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+      child: SizedBox(
+        height: 50,
+        width: 100,
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: colour,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(text,
+              style: const TextStyle(
+                  color: Colors.black, fontWeight: FontWeight.normal)),
+        ),
+      ),
     );
   }
 }
