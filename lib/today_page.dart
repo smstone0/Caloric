@@ -120,35 +120,43 @@ class ButtonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> buttons = [
+      CustomButton(
+        text: "Add",
+        onPressed: () {
+          print("Placeholder 1");
+        },
+        colour: const Color.fromRGBO(205, 255, 182, 1),
+      ),
+      CustomButton(
+        text: "View",
+        onPressed: () {
+          print("Placeholder 2");
+        },
+        colour: const Color.fromRGBO(255, 212, 161, 1),
+      ),
+      CustomButton(
+        text: "Remove",
+        onPressed: () {
+          print("Placeholder 3");
+        },
+        colour: const Color.fromRGBO(229, 139, 139, 1),
+      ),
+    ];
+
     return Column(
       children: [
         const Text("Nutrition for today"),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomButton(
-              text: "Add",
-              onPressed: () {
-                print("Placeholder 1");
-              },
-              colour: const Color.fromRGBO(205, 255, 182, 1),
-            ),
-            CustomButton(
-              text: "View",
-              onPressed: () {
-                print("Placeholder 2");
-              },
-              colour: const Color.fromRGBO(255, 212, 161, 1),
-            ),
-            CustomButton(
-              text: "Remove",
-              onPressed: () {
-                print("Placeholder 3");
-              },
-              colour: const Color.fromRGBO(229, 139, 139, 1),
-            ),
-          ],
-        ),
+        LayoutBuilder(builder: ((context, constraints) {
+          if (constraints.maxWidth > 330) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: buttons,
+            );
+          } else {
+            return Column(children: buttons);
+          }
+        }))
       ],
     );
   }
