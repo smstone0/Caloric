@@ -105,9 +105,63 @@ class StatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color colour;
+
+    //Final
+    double weight = 0;
+    String weightUnit = "kg";
+    double height = 0;
+    String heightUnit = "cm";
+    double BMI = 0;
+
+    if (BMI < 18.5) {
+      colour = Colors.blue;
+    } else if (BMI < 25) {
+      colour = Colors.green;
+    } else if (BMI < 30) {
+      colour = Colors.orange;
+    } else {
+      colour = Colors.red;
+    }
+
     return Column(
       children: [
-        Text("Your weight is"),
+        const Text("Your weight is"),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+          child: Card(
+            elevation: 0,
+            child: SizedBox(
+              width: 100,
+              height: 35,
+              child: Center(child: Text("$weight$weightUnit")),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+          child: Column(
+            children: [
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style,
+                  children: [
+                    TextSpan(
+                        text:
+                            "For a height of $height$heightUnit, this means your BMI is "),
+                    TextSpan(text: "$BMI", style: TextStyle(color: colour)),
+                  ],
+                ),
+              ),
+              Text(
+                "Last calculated on (Placeholder)",
+                style: TextStyle(fontSize: 12),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
