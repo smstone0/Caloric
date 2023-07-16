@@ -110,15 +110,15 @@ class StatsCard extends StatelessWidget {
     //Final
     double weight = 0;
     String weightUnit = "kg";
-    double height = 0;
+    double userHeight = 0;
     String heightUnit = "cm";
-    double BMI = 0;
+    double bmi = 0;
 
-    if (BMI < 18.5) {
+    if (bmi < 18.5) {
       colour = Colors.blue;
-    } else if (BMI < 25) {
+    } else if (bmi < 25) {
       colour = Colors.green;
-    } else if (BMI < 30) {
+    } else if (bmi < 30) {
       colour = Colors.orange;
     } else {
       colour = Colors.red;
@@ -149,8 +149,8 @@ class StatsCard extends StatelessWidget {
                   children: [
                     TextSpan(
                         text:
-                            "For a height of $height$heightUnit, this means your BMI is "),
-                    TextSpan(text: "$BMI", style: TextStyle(color: colour)),
+                            "For a height of $userHeight$heightUnit, this means your BMI is "),
+                    TextSpan(text: "$bmi", style: TextStyle(color: colour)),
                   ],
                 ),
               ),
@@ -162,6 +162,14 @@ class StatsCard extends StatelessWidget {
             ],
           ),
         ),
+        CustomButton(
+            text: "Update weight/height",
+            onPressed: () {
+              print("Placeholder 4");
+            },
+            colour: const Color.fromRGBO(217, 210, 226, 10),
+            height: 38,
+            width: 190),
       ],
     );
   }
@@ -181,6 +189,8 @@ class ButtonCard extends StatelessWidget {
           print("Placeholder 1");
         },
         colour: const Color.fromRGBO(205, 255, 182, 1),
+        height: 50,
+        width: 100,
       ),
       CustomButton(
         text: "View",
@@ -188,6 +198,8 @@ class ButtonCard extends StatelessWidget {
           print("Placeholder 2");
         },
         colour: const Color.fromRGBO(255, 212, 161, 1),
+        height: 50,
+        width: 100,
       ),
       CustomButton(
         text: "Remove",
@@ -195,6 +207,8 @@ class ButtonCard extends StatelessWidget {
           print("Placeholder 3");
         },
         colour: const Color.fromRGBO(229, 139, 139, 1),
+        height: 50,
+        width: 100,
       ),
     ];
 
@@ -221,19 +235,22 @@ class CustomButton extends StatelessWidget {
       {super.key,
       required this.text,
       required this.onPressed,
-      required this.colour});
+      required this.colour,
+      required this.height,
+      required this.width});
 
   final String text;
   final VoidCallback onPressed;
   final Color colour;
+  final double height, width;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
       child: SizedBox(
-        height: 50,
-        width: 100,
+        height: height,
+        width: width,
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
@@ -242,9 +259,12 @@ class CustomButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          child: Text(text,
-              style: const TextStyle(
-                  color: Colors.black, fontWeight: FontWeight.normal)),
+          child: Text(
+            text,
+            style: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.normal),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );
