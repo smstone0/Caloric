@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'today_page.dart';
+import 'settings_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,6 +32,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
 
+  void changeSelectedIndex(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget page;
@@ -45,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = Placeholder();
         break;
       case 3:
-        page = Placeholder();
+        page = const SettingsPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');

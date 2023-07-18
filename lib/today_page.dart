@@ -165,7 +165,7 @@ class StatsCard extends StatelessWidget {
         CustomButton(
             text: "Update weight/height",
             onPressed: () {
-              print("Placeholder 4");
+              //Set page
             },
             colour: const Color.fromRGBO(217, 210, 226, 10),
             height: 38,
