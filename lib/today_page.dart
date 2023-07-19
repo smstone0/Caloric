@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TodayPage extends StatelessWidget {
-  const TodayPage({super.key});
+  const TodayPage({super.key, required this.callback});
+
+  final VoidCallback callback;
 
   @override
   Widget build(BuildContext context) {
@@ -80,16 +82,16 @@ class TodayPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Column(
                   children: [
-                    GreyCard(
+                    const GreyCard(
                       child: ButtonCard(),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     GreyCard(
-                      child: StatsCard(),
+                      child: StatsCard(callback: callback),
                     ),
                   ],
                 ),
@@ -134,9 +136,9 @@ class CalorieRing extends StatelessWidget {
 }
 
 class StatsCard extends StatelessWidget {
-  const StatsCard({
-    super.key,
-  });
+  const StatsCard({super.key, required this.callback});
+
+  final VoidCallback callback;
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +202,7 @@ class StatsCard extends StatelessWidget {
         CustomButton(
             text: "Update weight/height",
             onPressed: () {
-              //Set page
+              callback();
             },
             colour: const Color.fromRGBO(217, 210, 226, 10),
             height: 38,

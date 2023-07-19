@@ -43,7 +43,11 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = const TodayPage();
+        page = TodayPage(
+          callback: () {
+            changeSelectedIndex(3);
+          },
+        );
         break;
       case 1:
         page = Placeholder();
