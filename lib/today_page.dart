@@ -56,43 +56,78 @@ class TodayPage extends StatelessWidget {
         month = "December";
     }
 
-    return Center(
-      child: Column(
-        children: [
-          Container(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                child: SafeArea(
-                  child: Column(
-                    children: [
-                      Text("Good $timeOfDay!"),
-                      Text("Today is ${time.day} $month"),
-                      const SizedBox(height: 10),
-                      Text("Placeholder"),
-                    ],
+    return ListView(
+      children: [
+        Center(
+          child: Column(
+            children: [
+              Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: SafeArea(
+                      child: Column(
+                        children: [
+                          Text("Good $timeOfDay!"),
+                          Text("Today is ${time.day} $month"),
+                          const SizedBox(height: 10),
+                          const CalorieRing(),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: Column(
-              children: [
-                GreyCard(
-                  child: ButtonCard(),
+              const SizedBox(height: 20),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Column(
+                  children: [
+                    GreyCard(
+                      child: ButtonCard(),
+                    ),
+                    SizedBox(height: 20),
+                    GreyCard(
+                      child: StatsCard(),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 20),
-                GreyCard(
-                  child: StatsCard(),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
+      ],
+    );
+  }
+}
+
+class CalorieRing extends StatelessWidget {
+  const CalorieRing({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: SizedBox(
+        width: 125,
+        height: 125,
+        child: Padding(
+          padding: const EdgeInsets.all(3.0),
+          child: Card(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: Center(child: Text("/")),
+          ),
+        ),
       ),
     );
   }
