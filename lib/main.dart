@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'today_page.dart';
 import 'settings_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        //textTheme: GoogleFonts.arapeyTextTheme(Theme.of(context).textTheme),
       ),
       home: const MyHomePage(),
     );

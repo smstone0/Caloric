@@ -60,41 +60,33 @@ class TodayPage extends StatelessWidget {
 
     return ListView(
       children: [
-        Center(
+        Container(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  Text("Good $timeOfDay!"),
+                  Text("Today is ${time.day} $month"),
+                  const SizedBox(height: 10),
+                  const CalorieRing(),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Column(
             children: [
-              Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: SafeArea(
-                      child: Column(
-                        children: [
-                          Text("Good $timeOfDay!"),
-                          Text("Today is ${time.day} $month"),
-                          const SizedBox(height: 10),
-                          const CalorieRing(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+              const GreyCard(
+                child: ButtonCard(),
               ),
               const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Column(
-                  children: [
-                    const GreyCard(
-                      child: ButtonCard(),
-                    ),
-                    const SizedBox(height: 20),
-                    GreyCard(
-                      child: StatsCard(callback: callback),
-                    ),
-                  ],
-                ),
+              GreyCard(
+                child: StatsCard(callback: callback),
               ),
             ],
           ),
