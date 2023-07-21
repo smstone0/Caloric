@@ -67,7 +67,8 @@ class TodayPage extends StatelessWidget {
             child: SafeArea(
               child: Column(
                 children: [
-                  Text("Good $timeOfDay!"),
+                  Text("Good $timeOfDay!",
+                      style: const TextStyle(fontSize: 18)),
                   Text("Today is ${time.day} $month"),
                   const SizedBox(height: 10),
                   const CalorieRing(),
@@ -155,7 +156,7 @@ class StatsCard extends StatelessWidget {
 
     return Column(
       children: [
-        const Text("Your weight is"),
+        const Text("Your weight is", style: TextStyle(fontSize: 16.5)),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
           child: Card(
@@ -163,7 +164,9 @@ class StatsCard extends StatelessWidget {
             child: SizedBox(
               width: 100,
               height: 35,
-              child: Center(child: Text("$weight$weightUnit")),
+              child: Center(
+                  child: Text("$weight$weightUnit",
+                      style: TextStyle(fontSize: 16.5))),
             ),
           ),
         ),
@@ -243,7 +246,7 @@ class ButtonCard extends StatelessWidget {
 
     return Column(
       children: [
-        const Text("Nutrition for today"),
+        const Text("Nutrition for today", style: TextStyle(fontSize: 16.5)),
         LayoutBuilder(builder: ((context, constraints) {
           if (constraints.maxWidth > 330) {
             return Row(
