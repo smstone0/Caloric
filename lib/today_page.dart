@@ -71,7 +71,7 @@ class TodayPage extends StatelessWidget {
                       style: const TextStyle(fontSize: 18)),
                   Text("Today is ${time.day} $month"),
                   const SizedBox(height: 10),
-                  const CalorieRing(),
+                  const CalorieRing(size: 150),
                 ],
               ),
             ),
@@ -98,9 +98,9 @@ class TodayPage extends StatelessWidget {
 }
 
 class CalorieRing extends StatelessWidget {
-  const CalorieRing({
-    super.key,
-  });
+  const CalorieRing({super.key, required this.size});
+
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -110,8 +110,8 @@ class CalorieRing extends StatelessWidget {
         borderRadius: BorderRadius.circular(100),
       ),
       child: SizedBox(
-        width: 125,
-        height: 125,
+        width: size,
+        height: size,
         child: Padding(
           padding: const EdgeInsets.all(3.0),
           child: Card(
@@ -166,7 +166,7 @@ class StatsCard extends StatelessWidget {
               height: 35,
               child: Center(
                   child: Text("$weight$weightUnit",
-                      style: TextStyle(fontSize: 16.5))),
+                      style: const TextStyle(fontSize: 16.5))),
             ),
           ),
         ),
@@ -181,8 +181,11 @@ class StatsCard extends StatelessWidget {
                   children: [
                     TextSpan(
                         text:
-                            "For a height of $userHeight$heightUnit, this means your BMI is "),
-                    TextSpan(text: "$bmi", style: TextStyle(color: colour)),
+                            "For a height of $userHeight$heightUnit, this means your BMI is ",
+                        style: const TextStyle(fontSize: 16.5)),
+                    TextSpan(
+                        text: "$bmi",
+                        style: TextStyle(color: colour, fontSize: 16.5)),
                   ],
                 ),
               ),
