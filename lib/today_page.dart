@@ -195,7 +195,7 @@ class ButtonCard extends StatelessWidget {
         },
         colour: const Color.fromRGBO(205, 255, 182, 1),
         height: 50,
-        width: 100,
+        width: 105,
       ),
       CustomButton(
         text: "View",
@@ -204,7 +204,7 @@ class ButtonCard extends StatelessWidget {
         },
         colour: const Color.fromRGBO(255, 212, 161, 1),
         height: 50,
-        width: 100,
+        width: 105,
       ),
       CustomButton(
         text: "Remove",
@@ -213,7 +213,7 @@ class ButtonCard extends StatelessWidget {
         },
         colour: const Color.fromRGBO(229, 139, 139, 1),
         height: 50,
-        width: 100,
+        width: 105,
       ),
     ];
 
