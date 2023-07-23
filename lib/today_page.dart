@@ -72,7 +72,7 @@ class TodayPage extends StatelessWidget {
                       style: const TextStyle(fontSize: 18)),
                   Text("Today is ${time.day} $month"),
                   const SizedBox(height: 10),
-                  const CalorieRing(size: 150),
+                  const CalorieRing(size: 140),
                 ],
               ),
             ),
