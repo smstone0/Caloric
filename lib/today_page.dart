@@ -134,6 +134,7 @@ class StatsCard extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
           child: Column(
             children: [
+              const SizedBox(height: 5),
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
@@ -157,6 +158,7 @@ class StatsCard extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: 10),
         CustomButton(
             text: "Update weight/height",
             onPressed: () {
