@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'calorie_ring.dart';
 
 class TodayPage extends StatelessWidget {
   const TodayPage({super.key, required this.callback});
@@ -93,37 +94,6 @@ class TodayPage extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class CalorieRing extends StatelessWidget {
-  const CalorieRing({super.key, required this.size});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100),
-      ),
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: Padding(
-          padding: const EdgeInsets.all(3.0),
-          child: Card(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: Center(child: Text("/")),
-          ),
-        ),
-      ),
     );
   }
 }
