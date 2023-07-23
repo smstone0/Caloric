@@ -12,24 +12,21 @@ class CalorieRing extends StatelessWidget {
 
     double value = calories / target;
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          SizedBox(
-            width: size,
-            height: size,
-            child: CircularProgressIndicator(
-              value: value,
-              backgroundColor: Colors.white,
-              color: Colors.green,
-              strokeWidth: 7,
-            ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        SizedBox(
+          width: size,
+          height: size,
+          child: CircularProgressIndicator(
+            value: value,
+            backgroundColor: Colors.white,
+            color: Colors.green,
+            strokeWidth: 7,
           ),
-          Text("$calories/$target", style: const TextStyle(fontSize: 16.5)),
-        ],
-      ),
+        ),
+        Text("$calories/$target", style: const TextStyle(fontSize: 16.5)),
+      ],
     );
   }
 }

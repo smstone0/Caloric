@@ -64,34 +64,27 @@ class TodayPage extends StatelessWidget {
         Container(
           color: Theme.of(context).colorScheme.primaryContainer,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Text("Good $timeOfDay!",
-                      style: const TextStyle(fontSize: 18)),
-                  Text("Today is ${time.day} $month"),
-                  const SizedBox(height: 10),
-                  const CalorieRing(size: 140),
-                ],
-              ),
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+            child: Column(
+              children: [
+                Text("Good $timeOfDay!", style: const TextStyle(fontSize: 18)),
+                Text("Today is ${time.day} $month"),
+                const SizedBox(height: 20),
+                const CalorieRing(size: 140),
+                const SizedBox(height: 10),
+              ],
             ),
           ),
         ),
-        const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-          child: Column(
-            children: [
-              const GreyCard(
-                child: ButtonCard(),
-              ),
-              const SizedBox(height: 20),
-              GreyCard(
-                child: StatsCard(callback: callback),
-              ),
-            ],
-          ),
+        Column(
+          children: [
+            const GreyCard(
+              child: ButtonCard(),
+            ),
+            GreyCard(
+              child: StatsCard(callback: callback),
+            ),
+          ],
         ),
       ],
     );
@@ -107,7 +100,6 @@ class StatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Color colour;
 
-    //Final
     double weight = 0;
     String weightUnit = "kg";
     double userHeight = 0;
@@ -127,17 +119,15 @@ class StatsCard extends StatelessWidget {
     return Column(
       children: [
         const Text("Your weight is", style: TextStyle(fontSize: 16.5)),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-          child: Card(
-            elevation: 0,
-            child: SizedBox(
-              width: 100,
-              height: 35,
-              child: Center(
-                  child: Text("$weight$weightUnit",
-                      style: const TextStyle(fontSize: 16.5))),
-            ),
+        const SizedBox(height: 5),
+        Card(
+          elevation: 0,
+          child: SizedBox(
+            width: 100,
+            height: 35,
+            child: Center(
+                child: Text("$weight$weightUnit",
+                    style: const TextStyle(fontSize: 16.5))),
           ),
         ),
         Padding(
@@ -220,16 +210,13 @@ class ButtonCard extends StatelessWidget {
     return Column(
       children: [
         const Text("Nutrition for today", style: TextStyle(fontSize: 16.5)),
-        LayoutBuilder(builder: ((context, constraints) {
-          if (constraints.maxWidth > 330) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: buttons,
-            );
-          } else {
-            return Column(children: buttons);
-          }
-        }))
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 15,
+          runSpacing: 15,
+          alignment: WrapAlignment.center,
+          children: buttons,
+        ),
       ],
     );
   }
@@ -251,25 +238,22 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-      child: SizedBox(
-        height: height,
-        width: width,
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colour,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+    return SizedBox(
+      height: height,
+      width: width,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colour,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: Text(
-            text,
-            style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.normal),
-            textAlign: TextAlign.center,
-          ),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+              color: Colors.black, fontWeight: FontWeight.normal),
+          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -283,14 +267,17 @@ class GreyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      color: const Color.fromRGBO(217, 217, 217, 175),
-      child: SizedBox(
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-          child: child,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      child: Card(
+        elevation: 0,
+        color: const Color.fromRGBO(217, 217, 217, 175),
+        child: SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 5, 0, 15),
+            child: child,
+          ),
         ),
       ),
     );
