@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'calorie_ring.dart';
+import 'grey_card.dart';
 
 class TodayPage extends StatelessWidget {
   const TodayPage({super.key, required this.callback});
@@ -78,9 +79,11 @@ class TodayPage extends StatelessWidget {
         ),
         Column(
           children: [
+            const SizedBox(height: 20),
             const GreyCard(
               child: ButtonCard(),
             ),
+            const SizedBox(height: 20),
             GreyCard(
               child: StatsCard(callback: callback),
             ),
@@ -256,30 +259,6 @@ class CustomButton extends StatelessWidget {
           style: const TextStyle(
               color: Colors.black, fontWeight: FontWeight.normal),
           textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-}
-
-class GreyCard extends StatelessWidget {
-  const GreyCard({super.key, required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: Card(
-        elevation: 0,
-        color: const Color.fromRGBO(217, 217, 217, 175),
-        child: SizedBox(
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 5, 0, 15),
-            child: child,
-          ),
         ),
       ),
     );
