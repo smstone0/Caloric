@@ -14,10 +14,7 @@ class GreyCard extends StatelessWidget {
         color: const Color.fromRGBO(217, 217, 217, 175),
         child: SizedBox(
           width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 5, 0, 15),
-            child: child,
-          ),
+          child: child,
         ),
       ),
     );

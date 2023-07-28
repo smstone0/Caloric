@@ -81,11 +81,17 @@ class TodayPage extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             const GreyCard(
-              child: ButtonCard(),
+              child: Padding(
+                padding: EdgeInsets.only(top: 5, bottom: 15),
+                child: ButtonCard(),
+              ),
             ),
             const SizedBox(height: 20),
             GreyCard(
-              child: StatsCard(callback: callback),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 15),
+                child: StatsCard(callback: callback),
+              ),
             ),
           ],
         ),
