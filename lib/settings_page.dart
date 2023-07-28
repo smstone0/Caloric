@@ -56,24 +56,32 @@ class SettingsDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton(
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      //Get
-      value: list.first,
-      style: DefaultTextStyle.of(context).style,
-      underline: Container(
-        height: 2,
-        color: Theme.of(context).colorScheme.primaryContainer,
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: DropdownButton(
+          items: list.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          //Get
+          value: list.first,
+          style: DefaultTextStyle.of(context).style,
+          dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+          underline: Container(
+            height: 2,
+            color: Theme.of(context).colorScheme.primaryContainer,
+          ),
+          onChanged: (String? value) {
+            //Set
+            print("Placeholder");
+          },
+        ),
       ),
-      onChanged: (String? value) {
-        //Set
-        print("Placeholder");
-      },
     );
   }
 }
@@ -129,7 +137,7 @@ class SettingsCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 20, top: 10),
+                padding: const EdgeInsets.only(left: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -142,7 +150,7 @@ class SettingsCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 20, top: 10),
+                padding: const EdgeInsets.only(right: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
