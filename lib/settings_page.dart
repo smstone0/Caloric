@@ -23,9 +23,15 @@ class SettingsPage extends StatelessWidget {
         SettingsCard(titles: ["Calorie goal"], inputs: [Text("Placeholder 1")]),
         const SectionSeparator(),
         const SectionTitle(title: "MEASUREMENTS"),
-        SettingsCard(
-            titles: ["Height", "Weight", "Unit"],
-            inputs: [Text("Placeholder 2")]),
+        SettingsCard(titles: [
+          "Height",
+          "Weight",
+          "Unit"
+        ], inputs: [
+          Text("Placeholder 1"),
+          Text("Placeholder 2"),
+          Text("Placeholder 3")
+        ]),
         const SectionSeparator(),
         const SectionTitle(title: "STYLE"),
         SettingsCard(
@@ -90,13 +96,25 @@ class SettingsCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 20, top: 10),
                 child: Column(
-                  children: [for (String title in titles) Text(title)],
+                  children: [
+                    for (String title in titles)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Text(title),
+                      )
+                  ],
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 20, top: 10),
                 child: Column(
-                  children: inputs,
+                  children: [
+                    for (Widget input in inputs)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: input,
+                      ),
+                  ],
                 ),
               ),
             ],
