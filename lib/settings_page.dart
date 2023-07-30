@@ -61,25 +61,23 @@ class SettingsDropdown extends StatelessWidget {
       elevation: 0,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: DropdownButton(
-          items: list.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          //Get
-          value: list.first,
-          style: DefaultTextStyle.of(context).style,
-          dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-          underline: Container(
-            height: 2,
-            color: Theme.of(context).colorScheme.primaryContainer,
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton(
+            items: list.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            //Get
+            value: list.first,
+            style: DefaultTextStyle.of(context).style,
+            dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+            onChanged: (String? value) {
+              //Set
+              print("Placeholder");
+            },
           ),
-          onChanged: (String? value) {
-            //Set
-            print("Placeholder");
-          },
         ),
       ),
     );
@@ -130,42 +128,26 @@ class SettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GreyCard(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (String title in titles)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        child: Text(title),
-                      )
-                  ],
+    return GreyCard(
+      child: Column(
+        children: [
+          for (int i = 0; i < titles.length; i++)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: Text(titles[i]),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    for (Widget input in inputs)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        child: input,
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 10, bottom: 10, right: 20),
+                  child: inputs[i],
+                )
+              ],
+            ),
+        ],
+      ),
     );
   }
 }
