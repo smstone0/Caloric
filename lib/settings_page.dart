@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'grey_card.dart';
+import 'dart:async';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -20,7 +23,7 @@ class SettingsPage extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         const SectionTitle(title: "TARGET"),
-        SettingsCard(titles: ["Calorie goal"], inputs: [Text("Placeholder 1")]),
+        const SettingsCard(titles: ["Calorie goal"], inputs: [CalorieSlider()]),
         const SectionSeparator(),
         const SectionTitle(title: "MEASUREMENTS"),
         SettingsCard(titles: [
@@ -28,8 +31,8 @@ class SettingsPage extends StatelessWidget {
           "Weight",
           "Unit"
         ], inputs: [
-          Text("Placeholder 1"),
-          Text("Placeholder 2"),
+          Text("Placeholder 1[unit]"),
+          Text("Placeholder 2[unit]"),
           SettingsDropdown(
             list: ["Metric", "Imperial"],
           ),
@@ -45,6 +48,50 @@ class SettingsPage extends StatelessWidget {
           ],
         )
       ],
+    );
+  }
+}
+
+class CalorieSlider extends StatefulWidget {
+  const CalorieSlider({
+    super.key,
+  });
+
+  @override
+  State<CalorieSlider> createState() => _CalorieSliderState();
+}
+
+class _CalorieSliderState extends State<CalorieSlider> {
+  //Get
+  double calorieGoal = 2000;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Text(
+              calorieGoal.round().toString(),
+            ),
+          ),
+          Slider.adaptive(
+            value: calorieGoal,
+            min: 1000,
+            max: 10000,
+            divisions: 180,
+            activeColor: Theme.of(context).colorScheme.primaryContainer,
+            onChanged: (double value) {
+              setState(() {
+                calorieGoal = value;
+              });
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -115,7 +162,8 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 35),
-      child: Text(title, style: const TextStyle(fontSize: 12)),
+      child: Text(title,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
     );
   }
 }
