@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/grey_card.dart';
+import '../databases/settings_database.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
