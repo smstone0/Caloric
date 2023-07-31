@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'grey_card.dart';
-import 'dart:async';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import '../widgets/grey_card.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

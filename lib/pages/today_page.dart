@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'calorie_ring.dart';
-import 'grey_card.dart';
+import '../widgets/calorie_ring.dart';
+import '../widgets/grey_card.dart';
 
 class TodayPage extends StatelessWidget {
   const TodayPage({super.key, required this.callback});
