@@ -159,11 +159,6 @@ class StatsCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(
-                "Last calculated on (Placeholder)",
-                style: TextStyle(fontSize: 12),
-                textAlign: TextAlign.center,
-              ),
             ],
           ),
         ),

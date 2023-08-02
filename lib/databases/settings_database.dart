@@ -9,7 +9,6 @@ class Settings {
   final double weight;
   final String unit;
   final String mode;
-  final DateTime time;
 
   const Settings(
       {required this.id,
@@ -17,8 +16,7 @@ class Settings {
       required this.height,
       required this.weight,
       required this.unit,
-      required this.mode,
-      required this.time});
+      required this.mode});
 
   Map<String, dynamic> toMap() {
     return {
@@ -28,7 +26,6 @@ class Settings {
       'weight': weight,
       'unit': unit,
       'mode': mode,
-      'time': time,
     };
   }
 }
@@ -39,7 +36,7 @@ class SettingsDatabase {
       join(await getDatabasesPath(), 'settings_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE settings(id INTEGER PRIMARY KEY, calorieGoal FLOAT, height FLOAT, weight FLOAT, unit TEXT, mode TEXT, time DATE)',
+          'CREATE TABLE settings(id INTEGER PRIMARY KEY, calorieGoal FLOAT, height FLOAT, weight FLOAT, unit TEXT, mode TEXT)',
         );
       },
       version: 1,
@@ -66,7 +63,6 @@ class SettingsDatabase {
         weight: maps[i]['weight'],
         unit: maps[i]['unit'],
         mode: maps[i]['mode'],
-        time: maps[i]['time'],
       );
     });
   }
