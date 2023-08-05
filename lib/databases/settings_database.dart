@@ -34,10 +34,17 @@ class SettingsDatabase {
   Future<Database> openDatabaseConnection() async {
     return openDatabase(
       join(await getDatabasesPath(), 'settings_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
+      onCreate: (db, version) async {
+        await db.execute(
           'CREATE TABLE settings(id INTEGER PRIMARY KEY, calorieGoal FLOAT, height FLOAT, weight FLOAT, unit TEXT, mode TEXT)',
         );
+        await db.insert('settings', {
+          'calorieGoal': 2000.0,
+          'height': 170.0,
+          'weight': 60.0,
+          'unit': 'metric',
+          'mode': 'system',
+        });
       },
       version: 1,
     );

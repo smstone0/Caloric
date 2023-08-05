@@ -65,29 +65,12 @@ class CustomSliderHandler extends StatefulWidget {
 }
 
 class _CustomSliderHandlerState extends State<CustomSliderHandler> {
-  Future<List<Settings>> loadSettings() async {
-    List<Settings> settingsList = await SettingsDatabase().getSettings();
-    if (settingsList.isEmpty) {
-      var defaultSettings = Settings(
-        id: 0,
-        calorieGoal: 2000,
-        height: 170,
-        weight: 60,
-        unit: 'metric',
-        mode: 'system',
-      );
-      await SettingsDatabase().insertSettings(defaultSettings);
-      settingsList = await SettingsDatabase().getSettings();
-    }
-    return (settingsList);
-  }
-
   @override
   Widget build(BuildContext context) {
     double sliderValue;
 
     return (FutureBuilder<List<Settings>>(
-      future: loadSettings(),
+      future: SettingsDatabase().getSettings(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator(
@@ -187,7 +170,7 @@ class _CustomSliderState extends State<CustomSlider> {
                 widget.sliderValue.round().toString() + unit,
               ),
             ),
-            Slider.adaptive(
+            Slider(
               value: widget.sliderValue,
               min: min,
               max: max,
