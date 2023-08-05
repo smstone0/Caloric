@@ -4,13 +4,13 @@ import 'package:sqflite/sqflite.dart';
 
 class Settings {
   final int id;
-  final double calorieGoal;
-  final double height;
-  final double weight;
-  final String unit;
-  final String mode;
+  double calorieGoal;
+  double height;
+  double weight;
+  String unit;
+  String mode;
 
-  const Settings(
+  Settings(
       {required this.id,
       required this.calorieGoal,
       required this.height,

@@ -21,23 +21,25 @@ class SettingsPage extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         const SectionTitle(title: "TARGET"),
-        const SettingsCard(titles: ["Calorie goal"], inputs: [CalorieSlider()]),
+        const SettingsCard(
+            titles: ["Calorie goal"],
+            inputs: [CustomSliderHandler(type: 'calorie')]),
         const SectionSeparator(),
         const SectionTitle(title: "MEASUREMENTS"),
-        SettingsCard(titles: [
+        const SettingsCard(titles: [
           "Height",
           "Weight",
           "Unit"
         ], inputs: [
-          Text("Placeholder 1[unit]"),
-          Text("Placeholder 2[unit]"),
+          CustomSliderHandler(type: 'height'),
+          CustomSliderHandler(type: 'weight'),
           SettingsDropdown(
             list: ["Metric", "Imperial"],
           ),
         ]),
         const SectionSeparator(),
         const SectionTitle(title: "STYLE"),
-        SettingsCard(
+        const SettingsCard(
           titles: ["Dark mode"],
           inputs: [
             SettingsDropdown(
@@ -50,47 +52,169 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
-class CalorieSlider extends StatefulWidget {
-  const CalorieSlider({
+class CustomSliderHandler extends StatefulWidget {
+  const CustomSliderHandler({
     super.key,
+    required this.type,
   });
 
+  final String type;
+
   @override
-  State<CalorieSlider> createState() => _CalorieSliderState();
+  State<CustomSliderHandler> createState() => _CustomSliderHandlerState();
 }
 
-class _CalorieSliderState extends State<CalorieSlider> {
-  //Get
-  double calorieGoal = 2000;
+class _CustomSliderHandlerState extends State<CustomSliderHandler> {
+  Future<List<Settings>> loadSettings() async {
+    List<Settings> settingsList = await SettingsDatabase().getSettings();
+    if (settingsList.isEmpty) {
+      var defaultSettings = Settings(
+        id: 0,
+        calorieGoal: 2000,
+        height: 170,
+        weight: 60,
+        unit: 'metric',
+        mode: 'system',
+      );
+      await SettingsDatabase().insertSettings(defaultSettings);
+      settingsList = await SettingsDatabase().getSettings();
+    }
+    return (settingsList);
+  }
 
   @override
   Widget build(BuildContext context) {
+    double sliderValue;
+
+    return (FutureBuilder<List<Settings>>(
+      future: loadSettings(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(
+              color: Theme.of(context).colorScheme.primaryContainer);
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<Settings> settingsList = snapshot.data ?? [];
+          switch (widget.type) {
+            case 'calorie':
+              sliderValue = settingsList[0].calorieGoal;
+              break;
+            case 'height':
+              sliderValue = settingsList[0].height;
+              break;
+            default:
+              sliderValue = settingsList[0].weight;
+          }
+          return CustomSlider(
+            type: widget.type,
+            settingsUnit: settingsList[0].unit,
+            sliderValue: sliderValue,
+            currentSettings: settingsList[0],
+          );
+        }
+      },
+    ));
+  }
+}
+
+class CustomSlider extends StatefulWidget {
+  CustomSlider(
+      {super.key,
+      required this.type,
+      required this.settingsUnit,
+      required this.sliderValue,
+      required this.currentSettings});
+
+  final String type;
+  final String settingsUnit;
+  double sliderValue;
+  Settings currentSettings;
+
+  @override
+  State<CustomSlider> createState() => _CustomSliderState();
+}
+
+class _CustomSliderState extends State<CustomSlider> {
+  @override
+  Widget build(BuildContext context) {
+    double min, max;
+    int divisions;
+    String unit;
+
+    switch (widget.type) {
+      case 'calorie':
+        unit = 'kcal';
+        min = 1000;
+        max = 10000;
+        break;
+      case 'height':
+        if (widget.settingsUnit == 'metric') {
+          unit = 'cm';
+          min = 100;
+          max = 250;
+        } else {
+          unit = 'inches';
+          min = 40;
+          max = 100;
+        }
+        break;
+      default:
+        if (widget.settingsUnit == 'metric') {
+          unit = 'kg';
+          min = 35;
+          max = 275;
+        } else {
+          unit = 'lbs';
+          min = 80;
+          max = 600;
+        }
+    }
+    if (widget.type == 'calorie') {
+      divisions = 180;
+    } else {
+      divisions = (max - min).round();
+    }
+
     return Card(
-      color: Colors.white,
-      elevation: 0,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              calorieGoal.round().toString(),
+        color: Colors.white,
+        elevation: 0,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                widget.sliderValue.round().toString() + unit,
+              ),
             ),
-          ),
-          Slider.adaptive(
-            value: calorieGoal,
-            min: 1000,
-            max: 10000,
-            divisions: 180,
-            activeColor: Theme.of(context).colorScheme.primaryContainer,
-            onChanged: (double value) {
-              setState(() {
-                calorieGoal = value;
-              });
-            },
-          ),
-        ],
-      ),
-    );
+            Slider.adaptive(
+              value: widget.sliderValue,
+              min: min,
+              max: max,
+              divisions: divisions,
+              activeColor: Theme.of(context).colorScheme.primaryContainer,
+              onChanged: (double value) {
+                setState(() {
+                  widget.sliderValue = value;
+                });
+              },
+              onChangeEnd: (value) {
+                Settings newSettings = widget.currentSettings;
+                switch (widget.type) {
+                  case 'calorie':
+                    newSettings.calorieGoal = value;
+                    break;
+                  case 'height':
+                    newSettings.height = value;
+                    break;
+                  default:
+                    newSettings.weight = value;
+                }
+                SettingsDatabase().updateSettings(newSettings);
+              },
+            ),
+          ],
+        ));
   }
 }
 
