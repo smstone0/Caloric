@@ -42,8 +42,8 @@ class SettingsDatabase {
           'calorieGoal': 2000.0,
           'height': 170.0,
           'weight': 60.0,
-          'unit': 'metric',
-          'mode': 'system',
+          'unit': 'Metric',
+          'mode': 'System',
         });
       },
       version: 1,

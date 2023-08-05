@@ -23,7 +23,7 @@ class SettingsPage extends StatelessWidget {
         const SectionTitle(title: "TARGET"),
         const SettingsCard(
             titles: ["Calorie goal"],
-            inputs: [CustomSliderHandler(type: 'calorie')]),
+            inputs: [CustomSliderHandler(type: 'Calorie')]),
         const SectionSeparator(),
         const SectionTitle(title: "MEASUREMENTS"),
         const SettingsCard(titles: [
@@ -31,20 +31,16 @@ class SettingsPage extends StatelessWidget {
           "Weight",
           "Unit"
         ], inputs: [
-          CustomSliderHandler(type: 'height'),
-          CustomSliderHandler(type: 'weight'),
-          SettingsDropdown(
-            list: ["Metric", "Imperial"],
-          ),
+          CustomSliderHandler(type: 'Height'),
+          CustomSliderHandler(type: 'Weight'),
+          SettingsDropdown(list: ["Metric", "Imperial"], type: 'Unit'),
         ]),
         const SectionSeparator(),
         const SectionTitle(title: "STYLE"),
         const SettingsCard(
           titles: ["Dark mode"],
           inputs: [
-            SettingsDropdown(
-              list: ["System", "Dark", "Light"],
-            )
+            SettingsDropdown(list: ["System", "Dark", "Light"], type: 'Mode')
           ],
         )
       ],
@@ -80,10 +76,10 @@ class _CustomSliderHandlerState extends State<CustomSliderHandler> {
         } else {
           List<Settings> settingsList = snapshot.data ?? [];
           switch (widget.type) {
-            case 'calorie':
+            case 'Calorie':
               sliderValue = settingsList[0].calorieGoal;
               break;
-            case 'height':
+            case 'Height':
               sliderValue = settingsList[0].height;
               break;
             default:
@@ -126,13 +122,13 @@ class _CustomSliderState extends State<CustomSlider> {
     String unit;
 
     switch (widget.type) {
-      case 'calorie':
+      case 'Calorie':
         unit = 'kcal';
         min = 1000;
         max = 10000;
         break;
-      case 'height':
-        if (widget.settingsUnit == 'metric') {
+      case 'Height':
+        if (widget.settingsUnit == 'Metric') {
           unit = 'cm';
           min = 100;
           max = 250;
@@ -143,7 +139,7 @@ class _CustomSliderState extends State<CustomSlider> {
         }
         break;
       default:
-        if (widget.settingsUnit == 'metric') {
+        if (widget.settingsUnit == 'Metric') {
           unit = 'kg';
           min = 35;
           max = 275;
@@ -153,7 +149,7 @@ class _CustomSliderState extends State<CustomSlider> {
           max = 600;
         }
     }
-    if (widget.type == 'calorie') {
+    if (widget.type == 'Calorie') {
       divisions = 180;
     } else {
       divisions = (max - min).round();
@@ -184,10 +180,10 @@ class _CustomSliderState extends State<CustomSlider> {
               onChangeEnd: (value) {
                 Settings newSettings = widget.currentSettings;
                 switch (widget.type) {
-                  case 'calorie':
+                  case 'Calorie':
                     newSettings.calorieGoal = value;
                     break;
-                  case 'height':
+                  case 'Height':
                     newSettings.height = value;
                     break;
                   default:
@@ -202,37 +198,80 @@ class _CustomSliderState extends State<CustomSlider> {
 }
 
 class SettingsDropdown extends StatelessWidget {
-  const SettingsDropdown({super.key, required this.list});
+  const SettingsDropdown({super.key, required this.list, required this.type});
 
   final List<String> list;
+  final String type;
+
+  List<String> getDropdownItems(String type, Settings settingsList) {
+    List<String> dropdownItems = [];
+    if (type == 'Unit') {
+      dropdownItems.add(settingsList.unit);
+      for (String item in list) {
+        if (item != settingsList.unit) {
+          dropdownItems.add(item);
+        }
+      }
+    } else {
+      dropdownItems.add(settingsList.mode);
+      for (String item in list) {
+        if (item != settingsList.mode) {
+          dropdownItems.add(item);
+        }
+      }
+    }
+    return (dropdownItems);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton(
-            items: list.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            //Get
-            value: list.first,
-            style: DefaultTextStyle.of(context).style,
-            dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-            onChanged: (String? value) {
-              //Set
-              print("Placeholder");
-            },
-          ),
-        ),
-      ),
-    );
+    List<String> dropdownItems;
+
+    return (FutureBuilder<List<Settings>>(
+      future: SettingsDatabase().getSettings(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(
+              color: Theme.of(context).colorScheme.primaryContainer);
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<Settings> settingsList = snapshot.data ?? [];
+          dropdownItems = getDropdownItems(type, settingsList[0]);
+          return Card(
+            color: Colors.white,
+            elevation: 0,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  items: dropdownItems
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  value: dropdownItems.first,
+                  style: DefaultTextStyle.of(context).style,
+                  dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+                  onChanged: (String? value) {
+                    Settings newSettings = settingsList[0];
+                    if (type == 'Unit') {
+                      newSettings.unit = value.toString();
+                      //Handle unit conversion
+                    } else {
+                      newSettings.mode = value.toString();
+                    }
+                    //SettingsDatabase().updateSettings(newSettings);
+                  },
+                ),
+              ),
+            ),
+          );
+        }
+      },
+    ));
   }
 }
 
