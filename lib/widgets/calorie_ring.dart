@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
 class CalorieRing extends StatelessWidget {
-  const CalorieRing({super.key, required this.size});
+  const CalorieRing({super.key, required this.size, required this.target});
 
   final double size;
+  final double target;
 
   @override
   Widget build(BuildContext context) {
     int calories = 50;
-    int target = 2000;
-
-    double value = calories / target;
 
     return Stack(
       alignment: Alignment.center,
@@ -19,13 +17,14 @@ class CalorieRing extends StatelessWidget {
           width: size,
           height: size,
           child: CircularProgressIndicator(
-            value: value,
+            value: calories / target,
             backgroundColor: Colors.white,
             color: Colors.green,
             strokeWidth: 7,
           ),
         ),
-        Text("$calories/$target", style: const TextStyle(fontSize: 16.5)),
+        Text("$calories/${target.round()}",
+            style: const TextStyle(fontSize: 16.5)),
       ],
     );
   }

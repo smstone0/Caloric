@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/calorie_ring.dart';
 import '../widgets/grey_card.dart';
+import '../databases/settings_database.dart';
 
 class TodayPage extends StatelessWidget {
   const TodayPage({super.key, required this.callback});
@@ -14,9 +15,9 @@ class TodayPage extends StatelessWidget {
 
     DateTime time = DateTime.parse(DateTime.now().toString());
 
-    if (time.hour > 0 && time.hour < 12) {
+    if (time.hour >= 0 && time.hour < 12) {
       timeOfDay = "morning";
-    } else if (time.hour > 12 && time.hour < 17) {
+    } else if (time.hour >= 12 && time.hour < 17) {
       timeOfDay = "afternoon";
     } else {
       timeOfDay = "evening";
@@ -60,60 +61,82 @@ class TodayPage extends StatelessWidget {
         month = "December";
     }
 
-    return ListView(
-      children: [
-        Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
-            child: Column(
+    return FutureBuilder<List<Settings>>(
+        future: SettingsDatabase().getSettings(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.primaryContainer),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            List<Settings> settingsList = snapshot.data ?? [];
+            return ListView(
               children: [
-                Text("Good $timeOfDay!", style: const TextStyle(fontSize: 18)),
-                Text("Today is ${time.day} $month"),
-                const SizedBox(height: 20),
-                const CalorieRing(size: 140),
-                const SizedBox(height: 10),
+                Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                    child: Column(
+                      children: [
+                        Text("Good $timeOfDay!",
+                            style: const TextStyle(fontSize: 18)),
+                        Text("Today is ${time.day} $month"),
+                        const SizedBox(height: 20),
+                        CalorieRing(
+                            size: 140, target: settingsList[0].calorieGoal),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+                ),
+                Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    const GreyCard(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 5, bottom: 15),
+                        child: ButtonCard(),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    GreyCard(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 5, bottom: 15),
+                        child: StatsCard(
+                            callback: callback, stats: settingsList[0]),
+                      ),
+                    ),
+                  ],
+                ),
               ],
-            ),
-          ),
-        ),
-        Column(
-          children: [
-            const SizedBox(height: 20),
-            const GreyCard(
-              child: Padding(
-                padding: EdgeInsets.only(top: 5, bottom: 15),
-                child: ButtonCard(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            GreyCard(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 5, bottom: 15),
-                child: StatsCard(callback: callback),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
+            );
+          }
+        });
   }
 }
 
 class StatsCard extends StatelessWidget {
-  const StatsCard({super.key, required this.callback});
+  const StatsCard({super.key, required this.callback, required this.stats});
 
   final VoidCallback callback;
+  final Settings stats;
 
   @override
   Widget build(BuildContext context) {
     Color colour;
-
-    double weight = 0;
-    String weightUnit = "kg";
-    double userHeight = 0;
-    String heightUnit = "cm";
+    String weightUnit, heightUnit;
     double bmi = 0;
+
+    if (stats.unit == 'Metric') {
+      weightUnit = 'kg';
+      heightUnit = 'cm';
+    } else {
+      weightUnit = 'lbs';
+      heightUnit = ' inches';
+    }
 
     if (bmi < 18.5) {
       colour = Colors.blue;
@@ -135,7 +158,7 @@ class StatsCard extends StatelessWidget {
             width: 100,
             height: 35,
             child: Center(
-                child: Text("$weight$weightUnit",
+                child: Text("${stats.weight}$weightUnit",
                     style: const TextStyle(fontSize: 16.5))),
           ),
         ),
@@ -151,7 +174,7 @@ class StatsCard extends StatelessWidget {
                   children: [
                     TextSpan(
                         text:
-                            "For a height of $userHeight$heightUnit, this means your BMI is ",
+                            "For a height of ${stats.height}$heightUnit, this means your BMI is ",
                         style: const TextStyle(fontSize: 16.5)),
                     TextSpan(
                         text: "$bmi",
