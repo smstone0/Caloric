@@ -2,11 +2,31 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+class Height {
+  double metric;
+  double get imperial => metric / 2.54;
+  set imperial(double imperial) {
+    metric = imperial * 2.54;
+  }
+
+  Height({required this.metric});
+}
+
+class Weight {
+  double metric;
+  double get imperial => metric * 2.205;
+  set imperial(double imperial) {
+    metric = imperial / 2.205;
+  }
+
+  Weight({required this.metric});
+}
+
 class Settings {
   final int id;
   double calorieGoal;
-  double height;
-  double weight;
+  Height height;
+  Weight weight;
   String unit;
   String mode;
 
@@ -22,8 +42,8 @@ class Settings {
     return {
       'id': id,
       'calorieGoal': calorieGoal,
-      'height': height,
-      'weight': weight,
+      'height': height.metric,
+      'weight': weight.metric,
       'unit': unit,
       'mode': mode,
     };
