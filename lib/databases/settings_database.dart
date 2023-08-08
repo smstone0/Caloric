@@ -59,19 +59,17 @@ class SettingsDatabase {
     );
   }
 
-  Future<List<Settings>> getSettings() async {
+  Future<Settings> getSettings() async {
     final db = await openDatabaseConnection();
     final List<Map<String, dynamic>> maps = await db.query('settings');
-    return List.generate(maps.length, (i) {
-      return Settings(
-        id: maps[i]['id'],
-        calorieGoal: maps[i]['calorieGoal'],
-        height: maps[i]['height'],
-        weight: maps[i]['weight'],
-        unit: maps[i]['unit'],
-        mode: maps[i]['mode'],
-      );
-    });
+    return Settings(
+      id: maps[0]['id'],
+      calorieGoal: maps[0]['calorieGoal'],
+      height: maps[0]['height'],
+      weight: maps[0]['weight'],
+      unit: maps[0]['unit'],
+      mode: maps[0]['mode'],
+    );
   }
 
   Future<void> updateSettings(Settings settings) async {

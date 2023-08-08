@@ -61,7 +61,7 @@ class TodayPage extends StatelessWidget {
         month = "December";
     }
 
-    return FutureBuilder<List<Settings>>(
+    return FutureBuilder<Settings>(
         future: SettingsDatabase().getSettings(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -72,7 +72,7 @@ class TodayPage extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            List<Settings> settingsList = snapshot.data ?? [];
+            Settings settings = snapshot.data!;
             return ListView(
               children: [
                 Container(
@@ -85,8 +85,7 @@ class TodayPage extends StatelessWidget {
                             style: const TextStyle(fontSize: 18)),
                         Text("Today is ${time.day} $month"),
                         const SizedBox(height: 20),
-                        CalorieRing(
-                            size: 140, target: settingsList[0].calorieGoal),
+                        CalorieRing(size: 140, target: settings.calorieGoal),
                         const SizedBox(height: 10),
                       ],
                     ),
@@ -105,8 +104,7 @@ class TodayPage extends StatelessWidget {
                     GreyCard(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 5, bottom: 15),
-                        child: StatsCard(
-                            callback: callback, stats: settingsList[0]),
+                        child: StatsCard(callback: callback, stats: settings),
                       ),
                     ),
                   ],

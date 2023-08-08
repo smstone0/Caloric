@@ -7,7 +7,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Settings>>(
+    return FutureBuilder<Settings>(
       future: SettingsDatabase().getSettings(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -18,7 +18,7 @@ class SettingsPage extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          List<Settings> settingsList = snapshot.data ?? [];
+          Settings settings = snapshot.data!;
           return ListView(
             children: [
               const Padding(
@@ -38,8 +38,8 @@ class SettingsPage extends StatelessWidget {
               ], inputs: [
                 CustomSlider(
                     type: 'Calorie',
-                    settings: settingsList[0],
-                    sliderValue: settingsList[0].calorieGoal)
+                    settings: settings,
+                    sliderValue: settings.calorieGoal)
               ]),
               const SectionSeparator(),
               const SectionTitle(title: "MEASUREMENTS"),
@@ -50,16 +50,16 @@ class SettingsPage extends StatelessWidget {
               ], inputs: [
                 CustomSlider(
                     type: 'Height',
-                    settings: settingsList[0],
-                    sliderValue: settingsList[0].height),
+                    settings: settings,
+                    sliderValue: settings.height),
                 CustomSlider(
                     type: 'Weight',
-                    settings: settingsList[0],
-                    sliderValue: settingsList[0].weight),
+                    settings: settings,
+                    sliderValue: settings.weight),
                 SettingsDropdown(
                     list: const ["Metric", "Imperial"],
                     type: 'Unit',
-                    settings: settingsList[0]),
+                    settings: settings),
               ]),
               const SectionSeparator(),
               const SectionTitle(title: "STYLE"),
@@ -69,7 +69,7 @@ class SettingsPage extends StatelessWidget {
                   SettingsDropdown(
                       list: const ["System", "Dark", "Light"],
                       type: 'Mode',
-                      settings: settingsList[0])
+                      settings: settings)
                 ],
               )
             ],
@@ -165,10 +165,14 @@ class _CustomSliderState extends State<CustomSlider> {
                     newSettings.calorieGoal = value;
                     break;
                   case 'Height':
+                    //
                     newSettings.height = value;
+                    //
                     break;
                   default:
+                    //
                     newSettings.weight = value;
+                  //
                 }
                 SettingsDatabase().updateSettings(newSettings);
               },
@@ -237,6 +241,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             onChanged: (String? value) {
               setState(() {});
               Settings newSettings = widget.settings;
+              //
               if (widget.type == 'Unit' && value != widget.settings.unit) {
                 newSettings.unit = value.toString();
                 //Handle unit conversion for height and weight
@@ -258,6 +263,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
                 SettingsDatabase().updateSettings(newSettings);
                 //Rebuild page
               }
+              //
             },
           ),
         ),
