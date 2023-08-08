@@ -7,93 +7,76 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 0, 15),
-          child: Text("Settings", style: TextStyle(fontSize: 18)),
-        ),
-        SizedBox(
-          height: 5,
-          child: Container(
-            color: Theme.of(context).colorScheme.primaryContainer,
-          ),
-        ),
-        const SizedBox(height: 20),
-        const SectionTitle(title: "TARGET"),
-        const SettingsCard(
-            titles: ["Calorie goal"],
-            inputs: [CustomSliderHandler(type: 'Calorie')]),
-        const SectionSeparator(),
-        const SectionTitle(title: "MEASUREMENTS"),
-        const SettingsCard(titles: [
-          "Height",
-          "Weight",
-          "Unit"
-        ], inputs: [
-          CustomSliderHandler(type: 'Height'),
-          CustomSliderHandler(type: 'Weight'),
-          SettingsDropdown(list: ["Metric", "Imperial"], type: 'Unit'),
-        ]),
-        const SectionSeparator(),
-        const SectionTitle(title: "STYLE"),
-        const SettingsCard(
-          titles: ["Dark mode"],
-          inputs: [
-            SettingsDropdown(list: ["System", "Dark", "Light"], type: 'Mode')
-          ],
-        )
-      ],
-    );
-  }
-}
-
-class CustomSliderHandler extends StatefulWidget {
-  const CustomSliderHandler({
-    super.key,
-    required this.type,
-  });
-
-  final String type;
-
-  @override
-  State<CustomSliderHandler> createState() => _CustomSliderHandlerState();
-}
-
-class _CustomSliderHandlerState extends State<CustomSliderHandler> {
-  @override
-  Widget build(BuildContext context) {
-    double sliderValue;
-
-    return (FutureBuilder<List<Settings>>(
+    return FutureBuilder<List<Settings>>(
       future: SettingsDatabase().getSettings(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.primaryContainer);
+          return Center(
+            child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primaryContainer),
+          );
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
           List<Settings> settingsList = snapshot.data ?? [];
-          switch (widget.type) {
-            case 'Calorie':
-              sliderValue = settingsList[0].calorieGoal;
-              break;
-            case 'Height':
-              sliderValue = settingsList[0].height;
-              break;
-            default:
-              sliderValue = settingsList[0].weight;
-          }
-          return CustomSlider(
-            type: widget.type,
-            settingsUnit: settingsList[0].unit,
-            sliderValue: sliderValue,
-            currentSettings: settingsList[0],
+          return ListView(
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(20, 20, 0, 15),
+                child: Text("Settings", style: TextStyle(fontSize: 18)),
+              ),
+              SizedBox(
+                height: 5,
+                child: Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const SectionTitle(title: "TARGET"),
+              SettingsCard(titles: const [
+                "Calorie goal"
+              ], inputs: [
+                CustomSlider(
+                    type: 'Calorie',
+                    settings: settingsList[0],
+                    sliderValue: settingsList[0].calorieGoal)
+              ]),
+              const SectionSeparator(),
+              const SectionTitle(title: "MEASUREMENTS"),
+              SettingsCard(titles: const [
+                "Height",
+                "Weight",
+                "Unit"
+              ], inputs: [
+                CustomSlider(
+                    type: 'Height',
+                    settings: settingsList[0],
+                    sliderValue: settingsList[0].height),
+                CustomSlider(
+                    type: 'Weight',
+                    settings: settingsList[0],
+                    sliderValue: settingsList[0].weight),
+                SettingsDropdown(
+                    list: const ["Metric", "Imperial"],
+                    type: 'Unit',
+                    settings: settingsList[0]),
+              ]),
+              const SectionSeparator(),
+              const SectionTitle(title: "STYLE"),
+              SettingsCard(
+                titles: const ["Light/dark mode"],
+                inputs: [
+                  SettingsDropdown(
+                      list: const ["System", "Dark", "Light"],
+                      type: 'Mode',
+                      settings: settingsList[0])
+                ],
+              )
+            ],
           );
         }
       },
-    ));
+    );
   }
 }
 
@@ -101,14 +84,12 @@ class CustomSlider extends StatefulWidget {
   CustomSlider(
       {super.key,
       required this.type,
-      required this.settingsUnit,
-      required this.sliderValue,
-      required this.currentSettings});
+      required this.settings,
+      required this.sliderValue});
 
   final String type;
-  final String settingsUnit;
+  final Settings settings;
   double sliderValue;
-  Settings currentSettings;
 
   @override
   State<CustomSlider> createState() => _CustomSliderState();
@@ -128,18 +109,18 @@ class _CustomSliderState extends State<CustomSlider> {
         max = 10000;
         break;
       case 'Height':
-        if (widget.settingsUnit == 'Metric') {
+        if (widget.settings.unit == 'Metric') {
           unit = 'cm';
           min = 100;
           max = 250;
         } else {
-          unit = 'inches';
+          unit = ' inches';
           min = 40;
           max = 100;
         }
         break;
       default:
-        if (widget.settingsUnit == 'Metric') {
+        if (widget.settings.unit == 'Metric') {
           unit = 'kg';
           min = 35;
           max = 275;
@@ -178,7 +159,7 @@ class _CustomSliderState extends State<CustomSlider> {
                 });
               },
               onChangeEnd: (value) {
-                Settings newSettings = widget.currentSettings;
+                Settings newSettings = widget.settings;
                 switch (widget.type) {
                   case 'Calorie':
                     newSettings.calorieGoal = value;
@@ -198,29 +179,34 @@ class _CustomSliderState extends State<CustomSlider> {
 }
 
 class SettingsDropdown extends StatefulWidget {
-  const SettingsDropdown({super.key, required this.list, required this.type});
+  const SettingsDropdown(
+      {super.key,
+      required this.list,
+      required this.type,
+      required this.settings});
 
   final List<String> list;
   final String type;
+  final Settings settings;
 
   @override
   State<SettingsDropdown> createState() => _SettingsDropdownState();
 }
 
 class _SettingsDropdownState extends State<SettingsDropdown> {
-  List<String> getDropdownItems(String type, Settings settingsList) {
+  List<String> getDropdownItems(String type, Settings settings) {
     List<String> dropdownItems = [];
     if (type == 'Unit') {
-      dropdownItems.add(settingsList.unit);
+      dropdownItems.add(settings.unit);
       for (String item in widget.list) {
-        if (item != settingsList.unit) {
+        if (item != settings.unit) {
           dropdownItems.add(item);
         }
       }
     } else {
-      dropdownItems.add(settingsList.mode);
+      dropdownItems.add(settings.mode);
       for (String item in widget.list) {
-        if (item != settingsList.mode) {
+        if (item != settings.mode) {
           dropdownItems.add(item);
         }
       }
@@ -230,69 +216,53 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> dropdownItems;
+    List<String> dropdownItems = getDropdownItems(widget.type, widget.settings);
 
-    return (FutureBuilder<List<Settings>>(
-      future: SettingsDatabase().getSettings(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.primaryContainer);
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          List<Settings> settingsList = snapshot.data ?? [];
-          dropdownItems = getDropdownItems(widget.type, settingsList[0]);
-          return Card(
-            color: Colors.white,
-            elevation: 0,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton(
-                  items: dropdownItems
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  value: dropdownItems.first,
-                  style: DefaultTextStyle.of(context).style,
-                  dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-                  onChanged: (String? value) {
-                    setState(() {});
-                    Settings newSettings = settingsList[0];
-                    if (widget.type == 'Unit' &&
-                        value != settingsList[0].unit) {
-                      newSettings.unit = value.toString();
-                      //Handle unit conversion for height and weight
-                      if (value == 'Metric') {
-                        //Convert from imperial to metric
-                        newSettings.height = newSettings.height * 2.54;
-                        newSettings.weight = newSettings.weight / 2.205;
-                      } else if (value == 'Imperial') {
-                        //Convert from metric to imperial
-                        newSettings.height = newSettings.height / 2.54;
-                        newSettings.weight = newSettings.weight * 2.205;
-                      }
-                      SettingsDatabase().updateSettings(newSettings);
-                      //Rebuild page
-                    } else if (widget.type == 'Mode' &&
-                        value != settingsList[0].mode) {
-                      newSettings.mode = value.toString();
-                      //Handle mode change
-                      SettingsDatabase().updateSettings(newSettings);
-                      //Rebuild page
-                    }
-                  },
-                ),
-              ),
-            ),
-          );
-        }
-      },
-    ));
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton(
+            items: dropdownItems.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            value: dropdownItems.first,
+            style: DefaultTextStyle.of(context).style,
+            dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+            onChanged: (String? value) {
+              setState(() {});
+              Settings newSettings = widget.settings;
+              if (widget.type == 'Unit' && value != widget.settings.unit) {
+                newSettings.unit = value.toString();
+                //Handle unit conversion for height and weight
+                if (value == 'Metric') {
+                  //Convert from imperial to metric
+                  newSettings.height = newSettings.height * 2.54;
+                  newSettings.weight = newSettings.weight / 2.205;
+                } else if (value == 'Imperial') {
+                  //Convert from metric to imperial
+                  newSettings.height = newSettings.height / 2.54;
+                  newSettings.weight = newSettings.weight * 2.205;
+                }
+                SettingsDatabase().updateSettings(newSettings);
+                //Rebuild page
+              } else if (widget.type == 'Mode' &&
+                  value != widget.settings.mode) {
+                newSettings.mode = value.toString();
+                //Handle mode change
+                SettingsDatabase().updateSettings(newSettings);
+                //Rebuild page
+              }
+            },
+          ),
+        ),
+      ),
+    );
   }
 }
 
