@@ -25,18 +25,21 @@ class Weight {
 class Settings {
   final int id;
   double calorieGoal;
-  Height height;
-  Weight weight;
+  late Height height;
+  late Weight weight;
   String unit;
   String mode;
 
   Settings(
       {required this.id,
       required this.calorieGoal,
-      required this.height,
-      required this.weight,
+      required double height,
+      required double weight,
       required this.unit,
-      required this.mode});
+      required this.mode}) {
+    this.height = Height(metric: height);
+    this.weight = Weight(metric: weight);
+  }
 
   Map<String, dynamic> toMap() {
     return {
