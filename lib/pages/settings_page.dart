@@ -197,24 +197,29 @@ class _CustomSliderState extends State<CustomSlider> {
   }
 }
 
-class SettingsDropdown extends StatelessWidget {
+class SettingsDropdown extends StatefulWidget {
   const SettingsDropdown({super.key, required this.list, required this.type});
 
   final List<String> list;
   final String type;
 
+  @override
+  State<SettingsDropdown> createState() => _SettingsDropdownState();
+}
+
+class _SettingsDropdownState extends State<SettingsDropdown> {
   List<String> getDropdownItems(String type, Settings settingsList) {
     List<String> dropdownItems = [];
     if (type == 'Unit') {
       dropdownItems.add(settingsList.unit);
-      for (String item in list) {
+      for (String item in widget.list) {
         if (item != settingsList.unit) {
           dropdownItems.add(item);
         }
       }
     } else {
       dropdownItems.add(settingsList.mode);
-      for (String item in list) {
+      for (String item in widget.list) {
         if (item != settingsList.mode) {
           dropdownItems.add(item);
         }
@@ -237,7 +242,7 @@ class SettingsDropdown extends StatelessWidget {
           return Text('Error: ${snapshot.error}');
         } else {
           List<Settings> settingsList = snapshot.data ?? [];
-          dropdownItems = getDropdownItems(type, settingsList[0]);
+          dropdownItems = getDropdownItems(widget.type, settingsList[0]);
           return Card(
             color: Colors.white,
             elevation: 0,
@@ -256,14 +261,30 @@ class SettingsDropdown extends StatelessWidget {
                   style: DefaultTextStyle.of(context).style,
                   dropdownColor: Theme.of(context).colorScheme.primaryContainer,
                   onChanged: (String? value) {
+                    setState(() {});
                     Settings newSettings = settingsList[0];
-                    if (type == 'Unit') {
+                    if (widget.type == 'Unit' &&
+                        value != settingsList[0].unit) {
                       newSettings.unit = value.toString();
-                      //Handle unit conversion
-                    } else {
+                      //Handle unit conversion for height and weight
+                      if (value == 'Metric') {
+                        //Convert from imperial to metric
+                        newSettings.height = newSettings.height * 2.54;
+                        newSettings.weight = newSettings.weight / 2.205;
+                      } else if (value == 'Imperial') {
+                        //Convert from metric to imperial
+                        newSettings.height = newSettings.height / 2.54;
+                        newSettings.weight = newSettings.weight * 2.205;
+                      }
+                      SettingsDatabase().updateSettings(newSettings);
+                      //Rebuild page
+                    } else if (widget.type == 'Mode' &&
+                        value != settingsList[0].mode) {
                       newSettings.mode = value.toString();
+                      //Handle mode change
+                      SettingsDatabase().updateSettings(newSettings);
+                      //Rebuild page
                     }
-                    //SettingsDatabase().updateSettings(newSettings);
                   },
                 ),
               ),
