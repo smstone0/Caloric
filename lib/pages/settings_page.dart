@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
   double getHeight(Settings settings) {
     if (settings.unit == 'Metric') {
       return settings.height.metric;
@@ -75,7 +80,10 @@ class SettingsPage extends StatelessWidget {
                 SettingsDropdown(
                     list: const ["Metric", "Imperial"],
                     type: 'Unit',
-                    settings: settings),
+                    settings: settings,
+                    rebuildPage: () {
+                      setState(() {});
+                    }),
               ]),
               const SectionSeparator(),
               const SectionTitle(title: "STYLE"),
@@ -85,7 +93,10 @@ class SettingsPage extends StatelessWidget {
                   SettingsDropdown(
                       list: const ["System", "Dark", "Light"],
                       type: 'Mode',
-                      settings: settings)
+                      settings: settings,
+                      rebuildPage: () {
+                        setState(() {});
+                      })
                 ],
               )
             ],
@@ -182,16 +193,16 @@ class _CustomSliderState extends State<CustomSlider> {
                     break;
                   case 'Height':
                     if (widget.settings.unit == 'Metric') {
-                      newSettings.height.metric == value;
+                      newSettings.height.metric = value;
                     } else {
-                      newSettings.height.imperial == value;
+                      newSettings.height.imperial = value;
                     }
                     break;
                   default:
                     if (widget.settings.unit == 'Metric') {
-                      newSettings.weight.metric == value;
+                      newSettings.weight.metric = value;
                     } else {
-                      newSettings.weight.imperial == value;
+                      newSettings.weight.imperial = value;
                     }
                 }
                 SettingsDatabase().updateSettings(newSettings);
@@ -207,11 +218,13 @@ class SettingsDropdown extends StatefulWidget {
       {super.key,
       required this.list,
       required this.type,
-      required this.settings});
+      required this.settings,
+      required this.rebuildPage});
 
   final List<String> list;
   final String type;
   final Settings settings;
+  final Function rebuildPage;
 
   @override
   State<SettingsDropdown> createState() => _SettingsDropdownState();
@@ -264,12 +277,12 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
               if (widget.type == 'Unit' && value != widget.settings.unit) {
                 newSettings.unit = value.toString();
                 SettingsDatabase().updateSettings(newSettings);
-                //Rebuild page
+                widget.rebuildPage();
               } else if (widget.type == 'Mode' &&
                   value != widget.settings.mode) {
                 newSettings.mode = value.toString();
                 SettingsDatabase().updateSettings(newSettings);
-                //Rebuild page
+                widget.rebuildPage();
               }
             },
           ),
