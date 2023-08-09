@@ -2,28 +2,51 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+class Height {
+  double metric;
+  double get imperial => metric / 2.54;
+  set imperial(double imperial) {
+    metric = imperial * 2.54;
+  }
+
+  Height({required this.metric});
+}
+
+class Weight {
+  double metric;
+  double get imperial => metric * 2.205;
+  set imperial(double imperial) {
+    metric = imperial / 2.205;
+  }
+
+  Weight({required this.metric});
+}
+
 class Settings {
   final int id;
   double calorieGoal;
-  double height;
-  double weight;
+  late Height height;
+  late Weight weight;
   String unit;
   String mode;
 
   Settings(
       {required this.id,
       required this.calorieGoal,
-      required this.height,
-      required this.weight,
+      required double height,
+      required double weight,
       required this.unit,
-      required this.mode});
+      required this.mode}) {
+    this.height = Height(metric: height);
+    this.weight = Weight(metric: weight);
+  }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'calorieGoal': calorieGoal,
-      'height': height,
-      'weight': weight,
+      'height': height.metric,
+      'weight': weight.metric,
       'unit': unit,
       'mode': mode,
     };
