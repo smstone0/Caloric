@@ -338,24 +338,45 @@ class SettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GreyCard(
-      child: Column(
-        children: [
-          for (int i = 0; i < titles.length; i++)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth > 300) {
+            return Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: Text(titles[i]),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 10, bottom: 10, right: 20),
-                  child: inputs[i],
-                )
+                for (int i = 0; i < titles.length; i++)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Text(titles[i]),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 10, bottom: 10, right: 20),
+                        child: inputs[i],
+                      )
+                    ],
+                  ),
               ],
-            ),
-        ],
+            );
+          } else {
+            return Column(
+              children: [
+                for (int i = 0; i < titles.length; i++)
+                  Column(children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5),
+                      child: Text(titles[i]),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
+                        child: inputs[i])
+                  ]),
+              ],
+            );
+          }
+        },
       ),
     );
   }
