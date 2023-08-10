@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
 
+String capitalise(String text) {
+  return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
+}
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -11,7 +15,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   double getHeight(Settings settings) {
-    if (settings.unit == 'Metric') {
+    if (settings.unit == Unit.metric) {
       return settings.height.metric;
     } else {
       return settings.height.imperial;
@@ -19,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   double getWeight(Settings settings) {
-    if (settings.unit == 'Metric') {
+    if (settings.unit == Unit.metric) {
       return settings.weight.metric;
     } else {
       return settings.weight.imperial;
@@ -136,7 +140,7 @@ class _CustomSliderState extends State<CustomSlider> {
         max = 10000;
         break;
       case 'Height':
-        if (widget.settings.unit == 'Metric') {
+        if (widget.settings.unit == Unit.metric) {
           unit = 'cm';
           min = 100;
           max = 250;
@@ -147,7 +151,7 @@ class _CustomSliderState extends State<CustomSlider> {
         }
         break;
       default:
-        if (widget.settings.unit == 'Metric') {
+        if (widget.settings.unit == Unit.metric) {
           unit = 'kg';
           min = 35;
           max = 275;
@@ -192,14 +196,14 @@ class _CustomSliderState extends State<CustomSlider> {
                     newSettings.calorieGoal = value;
                     break;
                   case 'Height':
-                    if (widget.settings.unit == 'Metric') {
+                    if (widget.settings.unit == Unit.metric) {
                       newSettings.height.metric = value;
                     } else {
                       newSettings.height.imperial = value;
                     }
                     break;
                   default:
-                    if (widget.settings.unit == 'Metric') {
+                    if (widget.settings.unit == Unit.metric) {
                       newSettings.weight.metric = value;
                     } else {
                       newSettings.weight.imperial = value;
@@ -231,19 +235,19 @@ class SettingsDropdown extends StatefulWidget {
 }
 
 class _SettingsDropdownState extends State<SettingsDropdown> {
-  List<String> getDropdownItems(String type, Settings settings) {
+  List<String> getDropdownItems() {
     List<String> dropdownItems = [];
-    if (type == 'Unit') {
-      dropdownItems.add(settings.unit);
+    if (widget.type == 'Unit') {
+      dropdownItems.add(capitalise(widget.settings.unit.name));
       for (String item in widget.list) {
-        if (item != settings.unit) {
+        if (item != capitalise(widget.settings.unit.name)) {
           dropdownItems.add(item);
         }
       }
     } else {
-      dropdownItems.add(settings.mode);
+      dropdownItems.add(capitalise(widget.settings.appearance.name));
       for (String item in widget.list) {
-        if (item != settings.mode) {
+        if (item != capitalise(widget.settings.appearance.name)) {
           dropdownItems.add(item);
         }
       }
@@ -253,7 +257,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> dropdownItems = getDropdownItems(widget.type, widget.settings);
+    List<String> dropdownItems = getDropdownItems();
 
     return Card(
       color: Colors.white,
@@ -273,16 +277,36 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             dropdownColor: Theme.of(context).colorScheme.primaryContainer,
             onChanged: (String? value) {
               setState(() {});
+              //
+              //
               Settings newSettings = widget.settings;
-              if (widget.type == 'Unit' && value != widget.settings.unit) {
-                newSettings.unit = value.toString();
+              if (widget.type == 'Unit' &&
+                  value!.toLowerCase() != widget.settings.unit.name) {
+                switch (value) {
+                  case "Metric":
+                    newSettings.unit = Unit.metric;
+                    break;
+                  default:
+                    newSettings.unit = Unit.imperial;
+                }
                 SettingsDatabase().updateSettings(newSettings);
                 widget.rebuildPage();
               } else if (widget.type == 'Mode' &&
-                  value != widget.settings.mode) {
-                newSettings.mode = value.toString();
+                  value!.toLowerCase() != widget.settings.appearance.name) {
+                switch (value) {
+                  case "System":
+                    newSettings.appearance = Appearance.system;
+                    break;
+                  case "Dark":
+                    newSettings.appearance = Appearance.dark;
+                    break;
+                  default:
+                    newSettings.appearance = Appearance.light;
+                }
                 SettingsDatabase().updateSettings(newSettings);
                 widget.rebuildPage();
+                //
+                //
               }
             },
           ),

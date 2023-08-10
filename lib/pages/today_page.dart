@@ -130,7 +130,7 @@ class StatsCard extends StatelessWidget {
     double weight, height;
     double bmi = stats.weight.metric / pow(stats.height.metric / 100, 2);
 
-    if (stats.unit == 'Metric') {
+    if (stats.unit == Unit.metric) {
       weightUnit = 'kg';
       heightUnit = 'cm';
       weight = stats.weight.metric;
