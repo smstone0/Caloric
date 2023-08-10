@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/calorie_ring.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
+import 'dart:math';
 
 class TodayPage extends StatelessWidget {
   const TodayPage({super.key, required this.callback});
@@ -126,24 +127,33 @@ class StatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Color colour;
     String weightUnit, heightUnit;
-    double bmi = 0;
+    double weight, height;
+    double bmi = stats.weight.metric / pow(stats.height.metric / 100, 2);
 
     if (stats.unit == 'Metric') {
       weightUnit = 'kg';
       heightUnit = 'cm';
+      weight = stats.weight.metric;
+      height = stats.height.metric;
     } else {
       weightUnit = 'lbs';
       heightUnit = ' inches';
+      weight = stats.weight.imperial;
+      height = stats.height.imperial;
     }
 
-    if (bmi < 18.5) {
-      colour = Colors.blue;
-    } else if (bmi < 25) {
-      colour = Colors.green;
-    } else if (bmi < 30) {
-      colour = Colors.orange;
-    } else {
-      colour = Colors.red;
+    switch (bmi) {
+      case < 18.5:
+        colour = Colors.blue;
+        break;
+      case < 25:
+        colour = Colors.green;
+        break;
+      case < 30:
+        colour = Colors.orange;
+        break;
+      default:
+        colour = Colors.red;
     }
 
     return Column(
@@ -156,7 +166,7 @@ class StatsCard extends StatelessWidget {
             width: 100,
             height: 35,
             child: Center(
-                child: Text("${stats.weight}$weightUnit",
+                child: Text("${weight.round()}$weightUnit",
                     style: const TextStyle(fontSize: 16.5))),
           ),
         ),
@@ -172,10 +182,10 @@ class StatsCard extends StatelessWidget {
                   children: [
                     TextSpan(
                         text:
-                            "For a height of ${stats.height}$heightUnit, this means your BMI is ",
+                            "For a height of ${height.round()}$heightUnit, this means your BMI is ",
                         style: const TextStyle(fontSize: 16.5)),
                     TextSpan(
-                        text: "$bmi",
+                        text: bmi.toStringAsFixed(1),
                         style: TextStyle(color: colour, fontSize: 16.5)),
                   ],
                 ),
