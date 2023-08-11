@@ -60,8 +60,8 @@ class Settings {
       'calorieGoal': calorieGoal,
       'height': height.metric,
       'weight': weight.metric,
-      'unit': unit,
-      'appearance': appearance,
+      'unit': unit.index,
+      'appearance': appearance.index,
     };
   }
 }

@@ -277,8 +277,6 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             dropdownColor: Theme.of(context).colorScheme.primaryContainer,
             onChanged: (String? value) {
               setState(() {});
-              //
-              //
               Settings newSettings = widget.settings;
               if (widget.type == 'Unit' &&
                   value!.toLowerCase() != widget.settings.unit.name) {
@@ -305,8 +303,6 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
                 }
                 SettingsDatabase().updateSettings(newSettings);
                 widget.rebuildPage();
-                //
-                //
               }
             },
           ),
