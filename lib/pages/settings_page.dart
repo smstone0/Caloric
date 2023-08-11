@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
+import '../widgets/custom_button.dart';
 
 String capitalise(String text) {
   return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
@@ -90,8 +91,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     rebuildPage: () {
                       setState(() {});
                     }),
-                Text("Placeholder"),
-                Text("Placeholder"),
+                UnitButtons(type: 'height', settings: settings),
+                UnitButtons(type: 'weight', settings: settings),
               ]),
               const SectionSeparator(),
               const SectionTitle(title: "STYLE"),
@@ -112,6 +113,85 @@ class _SettingsPageState extends State<SettingsPage> {
         }
       },
     );
+  }
+}
+
+class UnitButtons extends StatelessWidget {
+  const UnitButtons({super.key, required this.type, required this.settings});
+
+  final String type;
+  final Settings settings;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> buttons = [];
+
+    if (type == 'height') {
+      if (settings.unit == Unit.metric) {
+        buttons = [
+          CustomButton(
+              text: 'm',
+              onPressed: () {},
+              colour: Theme.of(context).colorScheme.primaryContainer,
+              height: 30,
+              width: 80),
+          CustomButton(
+              text: 'cm',
+              onPressed: () {},
+              colour: Theme.of(context).colorScheme.primaryContainer,
+              height: 30,
+              width: 80)
+        ];
+      } else {
+        buttons = [
+          CustomButton(
+              text: 'ft in',
+              onPressed: () {},
+              colour: Theme.of(context).colorScheme.primaryContainer,
+              height: 30,
+              width: 90),
+          CustomButton(
+              text: 'in',
+              onPressed: () {},
+              colour: Theme.of(context).colorScheme.primaryContainer,
+              height: 30,
+              width: 90)
+        ];
+      }
+    } else {
+      if (settings.unit == Unit.metric) {
+        buttons = [
+          CustomButton(
+              text: 'kg',
+              onPressed: () {},
+              colour: Theme.of(context).colorScheme.primaryContainer,
+              height: 30,
+              width: 80)
+        ];
+      } else {
+        buttons = [
+          CustomButton(
+              text: 'lbs',
+              onPressed: () {},
+              colour: Theme.of(context).colorScheme.primaryContainer,
+              height: 30,
+              width: 90),
+          CustomButton(
+              text: 'st lbs',
+              onPressed: () {},
+              colour: Theme.of(context).colorScheme.primaryContainer,
+              height: 30,
+              width: 90)
+        ];
+      }
+    }
+
+    return Wrap(
+        spacing: 5,
+        runSpacing: 5,
+        alignment: WrapAlignment.center,
+        children: buttons);
+    //Rebuild page onPressed
   }
 }
 
