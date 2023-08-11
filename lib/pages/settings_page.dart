@@ -71,7 +71,9 @@ class _SettingsPageState extends State<SettingsPage> {
               SettingsCard(titles: const [
                 "Height",
                 "Weight",
-                "Unit"
+                "Unit system",
+                "Height unit",
+                "Weight unit"
               ], inputs: [
                 CustomSlider(
                     type: 'Height',
@@ -88,6 +90,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     rebuildPage: () {
                       setState(() {});
                     }),
+                Text("Placeholder"),
+                Text("Placeholder"),
               ]),
               const SectionSeparator(),
               const SectionTitle(title: "STYLE"),

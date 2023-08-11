@@ -3,9 +3,9 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Height {
-  String toFeetAndInches(double totalInches) {
-    double inches = totalInches % 12;
-    double feet = (totalInches - inches) / 12;
+  String toFeetAndInches() {
+    double inches = imperial % 12;
+    double feet = (imperial - inches) / 12;
 
     return "${feet.round()}'${inches.round()}\"";
   }
@@ -16,7 +16,7 @@ class Height {
     metric = imperial * 2.54;
   }
 
-  String get feetandInches => toFeetAndInches(imperial);
+  String get feetandInches => toFeetAndInches();
 
   Height({required this.metric});
 }
