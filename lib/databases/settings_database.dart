@@ -3,11 +3,20 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Height {
+  String toFeetAndInches(double totalInches) {
+    double inches = totalInches % 12;
+    double feet = (totalInches - inches) / 12;
+
+    return "${feet.round()}'${inches.round()}\"";
+  }
+
   double metric;
   double get imperial => metric / 2.54;
   set imperial(double imperial) {
     metric = imperial * 2.54;
   }
+
+  String get feetandInches => toFeetAndInches(imperial);
 
   Height({required this.metric});
 }
@@ -22,13 +31,17 @@ class Weight {
   Weight({required this.metric});
 }
 
+enum Unit { metric, imperial }
+
+enum Appearance { system, light, dark }
+
 class Settings {
   final int id;
   double calorieGoal;
   late Height height;
   late Weight weight;
-  String unit;
-  String mode;
+  Unit unit;
+  Appearance appearance;
 
   Settings(
       {required this.id,
@@ -36,7 +49,7 @@ class Settings {
       required double height,
       required double weight,
       required this.unit,
-      required this.mode}) {
+      required this.appearance}) {
     this.height = Height(metric: height);
     this.weight = Weight(metric: weight);
   }
@@ -47,8 +60,8 @@ class Settings {
       'calorieGoal': calorieGoal,
       'height': height.metric,
       'weight': weight.metric,
-      'unit': unit,
-      'mode': mode,
+      'unit': unit.index,
+      'appearance': appearance.index,
     };
   }
 }
@@ -59,14 +72,14 @@ class SettingsDatabase {
       join(await getDatabasesPath(), 'settings_database.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE settings(id INTEGER PRIMARY KEY, calorieGoal FLOAT, height FLOAT, weight FLOAT, unit TEXT, mode TEXT)',
+          'CREATE TABLE settings(id INTEGER PRIMARY KEY, calorieGoal FLOAT, height FLOAT, weight FLOAT, unit INT, appearance INT)',
         );
         await db.insert('settings', {
           'calorieGoal': 2000.0,
           'height': 170.0,
           'weight': 60.0,
-          'unit': 'Metric',
-          'mode': 'System',
+          'unit': Unit.metric.index,
+          'appearance': Appearance.system.index,
         });
       },
       version: 1,
@@ -90,8 +103,8 @@ class SettingsDatabase {
       calorieGoal: maps[0]['calorieGoal'],
       height: maps[0]['height'],
       weight: maps[0]['weight'],
-      unit: maps[0]['unit'],
-      mode: maps[0]['mode'],
+      unit: Unit.values[maps[0]['unit']],
+      appearance: Appearance.values[maps[0]['appearance']],
     );
   }
 
