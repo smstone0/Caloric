@@ -127,20 +127,33 @@ class StatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color colour;
-    String weightUnit, heightUnit;
-    double weight, height;
-    double bmi = stats.weight.metric / pow(stats.height.metric / 100, 2);
+    String weight, height;
+    double bmi = stats.weight.kg / pow(stats.height.m, 2);
 
     if (stats.unit == Unit.metric) {
-      weightUnit = 'kg';
-      heightUnit = 'cm';
-      weight = stats.weight.metric;
-      height = stats.height.metric;
+      weight = '${stats.weight.kg.round()}kg';
+      switch (stats.metricHeight) {
+        case MetricHeight.cm:
+          height = '${stats.height.cm.round()}${stats.metricHeight.name}';
+          break;
+        default:
+          height = '${stats.height.m.round()}${stats.metricHeight.name}';
+      }
     } else {
-      weightUnit = 'lbs';
-      heightUnit = ' inches';
-      weight = stats.weight.imperial;
-      height = stats.height.imperial;
+      switch (stats.imperialHeight) {
+        case ImperialHeight.inches:
+          height = '${stats.height.inches.round()}${stats.imperialHeight.name}';
+          break;
+        default:
+          height = stats.height.feetandInches;
+      }
+      switch (stats.imperialWeight) {
+        case ImperialWeight.lbs:
+          weight = '${stats.weight.lbs.round()}${stats.imperialWeight.name}';
+          break;
+        default:
+          weight = stats.weight.stonesandPounds;
+      }
     }
 
     switch (bmi) {
@@ -167,8 +180,7 @@ class StatsCard extends StatelessWidget {
             width: 100,
             height: 35,
             child: Center(
-                child: Text("${weight.round()}$weightUnit",
-                    style: const TextStyle(fontSize: 16.5))),
+                child: Text(weight, style: const TextStyle(fontSize: 16.5))),
           ),
         ),
         Padding(
@@ -183,7 +195,7 @@ class StatsCard extends StatelessWidget {
                   children: [
                     TextSpan(
                         text:
-                            "For a height of ${height.round()}$heightUnit, this means your BMI is ",
+                            "For a height of $height, this means your BMI is ",
                         style: const TextStyle(fontSize: 16.5)),
                     TextSpan(
                         text: bmi.toStringAsFixed(1),

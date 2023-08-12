@@ -17,17 +17,17 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   double getHeight(Settings settings) {
     if (settings.unit == Unit.metric) {
-      return settings.height.metric;
+      return settings.height.cm;
     } else {
-      return settings.height.imperial;
+      return settings.height.inches;
     }
   }
 
   double getWeight(Settings settings) {
     if (settings.unit == Unit.metric) {
-      return settings.weight.metric;
+      return settings.weight.kg;
     } else {
-      return settings.weight.imperial;
+      return settings.weight.lbs;
     }
   }
 
@@ -131,7 +131,10 @@ class UnitButtons extends StatelessWidget {
         buttons = [
           CustomButton(
               text: 'm',
-              onPressed: () {},
+              onPressed: () {
+                //Set height unit to m
+                //Rebuild page
+              },
               colour: Theme.of(context).colorScheme.primaryContainer,
               height: 30,
               width: 80),
@@ -191,7 +194,6 @@ class UnitButtons extends StatelessWidget {
         runSpacing: 5,
         alignment: WrapAlignment.center,
         children: buttons);
-    //Rebuild page onPressed
   }
 }
 
@@ -281,16 +283,16 @@ class _CustomSliderState extends State<CustomSlider> {
                     break;
                   case 'Height':
                     if (widget.settings.unit == Unit.metric) {
-                      newSettings.height.metric = value;
+                      newSettings.height.cm = value;
                     } else {
-                      newSettings.height.imperial = value;
+                      newSettings.height.inches = value;
                     }
                     break;
                   default:
                     if (widget.settings.unit == Unit.metric) {
-                      newSettings.weight.metric = value;
+                      newSettings.weight.kg = value;
                     } else {
-                      newSettings.weight.imperial = value;
+                      newSettings.weight.lbs = value;
                     }
                 }
                 SettingsDatabase().updateSettings(newSettings);
