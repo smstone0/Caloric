@@ -91,8 +91,18 @@ class _SettingsPageState extends State<SettingsPage> {
                     rebuildPage: () {
                       setState(() {});
                     }),
-                UnitButtons(type: 'height', settings: settings),
-                UnitButtons(type: 'weight', settings: settings),
+                UnitButtons(
+                    type: 'height',
+                    settings: settings,
+                    rebuildPage: () {
+                      setState(() {});
+                    }),
+                UnitButtons(
+                    type: 'weight',
+                    settings: settings,
+                    rebuildPage: () {
+                      setState(() {});
+                    }),
               ]),
               const SectionSeparator(),
               const SectionTitle(title: "STYLE"),
@@ -117,10 +127,15 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 class UnitButtons extends StatelessWidget {
-  const UnitButtons({super.key, required this.type, required this.settings});
+  const UnitButtons(
+      {super.key,
+      required this.type,
+      required this.settings,
+      required this.rebuildPage});
 
   final String type;
   final Settings settings;
+  final Function rebuildPage;
 
   @override
   Widget build(BuildContext context) {
@@ -132,15 +147,20 @@ class UnitButtons extends StatelessWidget {
           CustomButton(
               text: 'm',
               onPressed: () {
-                //Set height unit to m
-                //Rebuild page
+                settings.metricHeight = MetricHeight.m;
+                SettingsDatabase().updateSettings(settings);
+                rebuildPage();
               },
               colour: Theme.of(context).colorScheme.primaryContainer,
               height: 30,
               width: 80),
           CustomButton(
               text: 'cm',
-              onPressed: () {},
+              onPressed: () {
+                settings.metricHeight = MetricHeight.cm;
+                SettingsDatabase().updateSettings(settings);
+                rebuildPage();
+              },
               colour: Theme.of(context).colorScheme.primaryContainer,
               height: 30,
               width: 80)
@@ -149,13 +169,21 @@ class UnitButtons extends StatelessWidget {
         buttons = [
           CustomButton(
               text: 'ft in',
-              onPressed: () {},
+              onPressed: () {
+                settings.imperialHeight = ImperialHeight.ftinches;
+                SettingsDatabase().updateSettings(settings);
+                rebuildPage();
+              },
               colour: Theme.of(context).colorScheme.primaryContainer,
               height: 30,
               width: 90),
           CustomButton(
               text: 'in',
-              onPressed: () {},
+              onPressed: () {
+                settings.imperialHeight = ImperialHeight.inches;
+                SettingsDatabase().updateSettings(settings);
+                rebuildPage();
+              },
               colour: Theme.of(context).colorScheme.primaryContainer,
               height: 30,
               width: 90)
@@ -166,6 +194,7 @@ class UnitButtons extends StatelessWidget {
         buttons = [
           CustomButton(
               text: 'kg',
+              // Kg is the only metric weight option, therefore a settings update and rebuild is not required
               onPressed: () {},
               colour: Theme.of(context).colorScheme.primaryContainer,
               height: 30,
@@ -175,13 +204,21 @@ class UnitButtons extends StatelessWidget {
         buttons = [
           CustomButton(
               text: 'lbs',
-              onPressed: () {},
+              onPressed: () {
+                settings.imperialWeight = ImperialWeight.lbs;
+                SettingsDatabase().updateSettings(settings);
+                rebuildPage();
+              },
               colour: Theme.of(context).colorScheme.primaryContainer,
               height: 30,
               width: 90),
           CustomButton(
               text: 'st lbs',
-              onPressed: () {},
+              onPressed: () {
+                settings.imperialWeight = ImperialWeight.stonelbs;
+                SettingsDatabase().updateSettings(settings);
+                rebuildPage();
+              },
               colour: Theme.of(context).colorScheme.primaryContainer,
               height: 30,
               width: 90)
@@ -217,34 +254,48 @@ class _CustomSliderState extends State<CustomSlider> {
   Widget build(BuildContext context) {
     double min, max;
     int divisions;
-    String unit;
+    String label = widget.sliderValue.round().toString();
 
     switch (widget.type) {
       case 'Calorie':
-        unit = 'kcal';
+        label = '$label kcal';
         min = 1000;
         max = 10000;
         break;
       case 'Height':
         if (widget.settings.unit == Unit.metric) {
-          unit = 'cm';
           min = 100;
           max = 250;
+          if (widget.settings.metricHeight == MetricHeight.m) {
+            label = '${(widget.sliderValue / 100).toStringAsFixed(2)}m';
+          } else {
+            label = '$label${widget.settings.metricHeight.name}';
+          }
         } else {
-          unit = ' inches';
           min = 40;
           max = 100;
+          if (widget.settings.imperialHeight == ImperialHeight.ftinches) {
+            // Fix delay by one selection, not showing current value
+            label = widget.settings.height.feetandInches;
+          } else {
+            label = '$label ${widget.settings.imperialHeight.name}';
+          }
         }
         break;
       default:
         if (widget.settings.unit == Unit.metric) {
-          unit = 'kg';
+          label = '${label}kg';
           min = 35;
           max = 275;
         } else {
-          unit = 'lbs';
           min = 80;
           max = 600;
+          if (widget.settings.imperialWeight == ImperialWeight.stonelbs) {
+            // Fix delay by one selection, not showing current value
+            label = widget.settings.weight.stonesandPounds;
+          } else {
+            label = '$label${widget.settings.imperialWeight.name}';
+          }
         }
     }
     if (widget.type == 'Calorie') {
@@ -261,7 +312,7 @@ class _CustomSliderState extends State<CustomSlider> {
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Text(
-                widget.sliderValue.round().toString() + unit,
+                label,
               ),
             ),
             Slider(

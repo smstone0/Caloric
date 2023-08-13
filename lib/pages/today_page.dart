@@ -137,12 +137,14 @@ class StatsCard extends StatelessWidget {
           height = '${stats.height.cm.round()}${stats.metricHeight.name}';
           break;
         default:
-          height = '${stats.height.m.round()}${stats.metricHeight.name}';
+          height =
+              '${stats.height.m.toStringAsFixed(2)}${stats.metricHeight.name}';
       }
     } else {
       switch (stats.imperialHeight) {
         case ImperialHeight.inches:
-          height = '${stats.height.inches.round()}${stats.imperialHeight.name}';
+          height =
+              '${stats.height.inches.round()} ${stats.imperialHeight.name}';
           break;
         default:
           height = stats.height.feetandInches;
