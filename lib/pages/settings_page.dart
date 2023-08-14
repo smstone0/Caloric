@@ -140,88 +140,106 @@ class UnitButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> buttons = [];
+    Color colour = Theme.of(context).colorScheme.primaryContainer;
+
+    Color buttonColour(Object button) {
+      if (button == settings.imperialHeight ||
+          button == settings.imperialWeight ||
+          button == settings.metricHeight) {
+        return colour;
+      } else {
+        return Colors.white;
+      }
+    }
 
     if (type == 'height') {
       if (settings.unit == Unit.metric) {
         buttons = [
           CustomButton(
-              text: 'm',
-              onPressed: () {
-                settings.metricHeight = MetricHeight.m;
-                SettingsDatabase().updateSettings(settings);
-                rebuildPage();
-              },
-              colour: Theme.of(context).colorScheme.primaryContainer,
-              height: 30,
-              width: 80),
+            text: 'm',
+            onPressed: () {
+              settings.metricHeight = MetricHeight.m;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(MetricHeight.m),
+            height: 30,
+            width: 80,
+          ),
           CustomButton(
-              text: 'cm',
-              onPressed: () {
-                settings.metricHeight = MetricHeight.cm;
-                SettingsDatabase().updateSettings(settings);
-                rebuildPage();
-              },
-              colour: Theme.of(context).colorScheme.primaryContainer,
-              height: 30,
-              width: 80)
+            text: 'cm',
+            onPressed: () {
+              settings.metricHeight = MetricHeight.cm;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(MetricHeight.cm),
+            height: 30,
+            width: 80,
+          )
         ];
       } else {
         buttons = [
           CustomButton(
-              text: 'ft in',
-              onPressed: () {
-                settings.imperialHeight = ImperialHeight.ftinches;
-                SettingsDatabase().updateSettings(settings);
-                rebuildPage();
-              },
-              colour: Theme.of(context).colorScheme.primaryContainer,
-              height: 30,
-              width: 90),
+            text: 'ft in',
+            onPressed: () {
+              settings.imperialHeight = ImperialHeight.ftinches;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(ImperialHeight.ftinches),
+            height: 30,
+            width: 90,
+          ),
           CustomButton(
-              text: 'in',
-              onPressed: () {
-                settings.imperialHeight = ImperialHeight.inches;
-                SettingsDatabase().updateSettings(settings);
-                rebuildPage();
-              },
-              colour: Theme.of(context).colorScheme.primaryContainer,
-              height: 30,
-              width: 90)
+            text: 'in',
+            onPressed: () {
+              settings.imperialHeight = ImperialHeight.inches;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(ImperialHeight.inches),
+            height: 30,
+            width: 90,
+          )
         ];
       }
     } else {
       if (settings.unit == Unit.metric) {
         buttons = [
           CustomButton(
-              text: 'kg',
-              // Kg is the only metric weight option, therefore a settings update and rebuild is not required
-              onPressed: () {},
-              colour: Theme.of(context).colorScheme.primaryContainer,
-              height: 30,
-              width: 80)
+            text: 'kg',
+            // Kg is the only metric weight option, therefore a settings update and rebuild is not required
+            onPressed: () {},
+            colour: colour,
+            height: 30,
+            width: 80,
+          )
         ];
       } else {
         buttons = [
           CustomButton(
-              text: 'lbs',
-              onPressed: () {
-                settings.imperialWeight = ImperialWeight.lbs;
-                SettingsDatabase().updateSettings(settings);
-                rebuildPage();
-              },
-              colour: Theme.of(context).colorScheme.primaryContainer,
-              height: 30,
-              width: 90),
+            text: 'lbs',
+            onPressed: () {
+              settings.imperialWeight = ImperialWeight.lbs;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(ImperialWeight.lbs),
+            height: 30,
+            width: 90,
+          ),
           CustomButton(
-              text: 'st lbs',
-              onPressed: () {
-                settings.imperialWeight = ImperialWeight.stonelbs;
-                SettingsDatabase().updateSettings(settings);
-                rebuildPage();
-              },
-              colour: Theme.of(context).colorScheme.primaryContainer,
-              height: 30,
-              width: 90)
+            text: 'st lbs',
+            onPressed: () {
+              settings.imperialWeight = ImperialWeight.stonelbs;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(ImperialWeight.stonelbs),
+            height: 30,
+            width: 90,
+          )
         ];
       }
     }
