@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
+import '../widgets/custom_button.dart';
 
 String capitalise(String text) {
   return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
@@ -16,17 +17,17 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   double getHeight(Settings settings) {
     if (settings.unit == Unit.metric) {
-      return settings.height.metric;
+      return settings.height.cm;
     } else {
-      return settings.height.imperial;
+      return settings.height.inches;
     }
   }
 
   double getWeight(Settings settings) {
     if (settings.unit == Unit.metric) {
-      return settings.weight.metric;
+      return settings.weight.kg;
     } else {
-      return settings.weight.imperial;
+      return settings.weight.lbs;
     }
   }
 
@@ -71,7 +72,9 @@ class _SettingsPageState extends State<SettingsPage> {
               SettingsCard(titles: const [
                 "Height",
                 "Weight",
-                "Unit"
+                "Unit system",
+                "Height unit",
+                "Weight unit"
               ], inputs: [
                 CustomSlider(
                     type: 'Height',
@@ -84,6 +87,18 @@ class _SettingsPageState extends State<SettingsPage> {
                 SettingsDropdown(
                     list: const ["Metric", "Imperial"],
                     type: 'Unit',
+                    settings: settings,
+                    rebuildPage: () {
+                      setState(() {});
+                    }),
+                UnitButtons(
+                    type: 'height',
+                    settings: settings,
+                    rebuildPage: () {
+                      setState(() {});
+                    }),
+                UnitButtons(
+                    type: 'weight',
                     settings: settings,
                     rebuildPage: () {
                       setState(() {});
@@ -111,6 +126,132 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
+class UnitButtons extends StatelessWidget {
+  const UnitButtons(
+      {super.key,
+      required this.type,
+      required this.settings,
+      required this.rebuildPage});
+
+  final String type;
+  final Settings settings;
+  final Function rebuildPage;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> buttons = [];
+    Color colour = Theme.of(context).colorScheme.primaryContainer;
+
+    Color buttonColour(Object button) {
+      if (button == settings.imperialHeight ||
+          button == settings.imperialWeight ||
+          button == settings.metricHeight) {
+        return colour;
+      } else {
+        return Colors.white;
+      }
+    }
+
+    if (type == 'height') {
+      if (settings.unit == Unit.metric) {
+        buttons = [
+          CustomButton(
+            text: 'm',
+            onPressed: () {
+              settings.metricHeight = MetricHeight.m;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(MetricHeight.m),
+            height: 30,
+            width: 80,
+          ),
+          CustomButton(
+            text: 'cm',
+            onPressed: () {
+              settings.metricHeight = MetricHeight.cm;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(MetricHeight.cm),
+            height: 30,
+            width: 80,
+          )
+        ];
+      } else {
+        buttons = [
+          CustomButton(
+            text: 'ft in',
+            onPressed: () {
+              settings.imperialHeight = ImperialHeight.ftinches;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(ImperialHeight.ftinches),
+            height: 30,
+            width: 90,
+          ),
+          CustomButton(
+            text: 'in',
+            onPressed: () {
+              settings.imperialHeight = ImperialHeight.inches;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(ImperialHeight.inches),
+            height: 30,
+            width: 90,
+          )
+        ];
+      }
+    } else {
+      if (settings.unit == Unit.metric) {
+        buttons = [
+          CustomButton(
+            text: 'kg',
+            // Kg is the only metric weight option, therefore a settings update and rebuild is not required
+            onPressed: () {},
+            colour: colour,
+            height: 30,
+            width: 80,
+          )
+        ];
+      } else {
+        buttons = [
+          CustomButton(
+            text: 'lbs',
+            onPressed: () {
+              settings.imperialWeight = ImperialWeight.lbs;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(ImperialWeight.lbs),
+            height: 30,
+            width: 90,
+          ),
+          CustomButton(
+            text: 'st lbs',
+            onPressed: () {
+              settings.imperialWeight = ImperialWeight.stonelbs;
+              SettingsDatabase().updateSettings(settings);
+              rebuildPage();
+            },
+            colour: buttonColour(ImperialWeight.stonelbs),
+            height: 30,
+            width: 90,
+          )
+        ];
+      }
+    }
+
+    return Wrap(
+        spacing: 5,
+        runSpacing: 5,
+        alignment: WrapAlignment.center,
+        children: buttons);
+  }
+}
+
 class CustomSlider extends StatefulWidget {
   CustomSlider(
       {super.key,
@@ -131,34 +272,48 @@ class _CustomSliderState extends State<CustomSlider> {
   Widget build(BuildContext context) {
     double min, max;
     int divisions;
-    String unit;
+    String label = widget.sliderValue.round().toString();
 
     switch (widget.type) {
       case 'Calorie':
-        unit = 'kcal';
+        label = '$label kcal';
         min = 1000;
         max = 10000;
         break;
       case 'Height':
         if (widget.settings.unit == Unit.metric) {
-          unit = 'cm';
           min = 100;
           max = 250;
+          if (widget.settings.metricHeight == MetricHeight.m) {
+            label = '${(widget.sliderValue / 100).toStringAsFixed(2)}m';
+          } else {
+            label = '$label${widget.settings.metricHeight.name}';
+          }
         } else {
-          unit = ' inches';
           min = 40;
           max = 100;
+          if (widget.settings.imperialHeight == ImperialHeight.ftinches) {
+            // Fix delay by one selection, not showing current value
+            label = widget.settings.height.feetandInches;
+          } else {
+            label = '$label ${widget.settings.imperialHeight.name}';
+          }
         }
         break;
       default:
         if (widget.settings.unit == Unit.metric) {
-          unit = 'kg';
+          label = '${label}kg';
           min = 35;
           max = 275;
         } else {
-          unit = 'lbs';
           min = 80;
           max = 600;
+          if (widget.settings.imperialWeight == ImperialWeight.stonelbs) {
+            // Fix delay by one selection, not showing current value
+            label = widget.settings.weight.stonesandPounds;
+          } else {
+            label = '$label${widget.settings.imperialWeight.name}';
+          }
         }
     }
     if (widget.type == 'Calorie') {
@@ -175,7 +330,7 @@ class _CustomSliderState extends State<CustomSlider> {
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Text(
-                widget.sliderValue.round().toString() + unit,
+                label,
               ),
             ),
             Slider(
@@ -197,16 +352,16 @@ class _CustomSliderState extends State<CustomSlider> {
                     break;
                   case 'Height':
                     if (widget.settings.unit == Unit.metric) {
-                      newSettings.height.metric = value;
+                      newSettings.height.cm = value;
                     } else {
-                      newSettings.height.imperial = value;
+                      newSettings.height.inches = value;
                     }
                     break;
                   default:
                     if (widget.settings.unit == Unit.metric) {
-                      newSettings.weight.metric = value;
+                      newSettings.weight.kg = value;
                     } else {
-                      newSettings.weight.imperial = value;
+                      newSettings.weight.lbs = value;
                     }
                 }
                 SettingsDatabase().updateSettings(newSettings);

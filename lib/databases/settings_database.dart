@@ -3,35 +3,56 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Height {
-  String toFeetAndInches(double totalInches) {
-    double inches = totalInches % 12;
-    double feet = (totalInches - inches) / 12;
+  String feetAndInches() {
+    double inch = inches % 12;
+    double feet = (inches - inch) / 12;
 
-    return "${feet.round()}'${inches.round()}\"";
+    return "${feet.round()}'${inch.round()}\"";
   }
 
-  double metric;
-  double get imperial => metric / 2.54;
-  set imperial(double imperial) {
-    metric = imperial * 2.54;
+  double cm;
+  double get inches => cm / 2.54;
+  set inches(double inches) {
+    cm = inches * 2.54;
   }
 
-  String get feetandInches => toFeetAndInches(imperial);
+  double get m => cm / 100;
+  set m(double m) {
+    cm = m * 100;
+  }
 
-  Height({required this.metric});
+  String get feetandInches => feetAndInches();
+
+  Height({required this.cm});
 }
 
 class Weight {
-  double metric;
-  double get imperial => metric * 2.205;
-  set imperial(double imperial) {
-    metric = imperial / 2.205;
+  String stonesAndPounds() {
+    double pounds = lbs % 14;
+    double stones = (lbs - pounds) / 14;
+    return "${stones.round()}st ${pounds.round()}lbs";
   }
 
-  Weight({required this.metric});
+  double kg;
+  double get lbs => kg * 2.205;
+  set lbs(double lbs) {
+    kg = lbs / 2.205;
+  }
+
+  String get stonesandPounds => stonesAndPounds();
+
+  Weight({required this.kg});
 }
 
 enum Unit { metric, imperial }
+
+enum MetricHeight { m, cm }
+
+// MetricWeight = kg
+
+enum ImperialHeight { ftinches, inches }
+
+enum ImperialWeight { lbs, stonelbs }
 
 enum Appearance { system, light, dark }
 
@@ -42,6 +63,9 @@ class Settings {
   late Weight weight;
   Unit unit;
   Appearance appearance;
+  MetricHeight metricHeight;
+  ImperialHeight imperialHeight;
+  ImperialWeight imperialWeight;
 
   Settings(
       {required this.id,
@@ -49,19 +73,25 @@ class Settings {
       required double height,
       required double weight,
       required this.unit,
-      required this.appearance}) {
-    this.height = Height(metric: height);
-    this.weight = Weight(metric: weight);
+      required this.appearance,
+      required this.metricHeight,
+      required this.imperialHeight,
+      required this.imperialWeight}) {
+    this.height = Height(cm: height);
+    this.weight = Weight(kg: weight);
   }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'calorieGoal': calorieGoal,
-      'height': height.metric,
-      'weight': weight.metric,
+      'height': height.cm,
+      'weight': weight.kg,
       'unit': unit.index,
       'appearance': appearance.index,
+      'metricHeight': metricHeight.index,
+      'imperialHeight': imperialHeight.index,
+      'imperialWeight': imperialWeight.index,
     };
   }
 }
@@ -72,7 +102,7 @@ class SettingsDatabase {
       join(await getDatabasesPath(), 'settings_database.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE settings(id INTEGER PRIMARY KEY, calorieGoal FLOAT, height FLOAT, weight FLOAT, unit INT, appearance INT)',
+          'CREATE TABLE settings(id INTEGER PRIMARY KEY, calorieGoal FLOAT, height FLOAT, weight FLOAT, unit INT, appearance INT, metricHeight INT, imperialHeight INT, imperialWeight INT)',
         );
         await db.insert('settings', {
           'calorieGoal': 2000.0,
@@ -80,6 +110,9 @@ class SettingsDatabase {
           'weight': 60.0,
           'unit': Unit.metric.index,
           'appearance': Appearance.system.index,
+          'metricHeight': MetricHeight.cm.index,
+          'imperialHeight': ImperialHeight.ftinches.index,
+          'imperialWeight': ImperialWeight.lbs.index,
         });
       },
       version: 1,
@@ -99,13 +132,15 @@ class SettingsDatabase {
     final db = await openDatabaseConnection();
     final List<Map<String, dynamic>> maps = await db.query('settings');
     return Settings(
-      id: maps[0]['id'],
-      calorieGoal: maps[0]['calorieGoal'],
-      height: maps[0]['height'],
-      weight: maps[0]['weight'],
-      unit: Unit.values[maps[0]['unit']],
-      appearance: Appearance.values[maps[0]['appearance']],
-    );
+        id: maps[0]['id'],
+        calorieGoal: maps[0]['calorieGoal'],
+        height: maps[0]['height'],
+        weight: maps[0]['weight'],
+        unit: Unit.values[maps[0]['unit']],
+        appearance: Appearance.values[maps[0]['appearance']],
+        metricHeight: MetricHeight.values[maps[0]['metricHeight']],
+        imperialHeight: ImperialHeight.values[maps[0]['imperialHeight']],
+        imperialWeight: ImperialWeight.values[maps[0]['imperialWeight']]);
   }
 
   Future<void> updateSettings(Settings settings) async {
