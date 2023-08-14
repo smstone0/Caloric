@@ -268,6 +268,19 @@ class CustomSlider extends StatefulWidget {
 }
 
 class _CustomSliderState extends State<CustomSlider> {
+  String feetAndInches(double value) {
+    double inch = value % 12;
+    double feet = (value - inch) / 12;
+
+    return "${feet.round()}'${inch.round()}\"";
+  }
+
+  String stonesAndPounds(double value) {
+    double pounds = value % 14;
+    double stones = (value - pounds) / 14;
+    return "${stones.round()}st ${pounds.round()}lbs";
+  }
+
   @override
   Widget build(BuildContext context) {
     double min, max;
@@ -293,8 +306,7 @@ class _CustomSliderState extends State<CustomSlider> {
           min = 40;
           max = 100;
           if (widget.settings.imperialHeight == ImperialHeight.ftinches) {
-            // Fix delay by one selection, not showing current value
-            label = widget.settings.height.feetandInches;
+            label = feetAndInches(widget.sliderValue);
           } else {
             label = '$label ${widget.settings.imperialHeight.name}';
           }
@@ -309,8 +321,7 @@ class _CustomSliderState extends State<CustomSlider> {
           min = 80;
           max = 600;
           if (widget.settings.imperialWeight == ImperialWeight.stonelbs) {
-            // Fix delay by one selection, not showing current value
-            label = widget.settings.weight.stonesandPounds;
+            label = stonesAndPounds(widget.sliderValue);
           } else {
             label = '$label${widget.settings.imperialWeight.name}';
           }
