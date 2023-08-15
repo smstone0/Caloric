@@ -3,6 +3,8 @@ import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
 import '../widgets/custom_button.dart';
 
+enum Type { calorie, height, weight, unit, mode }
+
 String capitalise(String text) {
   return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
 }
@@ -63,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 "Calorie goal"
               ], inputs: [
                 CustomSlider(
-                    type: 'Calorie',
+                    type: Type.calorie,
                     settings: settings,
                     sliderValue: settings.calorieGoal)
               ]),
@@ -77,28 +79,28 @@ class _SettingsPageState extends State<SettingsPage> {
                 "Weight unit"
               ], inputs: [
                 CustomSlider(
-                    type: 'Height',
+                    type: Type.height,
                     settings: settings,
                     sliderValue: getHeight(settings)),
                 CustomSlider(
-                    type: 'Weight',
+                    type: Type.weight,
                     settings: settings,
                     sliderValue: getWeight(settings)),
                 SettingsDropdown(
                     list: const ["Metric", "Imperial"],
-                    type: 'Unit',
+                    type: Type.unit,
                     settings: settings,
                     rebuildPage: () {
                       setState(() {});
                     }),
                 UnitButtons(
-                    type: 'height',
+                    type: Type.height,
                     settings: settings,
                     rebuildPage: () {
                       setState(() {});
                     }),
                 UnitButtons(
-                    type: 'weight',
+                    type: Type.weight,
                     settings: settings,
                     rebuildPage: () {
                       setState(() {});
@@ -111,7 +113,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 inputs: [
                   SettingsDropdown(
                       list: const ["System", "Dark", "Light"],
-                      type: 'Mode',
+                      type: Type.mode,
                       settings: settings,
                       rebuildPage: () {
                         setState(() {});
@@ -133,7 +135,7 @@ class UnitButtons extends StatelessWidget {
       required this.settings,
       required this.rebuildPage});
 
-  final String type;
+  final Type type;
   final Settings settings;
   final Function rebuildPage;
 
@@ -152,7 +154,7 @@ class UnitButtons extends StatelessWidget {
       }
     }
 
-    if (type == 'height') {
+    if (type == Type.height) {
       if (settings.unit == Unit.metric) {
         buttons = [
           CustomButton(
@@ -259,7 +261,7 @@ class CustomSlider extends StatefulWidget {
       required this.settings,
       required this.sliderValue});
 
-  final String type;
+  final Type type;
   final Settings settings;
   double sliderValue;
 
@@ -288,12 +290,12 @@ class _CustomSliderState extends State<CustomSlider> {
     String label = widget.sliderValue.round().toString();
 
     switch (widget.type) {
-      case 'Calorie':
+      case Type.calorie:
         label = '$label kcal';
         min = 1000;
         max = 10000;
         break;
-      case 'Height':
+      case Type.height:
         if (widget.settings.unit == Unit.metric) {
           min = widget.settings.height.cmMin;
           max = widget.settings.height.cmMax;
@@ -327,7 +329,7 @@ class _CustomSliderState extends State<CustomSlider> {
           }
         }
     }
-    if (widget.type == 'Calorie') {
+    if (widget.type == Type.calorie) {
       divisions = 180;
     } else {
       divisions = (max - min).round();
@@ -358,10 +360,10 @@ class _CustomSliderState extends State<CustomSlider> {
               onChangeEnd: (value) {
                 Settings newSettings = widget.settings;
                 switch (widget.type) {
-                  case 'Calorie':
+                  case Type.calorie:
                     newSettings.calorieGoal = value;
                     break;
-                  case 'Height':
+                  case Type.height:
                     if (widget.settings.unit == Unit.metric) {
                       newSettings.height.cm = value;
                     } else {
@@ -392,7 +394,7 @@ class SettingsDropdown extends StatefulWidget {
       required this.rebuildPage});
 
   final List<String> list;
-  final String type;
+  final Type type;
   final Settings settings;
   final Function rebuildPage;
 
@@ -403,7 +405,7 @@ class SettingsDropdown extends StatefulWidget {
 class _SettingsDropdownState extends State<SettingsDropdown> {
   List<String> getDropdownItems() {
     List<String> dropdownItems = [];
-    if (widget.type == 'Unit') {
+    if (widget.type == Type.unit) {
       dropdownItems.add(capitalise(widget.settings.unit.name));
       for (String item in widget.list) {
         if (item != capitalise(widget.settings.unit.name)) {
@@ -444,7 +446,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             onChanged: (String? value) {
               setState(() {});
               Settings newSettings = widget.settings;
-              if (widget.type == 'Unit' &&
+              if (widget.type == Type.unit &&
                   value!.toLowerCase() != widget.settings.unit.name) {
                 switch (value) {
                   case "Metric":
@@ -455,7 +457,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
                 }
                 SettingsDatabase().updateSettings(newSettings);
                 widget.rebuildPage();
-              } else if (widget.type == 'Mode' &&
+              } else if (widget.type == Type.mode &&
                   value!.toLowerCase() != widget.settings.appearance.name) {
                 switch (value) {
                   case "System":
