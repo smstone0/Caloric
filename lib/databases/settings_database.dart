@@ -10,10 +10,11 @@ class Height {
     return "${feet.round()}'${inch.round()}\"";
   }
 
+  final double conversionFactor = 2.54;
   double cm;
-  double get inches => cm / 2.54;
+  double get inches => cm / conversionFactor;
   set inches(double inches) {
-    cm = inches * 2.54;
+    cm = inches * conversionFactor;
   }
 
   double get m => cm / 100;
@@ -22,6 +23,11 @@ class Height {
   }
 
   String get feetandInches => feetAndInches();
+
+  double cmMin = 120;
+  double cmMax = 220;
+  double get inchMin => cmMin / conversionFactor;
+  double get inchMax => cmMax / conversionFactor;
 
   Height({required this.cm});
 }
@@ -33,13 +39,20 @@ class Weight {
     return "${stones.round()}st ${pounds.round()}lbs";
   }
 
+  final double conversionFactor = 2.205;
+
   double kg;
-  double get lbs => kg * 2.205;
+  double get lbs => kg * conversionFactor;
   set lbs(double lbs) {
-    kg = lbs / 2.205;
+    kg = lbs / conversionFactor;
   }
 
   String get stonesandPounds => stonesAndPounds();
+
+  double kgMin = 35;
+  double kgMax = 275;
+  double get lbsMin => kgMin * conversionFactor;
+  double get lbsMax => kgMax * conversionFactor;
 
   Weight({required this.kg});
 }

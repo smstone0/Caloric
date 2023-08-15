@@ -295,16 +295,16 @@ class _CustomSliderState extends State<CustomSlider> {
         break;
       case 'Height':
         if (widget.settings.unit == Unit.metric) {
-          min = 100;
-          max = 250;
+          min = widget.settings.height.cmMin;
+          max = widget.settings.height.cmMax;
           if (widget.settings.metricHeight == MetricHeight.m) {
             label = '${(widget.sliderValue / 100).toStringAsFixed(2)}m';
           } else {
             label = '$label${widget.settings.metricHeight.name}';
           }
         } else {
-          min = 40;
-          max = 100;
+          min = widget.settings.height.inchMin;
+          max = widget.settings.height.inchMax;
           if (widget.settings.imperialHeight == ImperialHeight.ftinches) {
             label = feetAndInches(widget.sliderValue);
           } else {
@@ -315,11 +315,11 @@ class _CustomSliderState extends State<CustomSlider> {
       default:
         if (widget.settings.unit == Unit.metric) {
           label = '${label}kg';
-          min = 35;
-          max = 275;
+          min = widget.settings.weight.kgMin;
+          max = widget.settings.weight.kgMax;
         } else {
-          min = 80;
-          max = 600;
+          min = widget.settings.weight.lbsMin;
+          max = widget.settings.weight.lbsMax;
           if (widget.settings.imperialWeight == ImperialWeight.stonelbs) {
             label = stonesAndPounds(widget.sliderValue);
           } else {
