@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+//import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class Height {
   String feetAndInches() {
@@ -110,26 +111,50 @@ class Settings {
 }
 
 class SettingsDatabase {
+  // Future<Database> openDatabaseConnection() async {
+  //   return openDatabase(
+  //     join(await getDatabasesPath(), 'settings_database.db'),
+  //     onCreate: (db, version) async {
+  //       await db.execute(
+  //         'CREATE TABLE settings(id INTEGER PRIMARY KEY, calorieGoal FLOAT, height FLOAT, weight FLOAT, unit INT, appearance INT, metricHeight INT, imperialHeight INT, imperialWeight INT)',
+  //       );
+  //       await db.insert('settings', {
+  //         'calorieGoal': 2000.0,
+  //         'height': 170.0,
+  //         'weight': 60.0,
+  //         'unit': Unit.metric.index,
+  //         'appearance': Appearance.system.index,
+  //         'metricHeight': MetricHeight.cm.index,
+  //         'imperialHeight': ImperialHeight.ftinches.index,
+  //         'imperialWeight': ImperialWeight.lbs.index,
+  //       });
+  //     },
+  //     version: 1,
+  //   );
+  // }
+
   Future<Database> openDatabaseConnection() async {
-    return openDatabase(
-      join(await getDatabasesPath(), 'settings_database.db'),
-      onCreate: (db, version) async {
-        await db.execute(
-          'CREATE TABLE settings(id INTEGER PRIMARY KEY, calorieGoal FLOAT, height FLOAT, weight FLOAT, unit INT, appearance INT, metricHeight INT, imperialHeight INT, imperialWeight INT)',
-        );
-        await db.insert('settings', {
-          'calorieGoal': 2000.0,
-          'height': 170.0,
-          'weight': 60.0,
-          'unit': Unit.metric.index,
-          'appearance': Appearance.system.index,
-          'metricHeight': MetricHeight.cm.index,
-          'imperialHeight': ImperialHeight.ftinches.index,
-          'imperialWeight': ImperialWeight.lbs.index,
-        });
-      },
-      version: 1,
-    );
+    var databaseFactory = databaseFactoryFfi;
+    var db = await databaseFactory.openDatabase(inMemoryDatabasePath,
+        options: OpenDatabaseOptions(
+          onCreate: (db, version) async {
+            await db.execute(
+              'CREATE TABLE settings(id INTEGER PRIMARY KEY, calorieGoal FLOAT, height FLOAT, weight FLOAT, unit INT, appearance INT, metricHeight INT, imperialHeight INT, imperialWeight INT)',
+            );
+            await db.insert('settings', {
+              'calorieGoal': 2000.0,
+              'height': 170.0,
+              'weight': 60.0,
+              'unit': Unit.metric.index,
+              'appearance': Appearance.system.index,
+              'metricHeight': MetricHeight.cm.index,
+              'imperialHeight': ImperialHeight.ftinches.index,
+              'imperialWeight': ImperialWeight.lbs.index,
+            });
+          },
+          version: 1,
+        ));
+    return db;
   }
 
   Future<void> insertSettings(Settings settings) async {
