@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../widgets/calorie_ring.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
@@ -12,6 +13,8 @@ class TodayPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Theme.of(context).colorScheme.primaryContainer));
     String timeOfDay;
     String month;
 
