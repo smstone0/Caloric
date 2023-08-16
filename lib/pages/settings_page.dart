@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
 import '../widgets/custom_button.dart';
@@ -35,6 +36,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(statusBarColor: Colors.white));
     return FutureBuilder<Settings>(
       future: SettingsDatabase().getSettings(),
       builder: (context, snapshot) {
