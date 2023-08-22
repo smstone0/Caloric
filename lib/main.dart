@@ -1,3 +1,4 @@
+import 'package:caloric/databases/settings_database.dart';
 import 'package:flutter/material.dart';
 import 'pages/today_page.dart';
 import 'pages/settings_page.dart';
@@ -9,15 +10,49 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  ThemeData getAppearance(Settings settings) {
+    ThemeData light = ThemeData(
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      useMaterial3: true,
+    );
+    ThemeData dark = ThemeData(
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      useMaterial3: true,
+    );
+    String appearance = settings.appearance.name;
+    if (settings.appearance == Appearance.system) {
+      //Get system
+      //Set appearance
+    }
+    switch (appearance) {
+      case 'light':
+        return light;
+      default:
+        return dark;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Caloric',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
+    return FutureBuilder<Settings>(
+      future: SettingsDatabase().getSettings(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primaryContainer),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          Settings settings = snapshot.data!;
+          return MaterialApp(
+            title: 'Caloric',
+            theme: getAppearance(settings),
+            home: const MyHomePage(),
+          );
+        }
+      },
     );
   }
 }
