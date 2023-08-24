@@ -12,12 +12,16 @@ class MyApp extends StatelessWidget {
 
   ThemeData getAppearance(Settings settings) {
     ThemeData light = ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       useMaterial3: true,
+      primaryColor: const Color.fromRGBO(235, 221, 255, 1),
+      cardColor: const Color.fromRGBO(235, 221, 255, 0.5),
+      colorScheme: const ColorScheme.light(),
     );
     ThemeData dark = ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       useMaterial3: true,
+      primaryColor: const Color.fromRGBO(235, 221, 255, 1),
+      cardColor: const Color.fromRGBO(235, 221, 255, 0.5),
+      colorScheme: const ColorScheme.dark(),
     );
     String appearance = settings.appearance.name;
     if (settings.appearance == Appearance.system) {
@@ -116,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             child: Container(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.background,
               child: page,
             ),
           ),
