@@ -10,7 +10,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  ThemeData getAppearance(Settings settings) {
+  ThemeData getAppearance(Settings settings, Brightness systemBrightness) {
     ThemeData light = ThemeData(
       useMaterial3: true,
       primaryColor: const Color.fromRGBO(235, 221, 255, 1),
@@ -25,8 +25,9 @@ class MyApp extends StatelessWidget {
     );
     String appearance = settings.appearance.name;
     if (settings.appearance == Appearance.system) {
-      //Get system
-      //Set appearance
+      systemBrightness == Brightness.light
+          ? appearance = 'light'
+          : appearance = 'dark';
     }
     switch (appearance) {
       case 'light':
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Brightness systemBrightness = MediaQuery.of(context).platformBrightness;
     return FutureBuilder<Settings>(
       future: SettingsDatabase().getSettings(),
       builder: (context, snapshot) {
@@ -52,7 +54,7 @@ class MyApp extends StatelessWidget {
           Settings settings = snapshot.data!;
           return MaterialApp(
             title: 'Caloric',
-            theme: getAppearance(settings),
+            theme: getAppearance(settings, systemBrightness),
             home: const MyHomePage(),
           );
         }
