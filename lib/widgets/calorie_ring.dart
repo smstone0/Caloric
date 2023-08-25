@@ -24,7 +24,11 @@ class CalorieRing extends StatelessWidget {
           ),
         ),
         Text("$calories/${target.round()}",
-            style: const TextStyle(fontSize: 16.5)),
+            style: TextStyle(
+                fontSize: 16.5,
+                color: Theme.of(context).primaryColor.computeLuminance() >= 0.5
+                    ? Colors.black
+                    : Colors.white)),
       ],
     );
   }

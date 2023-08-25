@@ -17,8 +17,10 @@ class TodayPage extends StatelessWidget {
         SystemUiOverlayStyle(statusBarColor: Theme.of(context).primaryColor));
     String timeOfDay;
     String month;
-
     DateTime time = DateTime.parse(DateTime.now().toString());
+    Color textColour = Theme.of(context).primaryColor.computeLuminance() >= 0.5
+        ? Colors.black
+        : Colors.white;
 
     if (time.hour >= 0 && time.hour < 12) {
       timeOfDay = "morning";
@@ -87,8 +89,9 @@ class TodayPage extends StatelessWidget {
                     child: Column(
                       children: [
                         Text("Good $timeOfDay!",
-                            style: const TextStyle(fontSize: 18)),
-                        Text("Today is ${time.day} $month"),
+                            style: TextStyle(fontSize: 18, color: textColour)),
+                        Text("Today is ${time.day} $month",
+                            style: TextStyle(color: textColour)),
                         const SizedBox(height: 20),
                         CalorieRing(size: 140, target: settings.calorieGoal),
                         const SizedBox(height: 10),
