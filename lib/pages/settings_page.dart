@@ -1,5 +1,7 @@
+import 'package:caloric/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
 import '../widgets/custom_button.dart';
@@ -475,6 +477,11 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
                 }
                 SettingsDatabase().updateSettings(newSettings);
                 widget.rebuildPage();
+                if (widget.type == Type.mode &&
+                    value.toLowerCase() != widget.settings.appearance.name) {
+                  Provider.of<ThemeProvider>(context, listen: false)
+                      .setAppearance();
+                }
               }
             },
           ),

@@ -1,64 +1,23 @@
-import 'package:caloric/databases/settings_database.dart';
+import 'package:caloric/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'pages/today_page.dart';
 import 'pages/settings_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => ThemeProvider(context), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  ThemeData getAppearance(Settings settings, Brightness systemBrightness) {
-    ThemeData light = ThemeData(
-      useMaterial3: true,
-      primaryColor: const Color.fromRGBO(235, 221, 255, 1),
-      cardColor: const Color.fromRGBO(235, 221, 255, 0.5),
-      colorScheme: const ColorScheme.light(),
-    );
-    ThemeData dark = ThemeData(
-      useMaterial3: true,
-      primaryColor: const Color.fromRGBO(235, 221, 255, 1),
-      cardColor: const Color.fromRGBO(235, 221, 255, 0.5),
-      colorScheme: const ColorScheme.dark(),
-    );
-    String appearance = settings.appearance.name;
-    if (settings.appearance == Appearance.system) {
-      systemBrightness == Brightness.light
-          ? appearance = 'light'
-          : appearance = 'dark';
-    }
-    switch (appearance) {
-      case 'light':
-        return light;
-      default:
-        return dark;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    Brightness systemBrightness = MediaQuery.of(context).platformBrightness;
-    return FutureBuilder<Settings>(
-      future: SettingsDatabase().getSettings(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.primaryContainer),
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          Settings settings = snapshot.data!;
-          return MaterialApp(
-            title: 'Caloric',
-            theme: getAppearance(settings, systemBrightness),
-            home: const MyHomePage(),
-          );
-        }
-      },
+    return MaterialApp(
+      title: 'Caloric',
+      theme: Provider.of<ThemeProvider>(context).appearance,
+      home: const MyHomePage(),
     );
   }
 }
