@@ -7,39 +7,59 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  ThemeData getAppearance(Settings settings, Brightness systemBrightness) {
-    ThemeData light = ThemeData(
-      useMaterial3: true,
-      primaryColor: const Color.fromRGBO(235, 221, 255, 1),
-      cardColor: const Color.fromRGBO(235, 221, 255, 0.5),
-      colorScheme: const ColorScheme.light(),
-    );
-    ThemeData dark = ThemeData(
-      useMaterial3: true,
-      primaryColor: const Color.fromRGBO(235, 221, 255, 1),
-      cardColor: const Color.fromRGBO(235, 221, 255, 0.5),
-      colorScheme: const ColorScheme.dark(),
-    );
-    String appearance = settings.appearance.name;
-    if (settings.appearance == Appearance.system) {
-      systemBrightness == Brightness.light
-          ? appearance = 'light'
-          : appearance = 'dark';
-    }
-    switch (appearance) {
-      case 'light':
-        return light;
-      default:
-        return dark;
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late ThemeMode themeMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeThemeMode();
+  }
+
+  Future<void> _initializeThemeMode() async {
+    Settings settings = await SettingsDatabase().getSettings();
+    setState(() {
+      themeMode = getAppearance(settings);
+    });
+  }
+
+  ThemeMode getAppearance(Settings settings) {
+    switch (settings.appearance) {
+      case Appearance.system:
+        return ThemeMode.system;
+      case Appearance.light:
+        return ThemeMode.light;
+      case Appearance.dark:
+        return ThemeMode.dark;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    Brightness systemBrightness = MediaQuery.of(context).platformBrightness;
+    //print(themeMode);
+    while (themeMode == null) {
+      print("fuck you");
+    }
+    ThemeData lightTheme = ThemeData(
+      useMaterial3: true,
+      primaryColor: const Color.fromRGBO(235, 221, 255, 1),
+      cardColor: const Color.fromRGBO(235, 221, 255, 0.5),
+      colorScheme: const ColorScheme.light(),
+    );
+
+    ThemeData darkTheme = ThemeData(
+      useMaterial3: true,
+      primaryColor: const Color.fromRGBO(235, 221, 255, 1),
+      cardColor: const Color.fromRGBO(235, 221, 255, 0.5),
+      colorScheme: const ColorScheme.dark(),
+    );
     return FutureBuilder<Settings>(
       future: SettingsDatabase().getSettings(),
       builder: (context, snapshot) {
@@ -52,9 +72,14 @@ class MyApp extends StatelessWidget {
           return Text('Error: ${snapshot.error}');
         } else {
           Settings settings = snapshot.data!;
+          //
+          themeMode = getAppearance(settings);
+          //
           return MaterialApp(
             title: 'Caloric',
-            theme: getAppearance(settings, systemBrightness),
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            themeMode: themeMode,
             home: const MyHomePage(),
           );
         }

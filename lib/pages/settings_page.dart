@@ -430,6 +430,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
   @override
   Widget build(BuildContext context) {
     List<String> dropdownItems = getDropdownItems();
+    ThemeMode newTheme;
 
     return Card(
       color: Theme.of(context).colorScheme.background,
@@ -466,12 +467,15 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
                 switch (value) {
                   case "System":
                     newSettings.appearance = Appearance.system;
+                    newTheme = ThemeMode.system;
                     break;
                   case "Dark":
                     newSettings.appearance = Appearance.dark;
+                    newTheme = ThemeMode.dark;
                     break;
                   default:
                     newSettings.appearance = Appearance.light;
+                    newTheme = ThemeMode.light;
                 }
                 SettingsDatabase().updateSettings(newSettings);
                 widget.rebuildPage();
