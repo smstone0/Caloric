@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../main.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
 import '../widgets/custom_button.dart';
@@ -477,6 +478,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
                     newSettings.appearance = Appearance.light;
                     newTheme = ThemeMode.light;
                 }
+                MyApp.of(context)!.changeTheme(newTheme);
                 SettingsDatabase().updateSettings(newSettings);
                 widget.rebuildPage();
               }
