@@ -1,24 +1,91 @@
-import 'package:caloric/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'pages/today_page.dart';
 import 'pages/settings_page.dart';
-
-void main() {
-  runApp(ChangeNotifierProvider(
-      create: (context) => ThemeProvider(context), child: const MyApp()));
+	
+void main() {	
+  runApp(const MyApp());	
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+
+  static _MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>();
+}
+
+class _MyAppState extends State<MyApp> {
+  late ThemeMode themeMode;
+  bool fetchData = true;
+
+  ThemeMode getAppearance(Settings settings) {
+    switch (settings.appearance) {
+      case Appearance.system:
+        return ThemeMode.system;
+      case Appearance.light:
+        return ThemeMode.light;
+      case Appearance.dark:
+        return ThemeMode.dark;
+    }
+  }
+
+  void changeTheme(ThemeMode theme) {
+    setState(() {
+      themeMode = theme;
+    });
+  }
+
+  ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
+    primaryColor: const Color.fromRGBO(235, 221, 255, 1),
+    cardColor: const Color.fromRGBO(235, 221, 255, 0.5),
+    colorScheme: const ColorScheme.light(),
+  );
+
+  ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
+    primaryColor: const Color.fromRGBO(235, 221, 255, 1),
+    cardColor: const Color.fromRGBO(235, 221, 255, 0.5),
+    colorScheme: const ColorScheme.dark(),
+  );
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Caloric',
-      theme: Provider.of<ThemeProvider>(context).appearance,
-      home: const MyHomePage(),
-    );
+    if (fetchData == true) {
+      return FutureBuilder<Settings>(
+        future: SettingsDatabase().getSettings(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.primaryContainer),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            themeMode = getAppearance(snapshot.data!);
+            fetchData = false;
+            return MaterialApp(
+              title: 'Caloric',
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: themeMode,
+              home: const MyHomePage(),
+            );
+          }
+        },
+      );
+    } else {
+      return MaterialApp(
+        title: 'Caloric',
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: themeMode,
+        home: const MyHomePage(),
+      );
+    }
   }
 }
 
