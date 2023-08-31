@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'databases/settings_database.dart';
 import 'pages/today_page.dart';
 import 'pages/settings_page.dart';
-	
-void main() {	
-  runApp(const MyApp());	
+
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
