@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../main.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
 import '../widgets/custom_button.dart';
@@ -36,15 +37,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(statusBarColor: Colors.white));
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Theme.of(context).colorScheme.background));
     return FutureBuilder<Settings>(
       future: SettingsDatabase().getSettings(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.primaryContainer),
+                color: Theme.of(context).primaryColor),
           );
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -59,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
               SizedBox(
                 height: 5,
                 child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
               const SizedBox(height: 20),
@@ -145,7 +146,7 @@ class UnitButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> buttons = [];
-    Color colour = Theme.of(context).colorScheme.primaryContainer;
+    Color colour = Theme.of(context).primaryColor;
 
     Color buttonColour(Object button) {
       if (button == settings.imperialHeight ||
@@ -339,7 +340,7 @@ class _CustomSliderState extends State<CustomSlider> {
     }
 
     return Card(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.background,
         elevation: 0,
         child: Column(
           children: [
@@ -354,7 +355,8 @@ class _CustomSliderState extends State<CustomSlider> {
               min: min,
               max: max,
               divisions: divisions,
-              activeColor: Theme.of(context).colorScheme.primaryContainer,
+              activeColor: Theme.of(context).primaryColor,
+              inactiveColor: Theme.of(context).cardColor,
               onChanged: (double value) {
                 setState(() {
                   widget.sliderValue = value;
@@ -429,9 +431,10 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
   @override
   Widget build(BuildContext context) {
     List<String> dropdownItems = getDropdownItems();
+    ThemeMode newTheme;
 
     return Card(
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.background,
       elevation: 0,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
@@ -445,7 +448,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             }).toList(),
             value: dropdownItems.first,
             style: DefaultTextStyle.of(context).style,
-            dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+            dropdownColor: Theme.of(context).primaryColor,
             onChanged: (String? value) {
               setState(() {});
               Settings newSettings = widget.settings;
@@ -465,13 +468,17 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
                 switch (value) {
                   case "System":
                     newSettings.appearance = Appearance.system;
+                    newTheme = ThemeMode.system;
                     break;
                   case "Dark":
                     newSettings.appearance = Appearance.dark;
+                    newTheme = ThemeMode.dark;
                     break;
                   default:
                     newSettings.appearance = Appearance.light;
+                    newTheme = ThemeMode.light;
                 }
+                MyApp.of(context)!.changeTheme(newTheme);
                 SettingsDatabase().updateSettings(newSettings);
                 widget.rebuildPage();
               }
@@ -497,7 +504,7 @@ class SectionSeparator extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(left: 60, right: 60),
           child: Container(
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: Theme.of(context).primaryColor,
           ),
         ),
       ),

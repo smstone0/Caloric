@@ -13,12 +13,14 @@ class TodayPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).colorScheme.primaryContainer));
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Theme.of(context).primaryColor));
     String timeOfDay;
     String month;
-
     DateTime time = DateTime.parse(DateTime.now().toString());
+    Color textColour = Theme.of(context).primaryColor.computeLuminance() >= 0.5
+        ? Colors.black
+        : Colors.white;
 
     if (time.hour >= 0 && time.hour < 12) {
       timeOfDay = "morning";
@@ -72,7 +74,7 @@ class TodayPage extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primaryContainer),
+                  color: Theme.of(context).primaryColor),
             );
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
@@ -81,14 +83,15 @@ class TodayPage extends StatelessWidget {
             return ListView(
               children: [
                 Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: Theme.of(context).primaryColor,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
                     child: Column(
                       children: [
                         Text("Good $timeOfDay!",
-                            style: const TextStyle(fontSize: 18)),
-                        Text("Today is ${time.day} $month"),
+                            style: TextStyle(fontSize: 18, color: textColour)),
+                        Text("Today is ${time.day} $month",
+                            style: TextStyle(color: textColour)),
                         const SizedBox(height: 20),
                         CalorieRing(size: 140, target: settings.calorieGoal),
                         const SizedBox(height: 10),
@@ -217,7 +220,7 @@ class StatsCard extends StatelessWidget {
             onPressed: () {
               callback();
             },
-            colour: const Color.fromRGBO(217, 210, 226, 10),
+            colour: Theme.of(context).cardColor.withOpacity(1),
             height: 38,
             width: 190),
       ],
