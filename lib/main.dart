@@ -38,6 +38,10 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  ThemeMode getThemeMode() {
+    return themeMode;
+  }
+
   ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     primaryColor: const Color.fromRGBO(235, 221, 255, 1),
@@ -132,6 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       bottomNavigationBar: NavigationBar(
+        indicatorColor: Theme.of(context).primaryColor.withGreen(200),
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.fastfood), label: 'Nutrition'),
