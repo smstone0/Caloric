@@ -56,10 +56,8 @@ class _SettingsPageState extends State<SettingsPage> {
               SettingsCard(titles: const [
                 "Calorie goal"
               ], inputs: [
-                CustomSlider(
-                    type: Type.calorie,
-                    settings: settings,
-                    sliderValue: settings.calorieGoal)
+                CalorieSlider(
+                    settings: settings, sliderValue: settings.calorieGoal),
               ]),
               const SectionSeparator(),
               const SectionTitle(title: "MEASUREMENTS"),
@@ -70,14 +68,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 "Height unit",
                 "Weight unit"
               ], inputs: [
-                CustomSlider(
-                    type: Type.height,
-                    settings: settings,
-                    sliderValue: getHeight(settings)),
-                CustomSlider(
-                    type: Type.weight,
-                    settings: settings,
-                    sliderValue: getWeight(settings)),
+                HeightSlider(
+                    settings: settings, sliderValue: getHeight(settings)),
+                WeightSlider(
+                    settings: settings, sliderValue: getWeight(settings)),
                 SettingsDropdown(
                     list: const ["Metric", "Imperial"],
                     type: Type.unit,
@@ -271,86 +265,23 @@ class UnitButtons extends StatelessWidget {
   }
 }
 
-class CustomSlider extends StatefulWidget {
-  CustomSlider(
-      {super.key,
-      required this.type,
-      required this.settings,
-      required this.sliderValue});
+class CalorieSlider extends StatefulWidget {
+  CalorieSlider({super.key, required this.settings, required this.sliderValue});
 
-  final Type type;
   final Settings settings;
   double sliderValue;
 
   @override
-  State<CustomSlider> createState() => _CustomSliderState();
+  State<CalorieSlider> createState() => _CalorieSliderState();
 }
 
-class _CustomSliderState extends State<CustomSlider> {
-  String feetAndInches(double value) {
-    double inch = value % 12;
-    double feet = (value - inch) / 12;
-
-    return "${feet.round()}'${inch.round()}\"";
-  }
-
-  String stonesAndPounds(double value) {
-    double pounds = value % 14;
-    double stones = (value - pounds) / 14;
-    return "${stones.round()}st ${pounds.round()}lbs";
-  }
-
+class _CalorieSliderState extends State<CalorieSlider> {
   @override
   Widget build(BuildContext context) {
-    double min, max;
-    int divisions;
-    String label = widget.sliderValue.round().toString();
-
-    switch (widget.type) {
-      case Type.calorie:
-        label = '$label kcal';
-        min = 1000;
-        max = 10000;
-        break;
-      case Type.height:
-        if (widget.settings.unit == Unit.metric) {
-          min = widget.settings.height.cmMin;
-          max = widget.settings.height.cmMax;
-          if (widget.settings.metricHeight == MetricHeight.m) {
-            label = '${(widget.sliderValue / 100).toStringAsFixed(2)}m';
-          } else {
-            label = '$label${widget.settings.metricHeight.name}';
-          }
-        } else {
-          min = widget.settings.height.inchMin;
-          max = widget.settings.height.inchMax;
-          if (widget.settings.imperialHeight == ImperialHeight.ftinches) {
-            label = feetAndInches(widget.sliderValue);
-          } else {
-            label = '$label ${widget.settings.imperialHeight.name}';
-          }
-        }
-        break;
-      default:
-        if (widget.settings.unit == Unit.metric) {
-          label = '${label}kg';
-          min = widget.settings.weight.kgMin;
-          max = widget.settings.weight.kgMax;
-        } else {
-          min = widget.settings.weight.lbsMin;
-          max = widget.settings.weight.lbsMax;
-          if (widget.settings.imperialWeight == ImperialWeight.stonelbs) {
-            label = stonesAndPounds(widget.sliderValue);
-          } else {
-            label = '$label${widget.settings.imperialWeight.name}';
-          }
-        }
-    }
-    if (widget.type == Type.calorie) {
-      divisions = 180;
-    } else {
-      divisions = (max - min).round();
-    }
+    double min = 1000;
+    double max = 10000;
+    int divisions = 180;
+    String label = '${widget.sliderValue.round().toString()} kcal';
 
     return Card(
         color: Theme.of(context).colorScheme.background,
@@ -377,24 +308,156 @@ class _CustomSliderState extends State<CustomSlider> {
               },
               onChangeEnd: (value) {
                 Settings newSettings = widget.settings;
-                switch (widget.type) {
-                  case Type.calorie:
-                    newSettings.calorieGoal = value;
-                    break;
-                  case Type.height:
-                    if (widget.settings.unit == Unit.metric) {
-                      newSettings.height.cm = value;
-                    } else {
-                      newSettings.height.inches = value;
-                    }
-                    break;
-                  default:
-                    if (widget.settings.unit == Unit.metric) {
-                      newSettings.weight.kg = value;
-                    } else {
-                      newSettings.weight.lbs = value;
-                    }
-                }
+                newSettings.calorieGoal = value;
+                SettingsDatabase().updateSettings(newSettings);
+              },
+            ),
+          ],
+        ));
+  }
+}
+
+class HeightSlider extends StatefulWidget {
+  HeightSlider({super.key, required this.settings, required this.sliderValue});
+
+  final Settings settings;
+  double sliderValue;
+
+  @override
+  State<HeightSlider> createState() => _HeightSliderState();
+}
+
+class _HeightSliderState extends State<HeightSlider> {
+  String feetAndInches(double value) {
+    double inch = value % 12;
+    double feet = (value - inch) / 12;
+
+    return "${feet.round()}'${inch.round()}\"";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double min, max;
+    int divisions;
+    String label = widget.sliderValue.round().toString();
+
+    if (widget.settings.unit == Unit.metric) {
+      min = widget.settings.height.cmMin;
+      max = widget.settings.height.cmMax;
+      if (widget.settings.metricHeight == MetricHeight.m) {
+        label = '${(widget.sliderValue / 100).toStringAsFixed(2)}m';
+      } else {
+        label = '$label${widget.settings.metricHeight.name}';
+      }
+    } else {
+      min = widget.settings.height.inchMin;
+      max = widget.settings.height.inchMax;
+      if (widget.settings.imperialHeight == ImperialHeight.ftinches) {
+        label = feetAndInches(widget.sliderValue);
+      } else {
+        label = '$label ${widget.settings.imperialHeight.name}';
+      }
+    }
+    divisions = (max - min).round();
+
+    return Card(
+        color: Theme.of(context).colorScheme.background,
+        elevation: 0,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                label,
+              ),
+            ),
+            Slider(
+              value: widget.sliderValue,
+              min: min,
+              max: max,
+              divisions: divisions,
+              activeColor: Theme.of(context).primaryColor,
+              inactiveColor: Theme.of(context).cardColor,
+              onChanged: (double value) {
+                setState(() {
+                  widget.sliderValue = value;
+                });
+              },
+              onChangeEnd: (value) {
+                Settings newSettings = widget.settings;
+                newSettings.calorieGoal = value;
+                SettingsDatabase().updateSettings(newSettings);
+              },
+            ),
+          ],
+        ));
+  }
+}
+
+class WeightSlider extends StatefulWidget {
+  WeightSlider({super.key, required this.settings, required this.sliderValue});
+
+  final Settings settings;
+  double sliderValue;
+
+  @override
+  State<WeightSlider> createState() => _WeightSliderState();
+}
+
+class _WeightSliderState extends State<WeightSlider> {
+  String stonesAndPounds(double value) {
+    double pounds = value % 14;
+    double stones = (value - pounds) / 14;
+    return "${stones.round()}st ${pounds.round()}lbs";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double min, max;
+    int divisions;
+    String label = widget.sliderValue.round().toString();
+
+    if (widget.settings.unit == Unit.metric) {
+      label = '${label}kg';
+      min = widget.settings.weight.kgMin;
+      max = widget.settings.weight.kgMax;
+    } else {
+      min = widget.settings.weight.lbsMin;
+      max = widget.settings.weight.lbsMax;
+      if (widget.settings.imperialWeight == ImperialWeight.stonelbs) {
+        label = stonesAndPounds(widget.sliderValue);
+      } else {
+        label = '$label${widget.settings.imperialWeight.name}';
+      }
+    }
+    divisions = (max - min).round();
+
+    return Card(
+        color: Theme.of(context).colorScheme.background,
+        elevation: 0,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                label,
+              ),
+            ),
+            Slider(
+              value: widget.sliderValue,
+              min: min,
+              max: max,
+              divisions: divisions,
+              activeColor: Theme.of(context).primaryColor,
+              inactiveColor: Theme.of(context).cardColor,
+              onChanged: (double value) {
+                setState(() {
+                  widget.sliderValue = value;
+                });
+              },
+              onChangeEnd: (value) {
+                Settings newSettings = widget.settings;
+                newSettings.calorieGoal = value;
                 SettingsDatabase().updateSettings(newSettings);
               },
             ),
