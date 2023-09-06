@@ -516,6 +516,15 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
   Widget build(BuildContext context) {
     List<String> dropdownItems = getDropdownItems();
     ThemeMode newTheme;
+    Color colour;
+    Brightness systemBrightness = MediaQuery.of(context).platformBrightness;
+    if (MyApp.of(context)!.getThemeMode() == ThemeMode.light ||
+        (MyApp.of(context)!.getThemeMode() == ThemeMode.system &&
+            systemBrightness == Brightness.light)) {
+      colour = Colors.black;
+    } else {
+      colour = Colors.white;
+    }
 
     return Card(
       color: Theme.of(context).colorScheme.background,
@@ -524,11 +533,29 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
         child: DropdownButtonHideUnderline(
           child: DropdownButton(
+            selectedItemBuilder: (BuildContext context) {
+              return dropdownItems.map<Widget>((String item) {
+                return Center(
+                  child: Text(
+                    item,
+                    style: TextStyle(
+                      color: colour,
+                    ),
+                  ),
+                );
+              }).toList();
+            },
             items: dropdownItems.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
+                  value: value,
+                  child: Text(value,
+                      style: TextStyle(
+                          color: Theme.of(context)
+                                      .primaryColor
+                                      .computeLuminance() >=
+                                  0.5
+                              ? Colors.black
+                              : Colors.white)));
             }).toList(),
             value: dropdownItems.first,
             style: DefaultTextStyle.of(context).style,
