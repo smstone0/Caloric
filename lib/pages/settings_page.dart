@@ -385,7 +385,11 @@ class _HeightSliderState extends State<HeightSlider> {
               },
               onChangeEnd: (value) {
                 Settings newSettings = widget.settings;
-                newSettings.calorieGoal = value;
+                if (widget.settings.unit == Unit.metric) {
+                  newSettings.height.cm = value;
+                } else {
+                  newSettings.height.inches = value;
+                }
                 SettingsDatabase().updateSettings(newSettings);
               },
             ),
@@ -457,7 +461,11 @@ class _WeightSliderState extends State<WeightSlider> {
               },
               onChangeEnd: (value) {
                 Settings newSettings = widget.settings;
-                newSettings.calorieGoal = value;
+                if (widget.settings.unit == Unit.metric) {
+                  newSettings.weight.kg = value;
+                } else {
+                  newSettings.weight.lbs = value;
+                }
                 SettingsDatabase().updateSettings(newSettings);
               },
             ),
