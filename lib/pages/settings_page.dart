@@ -22,17 +22,15 @@ class _SettingsPageState extends State<SettingsPage> {
   double getHeight(Settings settings) {
     if (settings.unit == Unit.metric) {
       return settings.height.cm;
-    } else {
-      return settings.height.inches;
     }
+    return settings.height.inches;
   }
 
   double getWeight(Settings settings) {
     if (settings.unit == Unit.metric) {
       return settings.weight.kg;
-    } else {
-      return settings.weight.lbs;
     }
+    return settings.weight.lbs;
   }
 
   @override
@@ -53,17 +51,7 @@ class _SettingsPageState extends State<SettingsPage> {
           Settings settings = snapshot.data!;
           return ListView(
             children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(20, 20, 0, 15),
-                child: Text("Settings", style: TextStyle(fontSize: 18)),
-              ),
-              SizedBox(
-                height: 5,
-                child: Container(
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              const SizedBox(height: 20),
+              const Heading(),
               const SectionTitle(title: "TARGET"),
               SettingsCard(titles: const [
                 "Calorie goal"
@@ -132,6 +120,32 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
+class Heading extends StatelessWidget {
+  const Heading({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(20, 20, 0, 15),
+          child: Text("Settings", style: TextStyle(fontSize: 18)),
+        ),
+        SizedBox(
+          height: 5,
+          child: Container(
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+}
+
 class UnitButtons extends StatelessWidget {
   const UnitButtons(
       {super.key,
@@ -153,9 +167,8 @@ class UnitButtons extends StatelessWidget {
           button == settings.imperialWeight ||
           button == settings.metricHeight) {
         return colour;
-      } else {
-        return Colors.white;
       }
+      return Colors.white;
     }
 
     if (type == Type.height) {
