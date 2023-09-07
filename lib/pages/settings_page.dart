@@ -102,9 +102,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       list: const ["System", "Dark", "Light"],
                       type: Type.mode,
                       settings: settings,
-                      rebuildPage: () {
-                        setState(() {});
-                      })
+                      rebuildPage: () {})
                 ],
               )
             ],
