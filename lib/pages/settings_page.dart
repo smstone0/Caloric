@@ -4,6 +4,7 @@ import '../main.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/heading.dart';
 
 enum Type { calorie, height, weight, unit, mode }
 
@@ -51,7 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
           Settings settings = snapshot.data!;
           return ListView(
             children: [
-              const Heading(),
+              const Heading(text: "Settings"),
               const SectionTitle(title: "TARGET"),
               SettingsCard(titles: const [
                 "Calorie goal"
@@ -110,32 +111,6 @@ class _SettingsPageState extends State<SettingsPage> {
           );
         }
       },
-    );
-  }
-}
-
-class Heading extends StatelessWidget {
-  const Heading({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 0, 15),
-          child: Text("Settings", style: TextStyle(fontSize: 18)),
-        ),
-        SizedBox(
-          height: 5,
-          child: Container(
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
-        const SizedBox(height: 20),
-      ],
     );
   }
 }
