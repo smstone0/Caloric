@@ -93,7 +93,7 @@ class TodayPage extends StatelessWidget {
                         Text("Today is ${time.day} $month",
                             style: TextStyle(color: textColour)),
                         const SizedBox(height: 20),
-                        CalorieRing(size: 140, target: settings.calorieGoal),
+                        CalorieRing(size: 140, target: settings.energy.cal),
                         const SizedBox(height: 10),
                       ],
                     ),
@@ -134,35 +134,10 @@ class StatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Color colour;
     String weight, height;
-    double bmi = stats.weight.kg / pow(stats.height.m, 2);
+    double bmi = stats.weight.kg / pow(stats.height.cm / 100, 2);
 
-    if (stats.unit == Unit.metric) {
-      weight = '${stats.weight.kg.round()}kg';
-      switch (stats.metricHeight) {
-        case MetricHeight.cm:
-          height = '${stats.height.cm.round()}${stats.metricHeight.name}';
-          break;
-        default:
-          height =
-              '${stats.height.m.toStringAsFixed(2)}${stats.metricHeight.name}';
-      }
-    } else {
-      switch (stats.imperialHeight) {
-        case ImperialHeight.inches:
-          height =
-              '${stats.height.inches.round()} ${stats.imperialHeight.name}';
-          break;
-        default:
-          height = stats.height.feetandInches;
-      }
-      switch (stats.imperialWeight) {
-        case ImperialWeight.lbs:
-          weight = '${stats.weight.lbs.round()}${stats.imperialWeight.name}';
-          break;
-        default:
-          weight = stats.weight.stonesandPounds;
-      }
-    }
+    height = stats.height.toString();
+    weight = stats.weight.toString();
 
     switch (bmi) {
       case < 18.5:

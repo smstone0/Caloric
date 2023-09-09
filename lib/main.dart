@@ -21,17 +21,6 @@ class _MyAppState extends State<MyApp> {
   late ThemeMode themeMode;
   bool fetchData = true;
 
-  ThemeMode getAppearance(Settings settings) {
-    switch (settings.appearance) {
-      case Appearance.system:
-        return ThemeMode.system;
-      case Appearance.light:
-        return ThemeMode.light;
-      case Appearance.dark:
-        return ThemeMode.dark;
-    }
-  }
-
   void changeTheme(ThemeMode theme) {
     setState(() {
       themeMode = theme;
@@ -70,8 +59,8 @@ class _MyAppState extends State<MyApp> {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            themeMode = getAppearance(snapshot.data!);
-            fetchData = false;
+            Settings settings = snapshot.data!;
+            themeMode = settings.appearance.theme;
             return MaterialApp(
               title: 'Caloric',
               theme: lightTheme,
