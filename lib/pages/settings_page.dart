@@ -188,8 +188,31 @@ class SettingsDropdown<T extends Enum> extends StatefulWidget {
 }
 
 class _SettingsDropdownState extends State<SettingsDropdown> {
+  //Ensure selection is the first item in dropdown
+  List<Enum> orderList(List<Enum> list) {
+    if (list[0] != widget.selection) {
+      late int index;
+      Enum temp;
+      for (var i = 0; i < list.length; i++) {
+        if (list[i] == widget.selection) {
+          index = i;
+          break;
+        }
+      }
+      temp = list[0];
+      list[0] = list[index];
+      list[index] = temp;
+    }
+    return list;
+  }
+
+  String capitalise(String text) {
+    return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<Enum> orderedList = orderList(widget.list.toList());
     Color colour;
     Brightness systemBrightness = MediaQuery.of(context).platformBrightness;
     if (MyApp.of(context)!.getThemeMode() == ThemeMode.light ||
@@ -205,56 +228,60 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
       elevation: 0,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton(
-            selectedItemBuilder: (BuildContext context) {
-              return widget.list.map<Widget>((Enum item) {
-                return Center(
-                  child: Text(
-                    widget.selection.name,
-                    style: TextStyle(
-                      color: colour,
-                    ),
-                  ),
-                );
-              }).toList();
-            },
-            items: widget.list.map<DropdownMenuItem<Enum>>((Enum value) {
-              return DropdownMenuItem<Enum>(
-                  value: value,
-                  child: Text(value.name,
+        child: SizedBox(
+          width: 105,
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton(
+              selectedItemBuilder: (BuildContext context) {
+                return widget.list.map<Widget>((Enum item) {
+                  return Center(
+                    child: Text(
+                      capitalise(widget.selection.name),
                       style: TextStyle(
-                          color: Theme.of(context)
-                                      .primaryColor
-                                      .computeLuminance() >=
-                                  0.5
-                              ? Colors.black
-                              : Colors.white)));
-            }).toList(),
-            value: widget.list.first,
-            style: DefaultTextStyle.of(context).style,
-            dropdownColor: Theme.of(context).primaryColor,
-            onChanged: (Enum? value) {
-              setState(() {});
-              Settings newSettings = widget.settings;
-              switch (widget.type) {
-                case PropertyType.energy:
-                  newSettings.energy.unit = value as EnergyUnit;
-                  break;
-                case PropertyType.height:
-                  newSettings.height.unit = value as HeightUnit;
-                  break;
-                case PropertyType.weight:
-                  newSettings.weight.unit = value as WeightUnit;
-                  break;
-                case PropertyType.appearance:
-                  newSettings.appearance = value as Appearance;
-                  MyApp.of(context)!.changeTheme(newSettings.appearance.theme);
-                  break;
-              }
-              SettingsDatabase().updateSettings(newSettings);
-              widget.rebuildPage();
-            },
+                        color: colour,
+                      ),
+                    ),
+                  );
+                }).toList();
+              },
+              items: orderedList.map<DropdownMenuItem<Enum>>((Enum value) {
+                return DropdownMenuItem<Enum>(
+                    value: value,
+                    child: Text(capitalise(value.name),
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                        .primaryColor
+                                        .computeLuminance() >=
+                                    0.5
+                                ? Colors.black
+                                : Colors.white)));
+              }).toList(),
+              value: orderedList.first,
+              style: DefaultTextStyle.of(context).style,
+              dropdownColor: Theme.of(context).primaryColor,
+              onChanged: (Enum? value) {
+                setState(() {});
+                Settings newSettings = widget.settings;
+                switch (widget.type) {
+                  case PropertyType.energy:
+                    newSettings.energy.unit = value as EnergyUnit;
+                    break;
+                  case PropertyType.height:
+                    newSettings.height.unit = value as HeightUnit;
+                    break;
+                  case PropertyType.weight:
+                    newSettings.weight.unit = value as WeightUnit;
+                    break;
+                  case PropertyType.appearance:
+                    newSettings.appearance = value as Appearance;
+                    MyApp.of(context)!
+                        .changeTheme(newSettings.appearance.theme);
+                    break;
+                }
+                SettingsDatabase().updateSettings(newSettings);
+                widget.rebuildPage();
+              },
+            ),
           ),
         ),
       ),
