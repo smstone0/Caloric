@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../widgets/calorie_ring.dart';
+import '../widgets/energy_ring.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
 import 'dart:math';
@@ -93,7 +93,10 @@ class TodayPage extends StatelessWidget {
                         Text("Today is ${time.day} $month",
                             style: TextStyle(color: textColour)),
                         const SizedBox(height: 20),
-                        CalorieRing(size: 140, target: settings.energy.cal),
+                        CalorieRing(
+                            size: 140,
+                            target: settings.energy.value,
+                            type: settings.energy.unit),
                         const SizedBox(height: 10),
                       ],
                     ),
