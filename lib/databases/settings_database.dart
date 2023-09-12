@@ -7,7 +7,7 @@ enum UnitSystem { metric, imperial }
 
 enum HeightUnit { metres, centimetres, feet, inches }
 
-enum WeightUnit { kg, lbs, stone }
+enum WeightUnit { kilograms, pounds, stone }
 
 enum EnergyUnit { calories, joules }
 
@@ -119,12 +119,6 @@ class Height implements Measurement {
     }
   }
 
-  // Display Properties (get only)
-  int get metres => ((cm - cm % 100) / 100).round();
-  int get cmSubMetres => (cm % 100).round();
-  int get feet => ((inches - inches % 12) / 12).round();
-  int get inchesSubFeet => (inches % 12).round();
-
   @override
   String toString() {
     switch (unit) {
@@ -135,7 +129,7 @@ class Height implements Measurement {
       case HeightUnit.inches:
         return "${inches.round()}\"";
       case HeightUnit.feet:
-        return "$feet'$inchesSubFeet\"";
+        return "${(inches / 12).floor()}'${(inches % 12).round()}\"";
     }
   }
 
@@ -215,25 +209,22 @@ class Weight implements Measurement {
   @override
   UnitSystem get system {
     switch (unit) {
-      case WeightUnit.kg:
+      case WeightUnit.kilograms:
         return UnitSystem.metric;
       default:
         return UnitSystem.imperial;
     }
   }
 
-  int get lbsSubStone => (lbs % 14).round();
-  int get stone => ((lbs - lbs % 14) / 14).round();
-
   @override
   String toString() {
     switch (unit) {
-      case WeightUnit.kg:
+      case WeightUnit.kilograms:
         return "${kg.round()}kg";
-      case WeightUnit.lbs:
+      case WeightUnit.pounds:
         return "${lbs.round()}lbs";
       case WeightUnit.stone:
-        return "${stone}st ${lbsSubStone}lbs";
+        return "${(lbs / 14).floor()}st ${(lbs % 14).round()}lbs";
     }
   }
 
@@ -378,7 +369,7 @@ class SettingsDatabase {
           'height': 170.0,
           'weight': 60.0,
           'heightUnit': HeightUnit.centimetres.index,
-          'weightUnit': WeightUnit.kg.index,
+          'weightUnit': WeightUnit.kilograms.index,
           'energyUnit': EnergyUnit.calories.index,
           'appearance': Appearance.system.index
         });
