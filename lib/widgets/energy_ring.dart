@@ -14,6 +14,9 @@ class CalorieRing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int energy = 50;
+    Color colour = Theme.of(context).primaryColor.computeLuminance() >= 0.5
+        ? Colors.black
+        : Colors.white;
 
     return Stack(
       alignment: Alignment.center,
@@ -29,12 +32,8 @@ class CalorieRing extends StatelessWidget {
           ),
         ),
         Text("$energy/${target.round()}",
-            style: TextStyle(
-                fontSize: 16.5,
-                color: Theme.of(context).primaryColor.computeLuminance() >= 0.5
-                    ? Colors.black
-                    : Colors.white)),
-        Text("\n\n${type.name}", style: const TextStyle(fontSize: 12)),
+            style: TextStyle(fontSize: 16.5, color: colour)),
+        Text("\n\n${type.name}", style: TextStyle(fontSize: 12, color: colour)),
       ],
     );
   }

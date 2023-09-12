@@ -18,8 +18,21 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late ThemeMode themeMode;
-  bool fetchData = true;
+  ThemeMode? themeMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadThemeMode();
+  }
+
+  Future<void> _loadThemeMode() async {
+    Settings settings = await SettingsDatabase().getSettings();
+    ThemeMode storedMode = settings.appearance.theme;
+    setState(() {
+      themeMode = storedMode;
+    });
+  }
 
   void changeTheme(ThemeMode theme) {
     setState(() {
@@ -27,7 +40,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  ThemeMode getThemeMode() {
+  ThemeMode? getThemeMode() {
     return themeMode;
   }
 
@@ -47,39 +60,13 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    if (fetchData == true) {
-      return FutureBuilder<Settings>(
-        future: SettingsDatabase().getSettings(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primaryContainer),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            Settings settings = snapshot.data!;
-            themeMode = settings.appearance.theme;
-            return MaterialApp(
-              title: 'Caloric',
-              theme: lightTheme,
-              darkTheme: darkTheme,
-              themeMode: themeMode,
-              home: const MyHomePage(),
-            );
-          }
-        },
-      );
-    } else {
-      return MaterialApp(
-        title: 'Caloric',
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        themeMode: themeMode,
-        home: const MyHomePage(),
-      );
-    }
+    return MaterialApp(
+      title: 'Caloric',
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeMode,
+      home: const MyHomePage(),
+    );
   }
 }
 
