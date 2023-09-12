@@ -3,13 +3,9 @@ import 'package:flutter/services.dart';
 import '../main.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
-import '../widgets/custom_button.dart';
+import '../widgets/heading.dart';
 
-enum Type { calorie, height, weight, unit, mode }
-
-String capitalise(String text) {
-  return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
-}
+enum PropertyType { energy, height, weight, appearance }
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -19,22 +15,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  double getHeight(Settings settings) {
-    if (settings.unit == Unit.metric) {
-      return settings.height.cm;
-    } else {
-      return settings.height.inches;
-    }
-  }
-
-  double getWeight(Settings settings) {
-    if (settings.unit == Unit.metric) {
-      return settings.weight.kg;
-    } else {
-      return settings.weight.lbs;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -53,75 +33,81 @@ class _SettingsPageState extends State<SettingsPage> {
           Settings settings = snapshot.data!;
           return ListView(
             children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(20, 20, 0, 15),
-                child: Text("Settings", style: TextStyle(fontSize: 18)),
-              ),
-              SizedBox(
-                height: 5,
-                child: Container(
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              const SizedBox(height: 20),
+              const Heading(text: "Settings"),
               const SectionTitle(title: "TARGET"),
-              SettingsCard(titles: const [
-                "Calorie goal"
-              ], inputs: [
-                CustomSlider(
-                    type: Type.calorie,
+              SettingsCard(children: [
+                (
+                  "Energy Goal",
+                  SettingsSlider(
                     settings: settings,
-                    sliderValue: settings.calorieGoal)
+                    measurement: settings.energy,
+                  ),
+                ),
+                (
+                  "Energy Unit",
+                  SettingsDropdown(
+                      list: EnergyUnit.values,
+                      selection: settings.energy.unit,
+                      type: PropertyType.energy,
+                      settings: settings,
+                      rebuildPage: () {
+                        setState(() {});
+                      }),
+                )
               ]),
               const SectionSeparator(),
               const SectionTitle(title: "MEASUREMENTS"),
-              SettingsCard(titles: const [
-                "Height",
-                "Weight",
-                "Unit system",
-                "Height unit",
-                "Weight unit"
-              ], inputs: [
-                CustomSlider(
-                    type: Type.height,
+              SettingsCard(children: [
+                (
+                  "Height",
+                  SettingsSlider(
                     settings: settings,
-                    sliderValue: getHeight(settings)),
-                CustomSlider(
-                    type: Type.weight,
+                    measurement: settings.height,
+                  ),
+                ),
+                (
+                  "Height Unit",
+                  SettingsDropdown(
+                      list: HeightUnit.values,
+                      selection: settings.height.unit,
+                      type: PropertyType.height,
+                      settings: settings,
+                      rebuildPage: () {
+                        setState(() {});
+                      }),
+                ),
+                (
+                  "Weight",
+                  SettingsSlider(
                     settings: settings,
-                    sliderValue: getWeight(settings)),
-                SettingsDropdown(
-                    list: const ["Metric", "Imperial"],
-                    type: Type.unit,
-                    settings: settings,
-                    rebuildPage: () {
-                      setState(() {});
-                    }),
-                UnitButtons(
-                    type: Type.height,
-                    settings: settings,
-                    rebuildPage: () {
-                      setState(() {});
-                    }),
-                UnitButtons(
-                    type: Type.weight,
-                    settings: settings,
-                    rebuildPage: () {
-                      setState(() {});
-                    }),
+                    measurement: settings.weight,
+                  ),
+                ),
+                (
+                  "Weight Unit",
+                  SettingsDropdown(
+                      list: WeightUnit.values,
+                      selection: settings.weight.unit,
+                      type: PropertyType.weight,
+                      settings: settings,
+                      rebuildPage: () {
+                        setState(() {});
+                      }),
+                )
               ]),
               const SectionSeparator(),
               const SectionTitle(title: "STYLE"),
               SettingsCard(
-                titles: const ["Light/dark mode"],
-                inputs: [
-                  SettingsDropdown(
-                      list: const ["System", "Dark", "Light"],
-                      type: Type.mode,
-                      settings: settings,
-                      rebuildPage: () {
-                        setState(() {});
-                      })
+                children: [
+                  (
+                    "Light/Dark Mode",
+                    SettingsDropdown<Appearance>(
+                        list: Appearance.values,
+                        selection: settings.appearance,
+                        type: PropertyType.appearance,
+                        settings: settings,
+                        rebuildPage: () {})
+                  )
                 ],
               )
             ],
@@ -132,213 +118,23 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
-class UnitButtons extends StatelessWidget {
-  const UnitButtons(
-      {super.key,
-      required this.type,
-      required this.settings,
-      required this.rebuildPage});
-
-  final Type type;
+class SettingsSlider extends StatefulWidget {
   final Settings settings;
-  final Function rebuildPage;
+  final Measurement measurement;
+
+  const SettingsSlider({
+    super.key,
+    required this.settings,
+    required this.measurement,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    List<Widget> buttons = [];
-    Color colour = Theme.of(context).primaryColor;
-
-    Color buttonColour(Object button) {
-      if (button == settings.imperialHeight ||
-          button == settings.imperialWeight ||
-          button == settings.metricHeight) {
-        return colour;
-      } else {
-        return Colors.white;
-      }
-    }
-
-    if (type == Type.height) {
-      if (settings.unit == Unit.metric) {
-        buttons = [
-          CustomButton(
-            text: 'm',
-            onPressed: () {
-              settings.metricHeight = MetricHeight.m;
-              SettingsDatabase().updateSettings(settings);
-              rebuildPage();
-            },
-            colour: buttonColour(MetricHeight.m),
-            height: 30,
-            width: 80,
-          ),
-          CustomButton(
-            text: 'cm',
-            onPressed: () {
-              settings.metricHeight = MetricHeight.cm;
-              SettingsDatabase().updateSettings(settings);
-              rebuildPage();
-            },
-            colour: buttonColour(MetricHeight.cm),
-            height: 30,
-            width: 80,
-          )
-        ];
-      } else {
-        buttons = [
-          CustomButton(
-            text: 'ft in',
-            onPressed: () {
-              settings.imperialHeight = ImperialHeight.ftinches;
-              SettingsDatabase().updateSettings(settings);
-              rebuildPage();
-            },
-            colour: buttonColour(ImperialHeight.ftinches),
-            height: 30,
-            width: 90,
-          ),
-          CustomButton(
-            text: 'in',
-            onPressed: () {
-              settings.imperialHeight = ImperialHeight.inches;
-              SettingsDatabase().updateSettings(settings);
-              rebuildPage();
-            },
-            colour: buttonColour(ImperialHeight.inches),
-            height: 30,
-            width: 90,
-          )
-        ];
-      }
-    } else {
-      if (settings.unit == Unit.metric) {
-        buttons = [
-          CustomButton(
-            text: 'kg',
-            // Kg is the only metric weight option, therefore a settings update and rebuild is not required
-            onPressed: () {},
-            colour: colour,
-            height: 30,
-            width: 80,
-          )
-        ];
-      } else {
-        buttons = [
-          CustomButton(
-            text: 'lbs',
-            onPressed: () {
-              settings.imperialWeight = ImperialWeight.lbs;
-              SettingsDatabase().updateSettings(settings);
-              rebuildPage();
-            },
-            colour: buttonColour(ImperialWeight.lbs),
-            height: 30,
-            width: 90,
-          ),
-          CustomButton(
-            text: 'st lbs',
-            onPressed: () {
-              settings.imperialWeight = ImperialWeight.stonelbs;
-              SettingsDatabase().updateSettings(settings);
-              rebuildPage();
-            },
-            colour: buttonColour(ImperialWeight.stonelbs),
-            height: 30,
-            width: 90,
-          )
-        ];
-      }
-    }
-
-    return Wrap(
-        spacing: 5,
-        runSpacing: 5,
-        alignment: WrapAlignment.center,
-        children: buttons);
-  }
+  State<SettingsSlider> createState() => _SettingsSliderState();
 }
 
-class CustomSlider extends StatefulWidget {
-  CustomSlider(
-      {super.key,
-      required this.type,
-      required this.settings,
-      required this.sliderValue});
-
-  final Type type;
-  final Settings settings;
-  double sliderValue;
-
-  @override
-  State<CustomSlider> createState() => _CustomSliderState();
-}
-
-class _CustomSliderState extends State<CustomSlider> {
-  String feetAndInches(double value) {
-    double inch = value % 12;
-    double feet = (value - inch) / 12;
-
-    return "${feet.round()}'${inch.round()}\"";
-  }
-
-  String stonesAndPounds(double value) {
-    double pounds = value % 14;
-    double stones = (value - pounds) / 14;
-    return "${stones.round()}st ${pounds.round()}lbs";
-  }
-
+class _SettingsSliderState extends State<SettingsSlider> {
   @override
   Widget build(BuildContext context) {
-    double min, max;
-    int divisions;
-    String label = widget.sliderValue.round().toString();
-
-    switch (widget.type) {
-      case Type.calorie:
-        label = '$label kcal';
-        min = 1000;
-        max = 10000;
-        break;
-      case Type.height:
-        if (widget.settings.unit == Unit.metric) {
-          min = widget.settings.height.cmMin;
-          max = widget.settings.height.cmMax;
-          if (widget.settings.metricHeight == MetricHeight.m) {
-            label = '${(widget.sliderValue / 100).toStringAsFixed(2)}m';
-          } else {
-            label = '$label${widget.settings.metricHeight.name}';
-          }
-        } else {
-          min = widget.settings.height.inchMin;
-          max = widget.settings.height.inchMax;
-          if (widget.settings.imperialHeight == ImperialHeight.ftinches) {
-            label = feetAndInches(widget.sliderValue);
-          } else {
-            label = '$label ${widget.settings.imperialHeight.name}';
-          }
-        }
-        break;
-      default:
-        if (widget.settings.unit == Unit.metric) {
-          label = '${label}kg';
-          min = widget.settings.weight.kgMin;
-          max = widget.settings.weight.kgMax;
-        } else {
-          min = widget.settings.weight.lbsMin;
-          max = widget.settings.weight.lbsMax;
-          if (widget.settings.imperialWeight == ImperialWeight.stonelbs) {
-            label = stonesAndPounds(widget.sliderValue);
-          } else {
-            label = '$label${widget.settings.imperialWeight.name}';
-          }
-        }
-    }
-    if (widget.type == Type.calorie) {
-      divisions = 180;
-    } else {
-      divisions = (max - min).round();
-    }
-
     return Card(
         color: Theme.of(context).colorScheme.background,
         elevation: 0,
@@ -347,42 +143,24 @@ class _CustomSliderState extends State<CustomSlider> {
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Text(
-                label,
+                widget.measurement.toString(),
               ),
             ),
             Slider(
-              value: widget.sliderValue,
-              min: min,
-              max: max,
-              divisions: divisions,
+              value: widget.measurement.value,
+              min: widget.measurement.min,
+              max: widget.measurement.max,
+              divisions: widget.measurement.divisions,
               activeColor: Theme.of(context).primaryColor,
               inactiveColor: Theme.of(context).cardColor,
               onChanged: (double value) {
                 setState(() {
-                  widget.sliderValue = value;
+                  widget.measurement.value = value;
                 });
               },
               onChangeEnd: (value) {
-                Settings newSettings = widget.settings;
-                switch (widget.type) {
-                  case Type.calorie:
-                    newSettings.calorieGoal = value;
-                    break;
-                  case Type.height:
-                    if (widget.settings.unit == Unit.metric) {
-                      newSettings.height.cm = value;
-                    } else {
-                      newSettings.height.inches = value;
-                    }
-                    break;
-                  default:
-                    if (widget.settings.unit == Unit.metric) {
-                      newSettings.weight.kg = value;
-                    } else {
-                      newSettings.weight.lbs = value;
-                    }
-                }
-                SettingsDatabase().updateSettings(newSettings);
+                widget.measurement.value = value;
+                SettingsDatabase().updateSettings(widget.settings);
               },
             ),
           ],
@@ -390,16 +168,18 @@ class _CustomSliderState extends State<CustomSlider> {
   }
 }
 
-class SettingsDropdown extends StatefulWidget {
+class SettingsDropdown<T extends Enum> extends StatefulWidget {
   const SettingsDropdown(
       {super.key,
       required this.list,
+      required this.selection,
       required this.type,
       required this.settings,
       required this.rebuildPage});
 
-  final List<String> list;
-  final Type type;
+  final List<T> list;
+  final T selection;
+  final PropertyType type;
   final Settings settings;
   final Function rebuildPage;
 
@@ -408,30 +188,31 @@ class SettingsDropdown extends StatefulWidget {
 }
 
 class _SettingsDropdownState extends State<SettingsDropdown> {
-  List<String> getDropdownItems() {
-    List<String> dropdownItems = [];
-    if (widget.type == Type.unit) {
-      dropdownItems.add(capitalise(widget.settings.unit.name));
-      for (String item in widget.list) {
-        if (item != capitalise(widget.settings.unit.name)) {
-          dropdownItems.add(item);
+  //Ensure selection is the first item in dropdown
+  List<Enum> orderList(List<Enum> list) {
+    if (list[0] != widget.selection) {
+      late int index;
+      Enum temp;
+      for (var i = 0; i < list.length; i++) {
+        if (list[i] == widget.selection) {
+          index = i;
+          break;
         }
       }
-    } else {
-      dropdownItems.add(capitalise(widget.settings.appearance.name));
-      for (String item in widget.list) {
-        if (item != capitalise(widget.settings.appearance.name)) {
-          dropdownItems.add(item);
-        }
-      }
+      temp = list[0];
+      list[0] = list[index];
+      list[index] = temp;
     }
-    return (dropdownItems);
+    return list;
+  }
+
+  String capitalise(String text) {
+    return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> dropdownItems = getDropdownItems();
-    ThemeMode newTheme;
+    List<Enum> orderedList = orderList(widget.list.toList());
     Color colour;
     Brightness systemBrightness = MediaQuery.of(context).platformBrightness;
     if (MyApp.of(context)!.getThemeMode() == ThemeMode.light ||
@@ -447,69 +228,60 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
       elevation: 0,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton(
-            selectedItemBuilder: (BuildContext context) {
-              return dropdownItems.map<Widget>((String item) {
-                return Center(
-                  child: Text(
-                    item,
-                    style: TextStyle(
-                      color: colour,
-                    ),
-                  ),
-                );
-              }).toList();
-            },
-            items: dropdownItems.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value,
+        child: SizedBox(
+          width: 105,
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton(
+              selectedItemBuilder: (BuildContext context) {
+                return widget.list.map<Widget>((Enum item) {
+                  return Center(
+                    child: Text(
+                      capitalise(widget.selection.name),
                       style: TextStyle(
-                          color: Theme.of(context)
-                                      .primaryColor
-                                      .computeLuminance() >=
-                                  0.5
-                              ? Colors.black
-                              : Colors.white)));
-            }).toList(),
-            value: dropdownItems.first,
-            style: DefaultTextStyle.of(context).style,
-            dropdownColor: Theme.of(context).primaryColor,
-            onChanged: (String? value) {
-              setState(() {});
-              Settings newSettings = widget.settings;
-              if (widget.type == Type.unit &&
-                  value!.toLowerCase() != widget.settings.unit.name) {
-                switch (value) {
-                  case "Metric":
-                    newSettings.unit = Unit.metric;
+                        color: colour,
+                      ),
+                    ),
+                  );
+                }).toList();
+              },
+              items: orderedList.map<DropdownMenuItem<Enum>>((Enum value) {
+                return DropdownMenuItem<Enum>(
+                    value: value,
+                    child: Text(capitalise(value.name),
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                        .primaryColor
+                                        .computeLuminance() >=
+                                    0.5
+                                ? Colors.black
+                                : Colors.white)));
+              }).toList(),
+              value: orderedList.first,
+              style: DefaultTextStyle.of(context).style,
+              dropdownColor: Theme.of(context).primaryColor,
+              onChanged: (Enum? value) {
+                setState(() {});
+                Settings newSettings = widget.settings;
+                switch (widget.type) {
+                  case PropertyType.energy:
+                    newSettings.energy.unit = value as EnergyUnit;
                     break;
-                  default:
-                    newSettings.unit = Unit.imperial;
+                  case PropertyType.height:
+                    newSettings.height.unit = value as HeightUnit;
+                    break;
+                  case PropertyType.weight:
+                    newSettings.weight.unit = value as WeightUnit;
+                    break;
+                  case PropertyType.appearance:
+                    newSettings.appearance = value as Appearance;
+                    MyApp.of(context)!
+                        .changeTheme(newSettings.appearance.theme);
+                    break;
                 }
                 SettingsDatabase().updateSettings(newSettings);
                 widget.rebuildPage();
-              } else if (widget.type == Type.mode &&
-                  value!.toLowerCase() != widget.settings.appearance.name) {
-                switch (value) {
-                  case "System":
-                    newSettings.appearance = Appearance.system;
-                    newTheme = ThemeMode.system;
-                    break;
-                  case "Dark":
-                    newSettings.appearance = Appearance.dark;
-                    newTheme = ThemeMode.dark;
-                    break;
-                  default:
-                    newSettings.appearance = Appearance.light;
-                    newTheme = ThemeMode.light;
-                }
-                MyApp.of(context)!.changeTheme(newTheme);
-                SettingsDatabase().updateSettings(newSettings);
-                widget.rebuildPage();
-              }
-            },
+              },
+            ),
           ),
         ),
       ),
@@ -555,10 +327,9 @@ class SectionTitle extends StatelessWidget {
 }
 
 class SettingsCard extends StatelessWidget {
-  const SettingsCard({super.key, required this.titles, required this.inputs});
+  const SettingsCard({super.key, required this.children});
 
-  final List<String> titles;
-  final List<Widget> inputs;
+  final List<(String, Widget)> children;
 
   @override
   Widget build(BuildContext context) {
@@ -567,38 +338,35 @@ class SettingsCard extends StatelessWidget {
         builder: (context, constraints) {
           if (constraints.maxWidth > 300) {
             return Column(
-              children: [
-                for (int i = 0; i < titles.length; i++)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: Text(titles[i]),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 10, bottom: 10, right: 20),
-                        child: inputs[i],
-                      )
-                    ],
+                children: children.map<Widget>((value) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Text(value.$1),
                   ),
-              ],
-            );
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10, bottom: 10, right: 20),
+                    child: value.$2,
+                  )
+                ],
+              );
+            }).toList());
           } else {
             return Column(
-              children: [
-                for (int i = 0; i < titles.length; i++)
-                  Column(children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text(titles[i]),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
-                        child: inputs[i])
-                  ]),
-              ],
+              children: children.map<Widget>((value) {
+                return Column(children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Text(value.$1),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
+                      child: value.$2)
+                ]);
+              }).toList(),
             );
           }
         },
