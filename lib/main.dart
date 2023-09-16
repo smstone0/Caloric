@@ -1,3 +1,4 @@
+import 'package:caloric/pages/nutrition_page.dart';
 import 'package:flutter/material.dart';
 import 'databases/settings_database.dart';
 import 'pages/today_page.dart';
@@ -98,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
         );
         break;
       case 1:
-        page = Placeholder();
+        page = const NutritionPage();
         break;
       case 2:
         page = Placeholder();

@@ -17,7 +17,7 @@ class TodayPage extends StatelessWidget {
         SystemUiOverlayStyle(statusBarColor: Theme.of(context).primaryColor));
     String timeOfDay;
     String month;
-    DateTime time = DateTime.parse(DateTime.now().toString());
+    DateTime time = DateTime.now();
     Color textColour = Theme.of(context).primaryColor.computeLuminance() >= 0.5
         ? Colors.black
         : Colors.white;
