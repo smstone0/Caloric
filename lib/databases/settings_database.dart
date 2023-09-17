@@ -314,7 +314,7 @@ class Energy implements Measurement {
       case EnergyUnit.calories:
         return "${cal.round()} kcal";
       case EnergyUnit.joules:
-        return "${joules.round()} joules";
+        return "${joules.round()} kJ";
     }
   }
 

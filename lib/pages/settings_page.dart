@@ -4,6 +4,7 @@ import '../main.dart';
 import '../widgets/grey_card.dart';
 import '../databases/settings_database.dart';
 import '../widgets/heading.dart';
+import 'package:caloric/widgets/section_separator.dart';
 
 enum PropertyType { energy, height, weight, appearance }
 
@@ -229,7 +230,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
         child: SizedBox(
-          width: 105,
+          width: 110,
           child: DropdownButtonHideUnderline(
             child: DropdownButton(
               selectedItemBuilder: (BuildContext context) {
@@ -282,28 +283,6 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
                 widget.rebuildPage();
               },
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SectionSeparator extends StatelessWidget {
-  const SectionSeparator({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 20),
-      child: SizedBox(
-        height: 1,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 60, right: 60),
-          child: Container(
-            color: Theme.of(context).primaryColor,
           ),
         ),
       ),

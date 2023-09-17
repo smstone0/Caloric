@@ -6,27 +6,30 @@ enum NutType { food, drink }
 
 class Nutrition {
   final int id;
-  String name;
-  int calories;
+  String item;
+  int energy;
   NutType type;
-  String unitOfQuantity;
+  int quantity;
+  String unit;
   String creationDate;
 
   Nutrition(
       {required this.id,
-      required this.name,
-      required this.calories,
+      required this.item,
+      required this.energy,
       required this.type,
-      required this.unitOfQuantity,
+      required this.quantity,
+      required this.unit,
       required this.creationDate});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'name': name,
-      'calories': calories,
+      'item': item,
+      'energy': energy,
       'type': type.index,
-      'unitOfQuantity': unitOfQuantity,
+      'quantity': quantity,
+      'unit': unit,
       'creationDate': creationDate,
     };
   }
@@ -38,7 +41,7 @@ class NutritionDatabase {
       join(await getDatabasesPath(), 'nutrition_database.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE nutrition(id INTEGER PRIMARY KEY, name STRING, calories INT, type INT, unitOfQuantity STRING, creationDate STRING)',
+          'CREATE TABLE nutrition(id INTEGER PRIMARY KEY, item STRING, energy INT, type INT, quantity INT, unit STRING, creationDate STRING)',
         );
       },
       version: 1,
@@ -60,10 +63,11 @@ class NutritionDatabase {
     return List.generate(maps.length, (i) {
       return Nutrition(
         id: maps[i]['id'],
-        name: maps[i]['name'],
-        calories: maps[i]['calories'],
+        item: maps[i]['item'],
+        energy: maps[i]['energy'],
         type: NutType.values[maps[i]['type']],
-        unitOfQuantity: maps[i]['unitOfQuantity'],
+        quantity: maps[i]['quantity'],
+        unit: maps[i]['unit'],
         creationDate: maps[i]['creationDate'],
       );
     });
