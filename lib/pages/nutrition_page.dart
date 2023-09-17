@@ -1,4 +1,5 @@
 import 'package:caloric/main.dart';
+import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/grey_card.dart';
 import 'package:caloric/widgets/section_separator.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,8 @@ class NutritionPage extends StatelessWidget {
 class RefineSearch extends StatelessWidget {
   const RefineSearch({super.key});
 
+  addNutrition() {}
+
   @override
   Widget build(BuildContext context) {
     List<String> filterList = [
@@ -59,13 +62,24 @@ class RefineSearch extends StatelessWidget {
       'Z-A'
     ];
     return GreyCard(
-        //Layout builder
-        child: Row(
+        child: Wrap(
+      //textDirection: TextDirection.rtl,
       children: [
         NutritionDropdown(
             type: DropType.filter, list: filterList, display: 'Filter by'),
         NutritionDropdown(
             type: DropType.sort, list: sortList, display: 'Sort by'),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
+          child: CustomButton(
+              text: '+',
+              onPressed: () {
+                addNutrition();
+              },
+              colour: const Color.fromRGBO(205, 255, 182, 1),
+              height: 46,
+              width: 60),
+        )
       ],
     ));
   }
