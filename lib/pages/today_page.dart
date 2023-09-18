@@ -194,7 +194,7 @@ class StatsCard extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         CustomButton(
-            text: "Update weight/height",
+            widget: const Text("Update weight/height"),
             onPressed: () {
               callback();
             },
@@ -215,28 +215,22 @@ class ButtonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> buttons = [
       CustomButton(
-        text: "Add",
-        onPressed: () {
-          print("Placeholder 1");
-        },
+        widget: const Text("Add"),
+        onPressed: () {},
         colour: const Color.fromRGBO(205, 255, 182, 1),
         height: 50,
         width: 105,
       ),
       CustomButton(
-        text: "View",
-        onPressed: () {
-          print("Placeholder 2");
-        },
+        widget: const Text("View"),
+        onPressed: () {},
         colour: const Color.fromRGBO(255, 212, 161, 1),
         height: 50,
         width: 105,
       ),
       CustomButton(
-        text: "Remove",
-        onPressed: () {
-          print("Placeholder 3");
-        },
+        widget: const Text("Remove"),
+        onPressed: () {},
         colour: const Color.fromRGBO(229, 139, 139, 1),
         height: 50,
         width: 105,

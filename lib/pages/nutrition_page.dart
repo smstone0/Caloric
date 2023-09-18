@@ -72,13 +72,13 @@ class RefineSearch extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
           child: CustomButton(
-              text: '+',
+              widget: const Icon(Icons.add, color: Colors.black, size: 20),
               onPressed: () {
                 addNutrition();
               },
               colour: const Color.fromRGBO(205, 255, 182, 1),
               height: 46,
-              width: 60),
+              width: 80),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
