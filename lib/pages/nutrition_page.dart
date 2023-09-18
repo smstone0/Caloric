@@ -61,9 +61,9 @@ class RefineSearch extends StatelessWidget {
       'A-Z',
       'Z-A'
     ];
+
     return GreyCard(
         child: Wrap(
-      //textDirection: TextDirection.rtl,
       children: [
         NutritionDropdown(
             type: DropType.filter, list: filterList, display: 'Filter by'),
@@ -79,7 +79,22 @@ class RefineSearch extends StatelessWidget {
               colour: const Color.fromRGBO(205, 255, 182, 1),
               height: 46,
               width: 60),
-        )
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
+          child: SizedBox(
+            width: 250,
+            height: 50,
+            child: SearchBar(
+              leading: const Icon(Icons.search),
+              hintText: "Search for item",
+              hintStyle: MaterialStateProperty.resolveWith(
+                  (states) => DefaultTextStyle.of(context).style),
+              onSubmitted: (value) {},
+              elevation: MaterialStateProperty.all(0),
+            ),
+          ),
+        ),
       ],
     ));
   }
