@@ -61,7 +61,7 @@ class RefineSearch extends StatelessWidget {
       'A-Z',
       'Z-A'
     ];
-
+    TextStyle style = DefaultTextStyle.of(context).style;
     return GreyCard(
         child: Wrap(
       children: [
@@ -85,13 +85,29 @@ class RefineSearch extends StatelessWidget {
           child: SizedBox(
             width: 250,
             height: 50,
-            child: SearchBar(
-              leading: const Icon(Icons.search),
-              hintText: "Search for item",
-              hintStyle: MaterialStateProperty.resolveWith(
-                  (states) => DefaultTextStyle.of(context).style),
+            child: TextField(
+              cursorColor: Colors.black,
+              decoration: InputDecoration(
+                filled: true,
+                hintText: "Search for item",
+                hintStyle: style,
+                prefixIcon: const Icon(Icons.search),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(45),
+                  borderSide: BorderSide(
+                    width: 2,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(45.0),
+                  borderSide: BorderSide(
+                    width: 2.0,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
               onSubmitted: (value) {},
-              elevation: MaterialStateProperty.all(0),
             ),
           ),
         ),
