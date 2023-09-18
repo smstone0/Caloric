@@ -29,10 +29,11 @@ class NutritionPage extends StatelessWidget {
           } else {
             List<Nutrition> nutrition = snapshot.data!;
             return ListView(
-              children: const [
-                Heading(text: "Nutrition"),
-                RefineSearch(),
-                SectionSeparator(),
+              children: [
+                const Heading(text: "Nutrition"),
+                const RefineSearch(),
+                const SectionSeparator(),
+                NutritionCards(nutrition: nutrition),
               ],
             );
           }
@@ -185,6 +186,65 @@ class _NutritionDropdownState extends State<NutritionDropdown> {
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class NutritionCards extends StatelessWidget {
+  const NutritionCards({super.key, required this.nutrition});
+
+  final List<Nutrition> nutrition;
+
+  List<NutCard> getCards() {
+    List<NutCard> cards = [];
+    for (int i = 0; i < nutrition.length; i++) {
+      cards.add(NutCard(nutrition: nutrition[i]));
+    }
+    return cards;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<NutCard> nutCards = getCards();
+    return Column(
+      children: nutCards.isNotEmpty
+          ? nutCards
+          : [const Text("You have not yet added any items")],
+    );
+  }
+}
+
+class NutCard extends StatelessWidget {
+  const NutCard({super.key, required this.nutrition});
+
+  final Nutrition nutrition;
+
+  @override
+  Widget build(BuildContext context) {
+    return GreyCard(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 25),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(nutrition.item),
+                  const Icon(Icons.edit),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text("${nutrition.energy}(kcal/kJ) per ${nutrition.unit}"),
+              ],
+            )
+          ],
         ),
       ),
     );
