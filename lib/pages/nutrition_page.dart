@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:caloric/widgets/heading.dart';
 import 'package:flutter/services.dart';
 import 'package:caloric/databases/nutrition_database.dart';
+import 'package:caloric/databases/settings_database.dart';
 
 enum DropType { filter, sort }
 
@@ -197,32 +198,53 @@ class NutritionCards extends StatelessWidget {
 
   final List<Nutrition> nutrition;
 
-  List<NutCard> getCards() {
+  List<NutCard> getCards(Settings settings) {
     List<NutCard> cards = [];
     for (int i = 0; i < nutrition.length; i++) {
-      cards.add(NutCard(nutrition: nutrition[i]));
+      cards.add(NutCard(nutrition: nutrition[i], settings: settings));
     }
     return cards;
   }
 
   @override
   Widget build(BuildContext context) {
-    List<NutCard> nutCards = getCards();
-    return Column(
-      children: nutCards.isNotEmpty
-          ? nutCards
-          : [const Text("You have not yet added any items")],
-    );
+    return FutureBuilder<Settings>(
+        future: SettingsDatabase().getSettings(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            Settings settings = snapshot.data!;
+            List<NutCard> nutCards = getCards(settings);
+            return Column(
+              children: nutCards.isNotEmpty
+                  ? nutCards
+                  : [const Text("You have not yet added any items")],
+            );
+          }
+        });
   }
 }
 
 class NutCard extends StatelessWidget {
-  const NutCard({super.key, required this.nutrition});
+  const NutCard({super.key, required this.nutrition, required this.settings});
 
   final Nutrition nutrition;
+  final Settings settings;
 
   @override
   Widget build(BuildContext context) {
+    String energy;
+    if (settings.energy.unit == EnergyUnit.calories) {
+      energy = 'kcal';
+    } else {
+      energy = 'kJ';
+    }
     return GreyCard(
       child: Padding(
         padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
@@ -241,7 +263,7 @@ class NutCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text("${nutrition.energy}(kcal/kJ) per ${nutrition.unit}"),
+                Text("${nutrition.energy}$energy per ${nutrition.unit}"),
               ],
             )
           ],
