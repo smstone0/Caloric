@@ -1,4 +1,5 @@
 import 'package:caloric/main.dart';
+import 'package:caloric/pages/nutrition_addition_page.dart';
 import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/grey_card.dart';
 import 'package:caloric/widgets/section_separator.dart';
@@ -45,8 +46,6 @@ class NutritionPage extends StatelessWidget {
 class RefineSearch extends StatelessWidget {
   const RefineSearch({super.key});
 
-  addNutrition() {}
-
   @override
   Widget build(BuildContext context) {
     List<String> filterList = [
@@ -74,9 +73,13 @@ class RefineSearch extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
           child: CustomButton(
-              widget: const Icon(Icons.add, color: Colors.black, size: 20),
+              widget: const Icon(Icons.add, color: Colors.black),
               onPressed: () {
-                addNutrition();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const NutritionAdditionPage(),
+                  ),
+                );
               },
               colour: const Color.fromRGBO(205, 255, 182, 1),
               height: 46,
