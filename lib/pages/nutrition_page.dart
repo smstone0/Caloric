@@ -1,5 +1,5 @@
 import 'package:caloric/main.dart';
-import 'package:caloric/pages/add_nutrition_page.dart';
+import 'package:caloric/pages/nutrition_input_page.dart';
 import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/grey_card.dart';
 import 'package:caloric/widgets/section_separator.dart';
@@ -127,14 +127,14 @@ class RefineSearch extends StatelessWidget {
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(45),
                   borderSide: BorderSide(
-                    width: 2,
+                    width: 1,
                     color: Theme.of(context).primaryColor,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(45.0),
+                  borderRadius: BorderRadius.circular(45),
                   borderSide: BorderSide(
-                    width: 2.0,
+                    width: 2,
                     color: Theme.of(context).primaryColor,
                   ),
                 ),

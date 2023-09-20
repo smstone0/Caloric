@@ -56,35 +56,53 @@ class InputCard extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 20, bottom: 10),
-            child: Row(
-              children: [
-                Text("Name of item/untitled", style: TextStyle(fontSize: 15))
-              ],
+            padding: const EdgeInsets.only(top: 20, bottom: 20, right: 50),
+            child: TextField(
+              cursorColor: Colors.black,
+              decoration: InputDecoration(
+                filled: true,
+                hintText: "Enter name of item",
+                hintStyle: DefaultTextStyle.of(context).style,
+                enabledBorder: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    width: 2,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    width: 4,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+              onSubmitted: (value) {},
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
+            padding: const EdgeInsets.only(bottom: 20),
             child: Row(
               children: [
                 CustomButton(
                     widget: const Text("Food"),
                     onPressed: () {},
-                    colour: Theme.of(context).primaryColor,
-                    height: 30,
+                    colour: Colors.white,
+                    height: 40,
                     width: 85),
                 const SizedBox(width: 5),
                 CustomButton(
                     widget: const Text("Drink"),
                     onPressed: () {},
-                    colour: Theme.of(context).primaryColor,
-                    height: 30,
+                    colour: Colors.white,
+                    height: 40,
                     width: 85)
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 20),
+            padding: const EdgeInsets.only(bottom: 20),
             child: Row(
               children: [Text("x $energy per (quantity)(unit)")],
             ),
