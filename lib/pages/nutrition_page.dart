@@ -1,5 +1,5 @@
 import 'package:caloric/main.dart';
-import 'package:caloric/pages/nutrition_addition_page.dart';
+import 'package:caloric/pages/add_nutrition_page.dart';
 import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/grey_card.dart';
 import 'package:caloric/widgets/section_separator.dart';
@@ -30,12 +30,37 @@ class NutritionPage extends StatelessWidget {
             return Text('Error: ${snapshot.error}');
           } else {
             List<Nutrition> nutrition = snapshot.data!;
+            return NutritionPageContent(nutrition: nutrition);
+          }
+        });
+  }
+}
+
+class NutritionPageContent extends StatelessWidget {
+  const NutritionPageContent({super.key, required this.nutrition});
+
+  final List<Nutrition> nutrition;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Settings>(
+        future: SettingsDatabase().getSettings(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            Settings settings = snapshot.data!;
             return ListView(
               children: [
                 const Heading(text: "Nutrition"),
-                const RefineSearch(),
+                RefineSearch(settings: settings),
                 const SectionSeparator(),
-                NutritionCards(nutrition: nutrition),
+                NutritionCards(nutrition: nutrition, settings: settings),
               ],
             );
           }
@@ -44,7 +69,9 @@ class NutritionPage extends StatelessWidget {
 }
 
 class RefineSearch extends StatelessWidget {
-  const RefineSearch({super.key});
+  const RefineSearch({super.key, required this.settings});
+
+  final Settings settings;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +104,7 @@ class RefineSearch extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const NutritionAdditionPage(),
+                    builder: (context) => AddNutritionPage(settings: settings),
                   ),
                 );
               },
@@ -197,9 +224,11 @@ class _NutritionDropdownState extends State<NutritionDropdown> {
 }
 
 class NutritionCards extends StatelessWidget {
-  const NutritionCards({super.key, required this.nutrition});
+  const NutritionCards(
+      {super.key, required this.nutrition, required this.settings});
 
   final List<Nutrition> nutrition;
+  final Settings settings;
 
   List<NutCard> getCards(Settings settings) {
     List<NutCard> cards = [];
@@ -211,26 +240,12 @@ class NutritionCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Settings>(
-        future: SettingsDatabase().getSettings(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            Settings settings = snapshot.data!;
-            List<NutCard> nutCards = getCards(settings);
-            return Column(
-              children: nutCards.isNotEmpty
-                  ? nutCards
-                  : [const Text("You have not yet added any items")],
-            );
-          }
-        });
+    List<NutCard> nutCards = getCards(settings);
+    return Column(
+      children: nutCards.isNotEmpty
+          ? nutCards
+          : [const Text("You have not yet added any items")],
+    );
   }
 }
 
