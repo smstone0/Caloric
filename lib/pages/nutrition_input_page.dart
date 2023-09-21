@@ -81,25 +81,9 @@ class InputCard extends StatelessWidget {
               onSubmitted: (value) {},
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: Row(
-              children: [
-                CustomButton(
-                    widget: const Text("Food"),
-                    onPressed: () {},
-                    colour: Colors.white,
-                    height: 40,
-                    width: 85),
-                const SizedBox(width: 5),
-                CustomButton(
-                    widget: const Text("Drink"),
-                    onPressed: () {},
-                    colour: Colors.white,
-                    height: 40,
-                    width: 85)
-              ],
-            ),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 20),
+            child: ButtonRow(),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
@@ -109,6 +93,63 @@ class InputCard extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class ButtonRow extends StatefulWidget {
+  const ButtonRow({
+    super.key,
+  });
+
+  @override
+  State<ButtonRow> createState() => _ButtonRowState();
+}
+
+class _ButtonRowState extends State<ButtonRow> {
+  late NutType type;
+  bool foodClick = false;
+  bool drinkClick = false;
+
+  Color clickColour(bool click) {
+    if (click) {
+      return Theme.of(context).primaryColor;
+    }
+    return Colors.white;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Color foodColour = clickColour(foodClick);
+    Color drinkColour = clickColour(drinkClick);
+    return Row(
+      children: [
+        CustomButton(
+            widget: const Text("Food"),
+            onPressed: () {
+              setState(() {
+                foodClick = true;
+                drinkClick = false;
+                type = NutType.food;
+              });
+            },
+            colour: foodColour,
+            height: 40,
+            width: 85),
+        const SizedBox(width: 5),
+        CustomButton(
+            widget: const Text("Drink"),
+            onPressed: () {
+              setState(() {
+                drinkClick = true;
+                foodClick = false;
+                type = NutType.drink;
+              });
+            },
+            colour: drinkColour,
+            height: 40,
+            width: 85)
+      ],
     );
   }
 }
