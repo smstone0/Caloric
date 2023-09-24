@@ -88,10 +88,135 @@ class InputCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
             child: Row(
-              children: [Text("x $energy per (quantity)(unit)")],
+              children: [
+                //Energy
+                SizedBox(
+                  width: 90,
+                  height: 30,
+                  child: TextField(
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      filled: true,
+                      suffixIcon: Text(energy),
+                      suffixIconConstraints:
+                          const BoxConstraints(minWidth: 0, minHeight: 0),
+                      enabledBorder: UnderlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          width: 2,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          width: 4,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                    onSubmitted: (value) {},
+                  ),
+                ),
+              ],
             ),
-          )
+          ),
+          Row(
+            children: [
+              const Text("per "),
+              //Quantity
+              SizedBox(
+                width: 195,
+                height: 30,
+                child: TextField(
+                  cursorColor: Colors.black,
+                  decoration: InputDecoration(
+                    filled: true,
+                    //Unit
+                    suffixIcon: const NutInputDropdown(),
+                    enabledBorder: UnderlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        width: 2,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        width: 4,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                  onSubmitted: (value) {},
+                ),
+              ),
+            ],
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class NutInputDropdown extends StatefulWidget {
+  const NutInputDropdown({super.key});
+
+  @override
+  State<NutInputDropdown> createState() => _NutInputDropdownState();
+}
+
+class _NutInputDropdownState extends State<NutInputDropdown> {
+  String display = 'Choose unit';
+
+  @override
+  Widget build(BuildContext context) {
+    List<String> list = ['g', 'ml', 'custom'];
+
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: SizedBox(
+          width: 110,
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton(
+              selectedItemBuilder: (BuildContext context) {
+                return list.map<Widget>((String item) {
+                  return Center(
+                    child: Text(
+                      display,
+                      style: const TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                }).toList();
+              },
+              items: list.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value,
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                        .primaryColor
+                                        .computeLuminance() >=
+                                    0.5
+                                ? Colors.black
+                                : Colors.white)));
+              }).toList(),
+              value: list.first,
+              style: DefaultTextStyle.of(context).style,
+              dropdownColor: Theme.of(context).primaryColor,
+              onChanged: (String? value) {
+                setState(() {});
+                display = value!;
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
