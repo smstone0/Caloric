@@ -1,8 +1,8 @@
-import 'package:caloric/pages/nutrition_page.dart';
+import 'package:caloric/pages/nutrition.dart';
 import 'package:flutter/material.dart';
-import 'databases/settings_database.dart';
-import 'pages/today_page.dart';
-import 'pages/settings_page.dart';
+import 'databases/settings.dart';
+import 'pages/today.dart';
+import 'pages/settings.dart';
 
 void main() {
   runApp(const MyApp());

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../main.dart';
 import '../widgets/grey_card.dart';
-import '../databases/settings_database.dart';
+import '../databases/settings.dart';
 import '../widgets/heading.dart';
 import 'package:caloric/widgets/section_separator.dart';
 

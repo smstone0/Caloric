@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/energy_ring.dart';
 import '../widgets/grey_card.dart';
-import '../databases/settings_database.dart';
+import '../databases/settings.dart';
 import 'dart:math';
 import '../widgets/custom_button.dart';
 
