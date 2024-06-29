@@ -37,12 +37,14 @@ class _InputCardState extends State<InputCard> {
   bool drinkClick = false;
   late NutType type;
   String unit = "";
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
     return Form(
+      key: _formKey,
       child: Column(
         children: [
           Row(
@@ -59,7 +61,7 @@ class _InputCardState extends State<InputCard> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20, bottom: 20, right: 50),
-            child: TextField(
+            child: TextFormField(
               cursorColor: Colors.black,
               decoration: InputDecoration(
                 filled: true,
@@ -80,11 +82,16 @@ class _InputCardState extends State<InputCard> {
                   ),
                 ),
               ),
-              onSubmitted: (value) {},
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter an item name';
+                }
+                return null;
+              },
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.only(bottom: 20),
             child: Row(
               children: [
                 CustomButton(
@@ -129,7 +136,7 @@ class _InputCardState extends State<InputCard> {
                 SizedBox(
                   width: 90,
                   height: 30,
-                  child: TextField(
+                  child: TextFormField(
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
@@ -154,7 +161,13 @@ class _InputCardState extends State<InputCard> {
                         ),
                       ),
                     ),
-                    onSubmitted: (value) {},
+                    validator: (value) {
+                      var val = int.tryParse(value!);
+                      if (val is int) {
+                        return null;
+                      }
+                      return 'error';
+                    },
                   ),
                 ),
               ],
@@ -167,7 +180,7 @@ class _InputCardState extends State<InputCard> {
               SizedBox(
                 width: 195,
                 height: 30,
-                child: TextField(
+                child: TextFormField(
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
                     filled: true,
@@ -188,11 +201,25 @@ class _InputCardState extends State<InputCard> {
                       ),
                     ),
                   ),
-                  onSubmitted: (value) {},
+                  validator: (value) {
+                    var val = int.tryParse(value!);
+                    if (val is int) {
+                      return null;
+                    }
+                    return 'error';
+                  },
                 ),
               ),
             ],
           ),
+          ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate() && foodClick ||
+                    drinkClick) {
+                  print('Submitted');
+                }
+              },
+              child: Text("Add"))
         ],
       ),
     );
