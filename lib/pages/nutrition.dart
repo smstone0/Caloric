@@ -281,7 +281,8 @@ class NutCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text("${nutrition.energy}$energy per ${nutrition.unit}"),
+                Text(
+                    "${nutrition.energy}$energy per ${nutrition.quantity}${nutrition.unit}"),
               ],
             )
           ],

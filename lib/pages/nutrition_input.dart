@@ -38,6 +38,8 @@ class _InputCardState extends State<InputCard> {
   late NutType type;
   String unit = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late String itemName;
+  late int energy, portion;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +88,7 @@ class _InputCardState extends State<InputCard> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter an item name';
                 }
+                itemName = value;
                 return null;
               },
             ),
@@ -164,6 +167,7 @@ class _InputCardState extends State<InputCard> {
                     validator: (value) {
                       var val = int.tryParse(value!);
                       if (val is int) {
+                        energy = val;
                         return null;
                       }
                       return 'error';
@@ -204,6 +208,7 @@ class _InputCardState extends State<InputCard> {
                   validator: (value) {
                     var val = int.tryParse(value!);
                     if (val is int) {
+                      portion = val;
                       return null;
                     }
                     return 'error';
@@ -216,10 +221,19 @@ class _InputCardState extends State<InputCard> {
               onPressed: () {
                 if (_formKey.currentState!.validate() && foodClick ||
                     drinkClick) {
-                  print('Submitted');
+                  DateTime time = DateTime.now();
+                  NutritionDatabase().insertNutrition(Nutrition(
+                      //TODO: id = last + 1
+                      id: 0,
+                      item: itemName,
+                      energy: energy,
+                      type: type,
+                      quantity: portion,
+                      unit: unit,
+                      creationDate: '${time.day}/${time.month}/${time.year}'));
                 }
               },
-              child: Text("Add"))
+              child: const Text("Add"))
         ],
       ),
     );
