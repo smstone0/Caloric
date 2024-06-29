@@ -5,9 +5,12 @@ import 'package:caloric/widgets/grey_card.dart';
 import 'package:flutter/material.dart';
 
 class AddNutritionPage extends StatelessWidget {
-  const AddNutritionPage({super.key, required this.settings});
+  const AddNutritionPage(
+      {super.key, required this.settings, this.nutrition, required this.id});
 
   final Settings settings;
+  final nutrition;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
@@ -16,48 +19,77 @@ class AddNutritionPage extends StatelessWidget {
       children: [
         const SizedBox(height: 20),
         GreyCard(
-          child: InputCard(settings: settings),
+          child: InputCard(settings: settings, nutrition: nutrition, id: id),
         ),
       ],
     ));
   }
 }
 
-class InputCard extends StatelessWidget {
-  const InputCard({super.key, required this.settings});
+class InputCard extends StatefulWidget {
+  const InputCard(
+      {super.key,
+      required this.settings,
+      required this.nutrition,
+      required this.id});
 
   final Settings settings;
+  final nutrition;
+  final int id;
+
+  @override
+  State<InputCard> createState() => _InputCardState();
+}
+
+class _InputCardState extends State<InputCard> {
+  @override
+  void initState() {
+    super.initState();
+    if (!(widget.nutrition == null)) {
+      if (widget.nutrition.type == NutType.food) {
+        foodClick = true;
+        unit = 'g';
+      }
+      if (widget.nutrition.type == NutType.drink) {
+        drinkClick = true;
+        unit = 'ml';
+      }
+    }
+  }
+
+  bool foodClick = false;
+  bool drinkClick = false;
+  late NutType type;
+  String unit = "";
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late String itemName;
+  late int energy, portion;
 
   @override
   Widget build(BuildContext context) {
-    Nutrition newNutrition;
-    String energy;
-    if (settings.energy.unit == EnergyUnit.calories) {
-      energy = 'kcal';
-    } else {
-      energy = 'kJ';
-    }
-    return Padding(
-      padding: const EdgeInsets.only(left: 10),
+    final ThemeData theme = Theme.of(context);
+
+    return Form(
+      key: _formKey,
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                "Add item",
-                style: TextStyle(fontSize: 18),
-              ),
+              Text(widget.nutrition == null ? "Add item" : "Edit item",
+                  style: theme.textTheme.titleMedium),
               IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.close))
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.close),
+              ),
             ],
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20, bottom: 20, right: 50),
-            child: TextField(
+            child: TextFormField(
+              initialValue: widget.nutrition?.item,
               cursorColor: Colors.black,
               decoration: InputDecoration(
                 filled: true,
@@ -78,12 +110,52 @@ class InputCard extends StatelessWidget {
                   ),
                 ),
               ),
-              onSubmitted: (value) {},
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter an item name';
+                }
+                itemName = value;
+                return null;
+              },
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 20),
-            child: ButtonRow(),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Row(
+              children: [
+                CustomButton(
+                    widget: const Text("Food"),
+                    onPressed: () {
+                      setState(() {
+                        foodClick = true;
+                        drinkClick = false;
+                        type = NutType.food;
+                        unit = 'g';
+                      });
+                    },
+                    colour: foodClick == true
+                        ? Theme.of(context).primaryColor
+                        : Colors.white,
+                    height: 40,
+                    width: 85),
+                const SizedBox(width: 5),
+                CustomButton(
+                    widget: const Text("Drink"),
+                    onPressed: () {
+                      setState(() {
+                        drinkClick = true;
+                        foodClick = false;
+                        type = NutType.drink;
+                        unit = 'ml';
+                      });
+                    },
+                    colour: drinkClick == true
+                        ? Theme.of(context).primaryColor
+                        : Colors.white,
+                    height: 40,
+                    width: 85)
+              ],
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
@@ -93,11 +165,15 @@ class InputCard extends StatelessWidget {
                 SizedBox(
                   width: 90,
                   height: 30,
-                  child: TextField(
+                  child: TextFormField(
+                    initialValue: widget.nutrition?.energy.toString(),
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      suffixIcon: Text(energy),
+                      suffixIcon: Text(
+                          widget.settings.energy.unit == EnergyUnit.calories
+                              ? 'kcal'
+                              : 'kJ'),
                       suffixIconConstraints:
                           const BoxConstraints(minWidth: 0, minHeight: 0),
                       enabledBorder: UnderlineInputBorder(
@@ -115,7 +191,14 @@ class InputCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    onSubmitted: (value) {},
+                    validator: (value) {
+                      var val = int.tryParse(value!);
+                      if (val is int) {
+                        energy = val;
+                        return null;
+                      }
+                      return 'error';
+                    },
                   ),
                 ),
               ],
@@ -128,12 +211,13 @@ class InputCard extends StatelessWidget {
               SizedBox(
                 width: 195,
                 height: 30,
-                child: TextField(
+                child: TextFormField(
+                  initialValue: widget.nutrition?.quantity.toString(),
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
                     filled: true,
                     //Unit
-                    suffixIcon: const NutInputDropdown(),
+                    suffixIcon: Text(unit),
                     enabledBorder: UnderlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
@@ -149,132 +233,39 @@ class InputCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onSubmitted: (value) {},
+                  validator: (value) {
+                    var val = int.tryParse(value!);
+                    if (val is int) {
+                      portion = val;
+                      return null;
+                    }
+                    return 'error';
+                  },
                 ),
               ),
             ],
           ),
+          ElevatedButton(
+              //TODO: Update main nutrition page
+              onPressed: () {
+                if (_formKey.currentState!.validate() && foodClick ||
+                    drinkClick) {
+                  DateTime time = DateTime.now();
+                  NutritionDatabase().insertNutrition(Nutrition(
+                      id: widget.id,
+                      item: itemName,
+                      energy: energy,
+                      type: type,
+                      quantity: portion,
+                      unit: unit,
+                      creationDate: '${time.day}/${time.month}/${time.year}'));
+                }
+              },
+              child: widget.nutrition == null
+                  ? const Text("Add")
+                  : const Text("Edit"))
         ],
       ),
-    );
-  }
-}
-
-class NutInputDropdown extends StatefulWidget {
-  const NutInputDropdown({super.key});
-
-  @override
-  State<NutInputDropdown> createState() => _NutInputDropdownState();
-}
-
-class _NutInputDropdownState extends State<NutInputDropdown> {
-  String display = 'Choose unit';
-
-  @override
-  Widget build(BuildContext context) {
-    List<String> list = ['g', 'ml', 'custom'];
-
-    return Card(
-      color: Colors.white,
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: SizedBox(
-          width: 110,
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton(
-              selectedItemBuilder: (BuildContext context) {
-                return list.map<Widget>((String item) {
-                  return Center(
-                    child: Text(
-                      display,
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  );
-                }).toList();
-              },
-              items: list.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value,
-                        style: TextStyle(
-                            color: Theme.of(context)
-                                        .primaryColor
-                                        .computeLuminance() >=
-                                    0.5
-                                ? Colors.black
-                                : Colors.white)));
-              }).toList(),
-              value: list.first,
-              style: DefaultTextStyle.of(context).style,
-              dropdownColor: Theme.of(context).primaryColor,
-              onChanged: (String? value) {
-                setState(() {});
-                display = value!;
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ButtonRow extends StatefulWidget {
-  const ButtonRow({
-    super.key,
-  });
-
-  @override
-  State<ButtonRow> createState() => _ButtonRowState();
-}
-
-class _ButtonRowState extends State<ButtonRow> {
-  late NutType type;
-  bool foodClick = false;
-  bool drinkClick = false;
-
-  Color clickColour(bool click) {
-    if (click) {
-      return Theme.of(context).primaryColor;
-    }
-    return Colors.white;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Color foodColour = clickColour(foodClick);
-    Color drinkColour = clickColour(drinkClick);
-    return Row(
-      children: [
-        CustomButton(
-            widget: const Text("Food"),
-            onPressed: () {
-              setState(() {
-                foodClick = true;
-                drinkClick = false;
-                type = NutType.food;
-              });
-            },
-            colour: foodColour,
-            height: 40,
-            width: 85),
-        const SizedBox(width: 5),
-        CustomButton(
-            widget: const Text("Drink"),
-            onPressed: () {
-              setState(() {
-                drinkClick = true;
-                foodClick = false;
-                type = NutType.drink;
-              });
-            },
-            colour: drinkColour,
-            height: 40,
-            width: 85)
-      ],
     );
   }
 }

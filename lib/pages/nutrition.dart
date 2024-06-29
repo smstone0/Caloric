@@ -58,7 +58,7 @@ class NutritionPageContent extends StatelessWidget {
             return ListView(
               children: [
                 const Heading(text: "Nutrition"),
-                RefineSearch(settings: settings),
+                RefineSearch(settings: settings, id: nutrition.length),
                 const SectionSeparator(),
                 NutritionCards(nutrition: nutrition, settings: settings),
               ],
@@ -69,9 +69,10 @@ class NutritionPageContent extends StatelessWidget {
 }
 
 class RefineSearch extends StatelessWidget {
-  const RefineSearch({super.key, required this.settings});
+  const RefineSearch({super.key, required this.settings, required this.id});
 
   final Settings settings;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +105,8 @@ class RefineSearch extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => AddNutritionPage(settings: settings),
+                    builder: (context) =>
+                        AddNutritionPage(settings: settings, id: id),
                   ),
                 );
               },
@@ -274,14 +276,26 @@ class NutCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(nutrition.item),
-                  const Icon(Icons.edit),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => AddNutritionPage(
+                                settings: settings,
+                                nutrition: nutrition,
+                                id: nutrition.id),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.edit))
                 ],
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text("${nutrition.energy}$energy per ${nutrition.unit}"),
+                Text(
+                    "${nutrition.energy}$energy per ${nutrition.quantity}${nutrition.unit}"),
               ],
             )
           ],
