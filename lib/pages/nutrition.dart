@@ -1,13 +1,13 @@
 import 'package:caloric/main.dart';
-import 'package:caloric/pages/nutrition_input_page.dart';
+import 'package:caloric/pages/nutrition_input.dart';
 import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/grey_card.dart';
 import 'package:caloric/widgets/section_separator.dart';
 import 'package:flutter/material.dart';
 import 'package:caloric/widgets/heading.dart';
 import 'package:flutter/services.dart';
-import 'package:caloric/databases/nutrition_database.dart';
-import 'package:caloric/databases/settings_database.dart';
+import 'package:caloric/databases/nutrition.dart';
+import 'package:caloric/databases/settings.dart';
 
 enum DropType { filter, sort }
 

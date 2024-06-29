@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/energy_ring.dart';
 import '../widgets/grey_card.dart';
-import '../databases/settings_database.dart';
+import '../databases/settings.dart';
 import 'dart:math';
 import '../widgets/custom_button.dart';
+import '../functions/datetime.dart';
 
 class TodayPage extends StatelessWidget {
   const TodayPage({super.key, required this.callback});
@@ -13,68 +14,21 @@ class TodayPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Theme.of(context).primaryColor));
-    String timeOfDay;
-    String month;
+        SystemUiOverlayStyle(statusBarColor: theme.primaryColor));
     DateTime time = DateTime.now();
-    Color textColour = Theme.of(context).primaryColor.computeLuminance() >= 0.5
+    Color textColour = theme.primaryColor.computeLuminance() >= 0.5
         ? Colors.black
         : Colors.white;
-
-    if (time.hour >= 0 && time.hour < 12) {
-      timeOfDay = "morning";
-    } else if (time.hour >= 12 && time.hour < 17) {
-      timeOfDay = "afternoon";
-    } else {
-      timeOfDay = "evening";
-    }
-
-    switch (time.month) {
-      case 1:
-        month = "January";
-        break;
-      case 2:
-        month = "February";
-        break;
-      case 3:
-        month = "March";
-        break;
-      case 4:
-        month = "April";
-        break;
-      case 5:
-        month = "May";
-        break;
-      case 6:
-        month = "June";
-        break;
-      case 7:
-        month = "July";
-        break;
-      case 8:
-        month = "August";
-        break;
-      case 9:
-        month = "September";
-        break;
-      case 10:
-        month = "October";
-        break;
-      case 11:
-        month = "November";
-        break;
-      default:
-        month = "December";
-    }
 
     return FutureBuilder<Settings>(
         future: SettingsDatabase().getSettings(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor),
+              child: CircularProgressIndicator(color: theme.primaryColor),
             );
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
@@ -83,14 +37,14 @@ class TodayPage extends StatelessWidget {
             return ListView(
               children: [
                 Container(
-                  color: Theme.of(context).primaryColor,
+                  color: theme.primaryColor,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
                     child: Column(
                       children: [
-                        Text("Good $timeOfDay!",
+                        Text("Good ${getTimeOfDay()}!",
                             style: TextStyle(fontSize: 18, color: textColour)),
-                        Text("Today is ${time.day} $month",
+                        Text("Today is ${time.day} ${getMonth()}",
                             style: TextStyle(color: textColour)),
                         const SizedBox(height: 20),
                         CalorieRing(
