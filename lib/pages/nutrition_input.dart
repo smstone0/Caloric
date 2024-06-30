@@ -47,10 +47,12 @@ class _InputCardState extends State<InputCard> {
     super.initState();
     if (!(widget.nutrition == null)) {
       if (widget.nutrition.type == NutType.food) {
+        type = NutType.food;
         foodClick = true;
         unit = 'g';
       }
       if (widget.nutrition.type == NutType.drink) {
+        type = NutType.drink;
         drinkClick = true;
         unit = 'ml';
       }
