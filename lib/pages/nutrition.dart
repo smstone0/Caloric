@@ -1,6 +1,5 @@
 import 'package:caloric/main.dart';
 import 'package:caloric/pages/nutrition_input.dart';
-import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/grey_card.dart';
 import 'package:caloric/widgets/section_separator.dart';
 import 'package:flutter/material.dart';
@@ -100,19 +99,19 @@ class RefineSearch extends StatelessWidget {
             type: DropType.sort, list: sortList, display: 'Sort by'),
         Padding(
           padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
-          child: CustomButton(
-              widget: const Icon(Icons.add, color: Colors.black),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        AddNutritionPage(settings: settings, id: id),
-                  ),
-                );
-              },
-              colour: const Color.fromRGBO(205, 255, 182, 1),
-              height: 46,
-              width: 80),
+          // TODO: 46 x 80
+          child: IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      AddNutritionPage(settings: settings, id: id),
+                ),
+              );
+            },
+            icon: const Icon(Icons.add),
+            color: const Color.fromRGBO(205, 255, 182, 1),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
