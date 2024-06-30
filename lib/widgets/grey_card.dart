@@ -17,16 +17,26 @@ class GreyCard extends StatelessWidget {
     } else {
       colour = const Color.fromRGBO(217, 217, 217, 0.1);
     }
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-      child: Card(
-        elevation: 0,
-        color: colour,
-        child: SizedBox(
-          width: double.infinity,
-          child: child,
+    return Column(
+      children: [
+        const SizedBox(
+          height: 20,
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Card(
+            elevation: 0,
+            color: colour,
+            child: SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
+                child: child,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
