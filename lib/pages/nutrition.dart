@@ -217,20 +217,16 @@ class NutritionCards extends StatelessWidget {
   final List<Nutrition> nutrition;
   final Settings settings;
 
-  List<NutCard> getCards(Settings settings) {
+  @override
+  Widget build(BuildContext context) {
     List<NutCard> cards = [];
     for (int i = 0; i < nutrition.length; i++) {
       cards.add(NutCard(nutrition: nutrition[i], settings: settings));
     }
-    return cards;
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    List<NutCard> nutCards = getCards(settings);
     return Column(
-      children: nutCards.isNotEmpty
-          ? nutCards
+      children: cards.isNotEmpty
+          ? cards
           : [const Text("You have not yet added any items")],
     );
   }
@@ -251,40 +247,35 @@ class NutCard extends StatelessWidget {
       energy = 'kJ';
     }
     return GreyCard(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 25),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(nutrition.item),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => AddNutritionPage(
-                                settings: settings,
-                                nutrition: nutrition,
-                                id: nutrition.id),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.edit))
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                    "${nutrition.energy}$energy per ${nutrition.quantity}${nutrition.unit}"),
-              ],
-            )
-          ],
-        ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(nutrition.item),
+              IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => AddNutritionPage(
+                            settings: settings,
+                            nutrition: nutrition,
+                            id: nutrition.id),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.edit))
+            ],
+          ),
+          const SizedBox(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                  "${nutrition.energy}$energy per ${nutrition.quantity}${nutrition.unit}"),
+            ],
+          )
+        ],
       ),
     );
   }
