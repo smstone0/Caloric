@@ -77,7 +77,7 @@ class NutritionPage extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => AddNutritionPage(
+                                      builder: (context) => NutritionInput(
                                           settings: settings,
                                           id: nutrition.length),
                                     ),
@@ -257,7 +257,7 @@ class NutCard extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => AddNutritionPage(
+                        builder: (context) => NutritionInput(
                             settings: settings,
                             nutrition: nutrition,
                             id: nutrition.id),
