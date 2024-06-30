@@ -15,66 +15,9 @@ class NutritionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).colorScheme.background));
-    return FutureBuilder<List<Nutrition>>(
-        future: NutritionDatabase().getNutrition(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            List<Nutrition> nutrition = snapshot.data!;
-            return NutritionPageContent(nutrition: nutrition);
-          }
-        });
-  }
-}
+    final ThemeData theme = Theme.of(context);
+    TextStyle style = DefaultTextStyle.of(context).style;
 
-class NutritionPageContent extends StatelessWidget {
-  const NutritionPageContent({super.key, required this.nutrition});
-
-  final List<Nutrition> nutrition;
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Settings>(
-        future: SettingsDatabase().getSettings(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            Settings settings = snapshot.data!;
-            return ListView(
-              children: [
-                const Heading(text: "Nutrition"),
-                RefineSearch(settings: settings, id: nutrition.length),
-                const SectionSeparator(),
-                NutritionCards(nutrition: nutrition, settings: settings),
-              ],
-            );
-          }
-        });
-  }
-}
-
-class RefineSearch extends StatelessWidget {
-  const RefineSearch({super.key, required this.settings, required this.id});
-
-  final Settings settings;
-  final int id;
-
-  @override
-  Widget build(BuildContext context) {
     List<String> filterList = [
       'Food',
       'Drink',
@@ -89,66 +32,102 @@ class RefineSearch extends StatelessWidget {
       'A-Z',
       'Z-A'
     ];
-    TextStyle style = DefaultTextStyle.of(context).style;
-    return GreyCard(
-        child: Wrap(
-      children: [
-        NutritionDropdown(
-            type: DropType.filter, list: filterList, display: 'Filter by'),
-        NutritionDropdown(
-            type: DropType.sort, list: sortList, display: 'Sort by'),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
-          // TODO: 46 x 80
-          child: IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) =>
-                      AddNutritionPage(settings: settings, id: id),
-                ),
-              );
-            },
-            icon: const Icon(Icons.add),
-            color: const Color.fromRGBO(205, 255, 182, 1),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
-          child: SizedBox(
-            width: 250,
-            height: 50,
-            child: TextField(
-              cursorColor: Colors.black,
-              decoration: InputDecoration(
-                filled: true,
-                hintText: "Search for item",
-                hintStyle: style,
-                prefixIcon: const Icon(Icons.search),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(45),
-                  borderSide: BorderSide(
-                    width: 1,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(45),
-                  borderSide: BorderSide(
-                    width: 2,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              ),
-              onSubmitted: (value) {},
-            ),
-          ),
-        ),
-      ],
-    ));
+
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: theme.colorScheme.background));
+    return FutureBuilder<List<Nutrition>>(
+        future: NutritionDatabase().getNutrition(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(color: theme.primaryColor),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            List<Nutrition> nutrition = snapshot.data!;
+            return FutureBuilder<Settings>(
+                future: SettingsDatabase().getSettings(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child:
+                          CircularProgressIndicator(color: theme.primaryColor),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    Settings settings = snapshot.data!;
+                    return ListView(
+                      children: [
+                        const Heading(text: "Nutrition"),
+                        GreyCard(
+                            child: Wrap(
+                          runSpacing: 5,
+                          children: [
+                            NutritionDropdown(
+                                type: DropType.filter,
+                                list: filterList,
+                                display: 'Filter by'),
+                            NutritionDropdown(
+                                type: DropType.sort,
+                                list: sortList,
+                                display: 'Sort by'),
+                            IconButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => AddNutritionPage(
+                                        settings: settings,
+                                        id: nutrition.length),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.add),
+                              color: const Color.fromRGBO(205, 255, 182, 1),
+                            ),
+                            SizedBox(
+                              height: 50,
+                              child: TextField(
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  hintText: "Search for item",
+                                  hintStyle: style,
+                                  prefixIcon: const Icon(Icons.search),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(45),
+                                    borderSide: BorderSide(
+                                      width: 1,
+                                      color: theme.primaryColor,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(45),
+                                    borderSide: BorderSide(
+                                      width: 2,
+                                      color: theme.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                                onSubmitted: (value) {},
+                              ),
+                            ),
+                          ],
+                        )),
+                        const SectionSeparator(),
+                        NutritionCards(
+                            nutrition: nutrition, settings: settings),
+                      ],
+                    );
+                  }
+                });
+          }
+        });
   }
 }
 
+//TODO: Combine settings and nutrition dropdowns
 class NutritionDropdown extends StatefulWidget {
   const NutritionDropdown(
       {super.key,
