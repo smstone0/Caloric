@@ -74,18 +74,25 @@ class NutritionPage extends StatelessWidget {
                                 list: sortList,
                                 display: 'Sort by'),
                             IconButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => AddNutritionPage(
-                                        settings: settings,
-                                        id: nutrition.length),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.add),
-                              color: const Color.fromRGBO(205, 255, 182, 1),
-                            ),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => AddNutritionPage(
+                                          settings: settings,
+                                          id: nutrition.length),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.add),
+                                color: settings.appearance ==
+                                            Appearance.light ||
+                                        settings.appearance ==
+                                                Appearance.system &&
+                                            MediaQuery.of(context)
+                                                    .platformBrightness ==
+                                                Brightness.light
+                                    ? Colors.black
+                                    : const Color.fromRGBO(205, 255, 182, 1)),
                             SizedBox(
                               height: 50,
                               child: TextField(

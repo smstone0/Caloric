@@ -102,6 +102,7 @@ class TodayPage extends StatelessWidget {
                           RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
+                              style: theme.textTheme.bodyMedium,
                               children: [
                                 TextSpan(
                                   text:
