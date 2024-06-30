@@ -136,8 +136,7 @@ class _InputCardState extends State<InputCard> {
                     colour: foodClick == true
                         ? Theme.of(context).primaryColor
                         : Colors.white,
-                    height: 40,
-                    width: 85),
+                    size: Size.small),
                 const SizedBox(width: 5),
                 CustomButton(
                     widget: const Text("Drink"),
@@ -152,8 +151,7 @@ class _InputCardState extends State<InputCard> {
                     colour: drinkClick == true
                         ? Theme.of(context).primaryColor
                         : Colors.white,
-                    height: 40,
-                    width: 85)
+                    size: Size.small)
               ],
             ),
           ),

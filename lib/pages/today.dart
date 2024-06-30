@@ -62,8 +62,39 @@ class TodayPage extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    const GreyCard(
-                      child: ButtonCard(),
+                    GreyCard(
+                      child: Column(
+                        children: [
+                          Text("Nutrition for today",
+                              style: theme.textTheme.bodyLarge),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 15,
+                            runSpacing: 15,
+                            alignment: WrapAlignment.center,
+                            children: [
+                              CustomButton(
+                                widget: const Text("Add"),
+                                onPressed: () {},
+                                colour: const Color.fromRGBO(205, 255, 182, 1),
+                                size: Size.medium,
+                              ),
+                              CustomButton(
+                                widget: const Text("View"),
+                                onPressed: () {},
+                                colour: const Color.fromRGBO(255, 212, 161, 1),
+                                size: Size.medium,
+                              ),
+                              CustomButton(
+                                widget: const Text("Remove"),
+                                onPressed: () {},
+                                colour: const Color.fromRGBO(229, 139, 139, 1),
+                                size: Size.medium,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     GreyCard(
                       child: Column(
@@ -90,8 +121,7 @@ class TodayPage extends StatelessWidget {
                               },
                               colour:
                                   Theme.of(context).cardColor.withOpacity(1),
-                              height: 38,
-                              width: 190),
+                              size: Size.large),
                         ],
                       ),
                     ),
@@ -101,51 +131,5 @@ class TodayPage extends StatelessWidget {
             );
           }
         });
-  }
-}
-
-class ButtonCard extends StatelessWidget {
-  const ButtonCard({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Widget> buttons = [
-      CustomButton(
-        widget: const Text("Add"),
-        onPressed: () {},
-        colour: const Color.fromRGBO(205, 255, 182, 1),
-        height: 50,
-        width: 105,
-      ),
-      CustomButton(
-        widget: const Text("View"),
-        onPressed: () {},
-        colour: const Color.fromRGBO(255, 212, 161, 1),
-        height: 50,
-        width: 105,
-      ),
-      CustomButton(
-        widget: const Text("Remove"),
-        onPressed: () {},
-        colour: const Color.fromRGBO(229, 139, 139, 1),
-        height: 50,
-        width: 105,
-      ),
-    ];
-
-    return Column(
-      children: [
-        const Text("Nutrition for today", style: TextStyle(fontSize: 16.5)),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 15,
-          runSpacing: 15,
-          alignment: WrapAlignment.center,
-          children: buttons,
-        ),
-      ],
-    );
   }
 }
