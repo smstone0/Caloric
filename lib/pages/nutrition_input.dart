@@ -147,8 +147,10 @@ class _NutritionInputState extends State<NutritionInput> {
                     ),
                   ],
                 ),
-                ElevatedButton(
+                CustomButton(
                     //TODO: Update main nutrition page
+                    colour: theme.primaryColor,
+                    size: Size.small,
                     onPressed: () {
                       if (_formKey.currentState!.validate() && foodClick ||
                           drinkClick) {
@@ -164,7 +166,7 @@ class _NutritionInputState extends State<NutritionInput> {
                                 '${time.day}/${time.month}/${time.year}'));
                       }
                     },
-                    child: widget.nutrition == null
+                    widget: widget.nutrition == null
                         ? const Text("Add")
                         : const Text("Edit"))
               ],
