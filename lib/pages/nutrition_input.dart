@@ -2,6 +2,7 @@ import 'package:caloric/databases/nutrition.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/grey_card.dart';
+import 'package:caloric/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 
 /// Add or edit an existing nutrition item
@@ -48,7 +49,6 @@ class _NutritionInputState extends State<NutritionInput> {
     return Material(
         child: ListView(
       children: [
-        const SizedBox(height: 20),
         GreyCard(
           child: Form(
             key: _formKey,
@@ -67,123 +67,64 @@ class _NutritionInputState extends State<NutritionInput> {
                     ),
                   ],
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 20, bottom: 20, right: 50),
-                  child: TextFormField(
-                    initialValue: widget.nutrition?.item,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      filled: true,
-                      hintText: "Enter name of item",
-                      //hintStyle: DefaultTextStyle.of(context).style,
-                      hintStyle: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.normal),
-                      enabledBorder: UnderlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                          width: 2,
-                          color: theme.primaryColor,
-                        ),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                          width: 4,
-                          color: theme.primaryColor,
-                        ),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an item name';
-                      }
-                      itemName = value;
+                InputField(
+                  hintText: 'Enter name of item',
+                  initialValue: widget.nutrition?.item,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an item name';
+                    }
+                    itemName = value;
+                    return null;
+                  },
+                ),
+                Row(
+                  children: [
+                    CustomButton(
+                        widget: const Text("Food"),
+                        onPressed: () {
+                          setState(() {
+                            foodClick = true;
+                            drinkClick = false;
+                            type = NutType.food;
+                            unit = 'g';
+                          });
+                        },
+                        colour: foodClick == true
+                            ? theme.primaryColor
+                            : Colors.white,
+                        size: Size.small),
+                    const SizedBox(width: 5),
+                    CustomButton(
+                        widget: const Text("Drink"),
+                        onPressed: () {
+                          setState(() {
+                            drinkClick = true;
+                            foodClick = false;
+                            type = NutType.drink;
+                            unit = 'ml';
+                          });
+                        },
+                        colour: drinkClick == true
+                            ? theme.primaryColor
+                            : Colors.white,
+                        size: Size.small)
+                  ],
+                ),
+                InputField(
+                  initialValue: widget.nutrition?.energy.toString(),
+                  suffix: Text(
+                      widget.settings.energy.unit == EnergyUnit.calories
+                          ? 'kcal'
+                          : 'kJ'),
+                  validator: (value) {
+                    var val = int.tryParse(value!);
+                    if (val is int) {
+                      energy = val;
                       return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    children: [
-                      CustomButton(
-                          widget: const Text("Food"),
-                          onPressed: () {
-                            setState(() {
-                              foodClick = true;
-                              drinkClick = false;
-                              type = NutType.food;
-                              unit = 'g';
-                            });
-                          },
-                          colour: foodClick == true
-                              ? theme.primaryColor
-                              : Colors.white,
-                          size: Size.small),
-                      const SizedBox(width: 5),
-                      CustomButton(
-                          widget: const Text("Drink"),
-                          onPressed: () {
-                            setState(() {
-                              drinkClick = true;
-                              foodClick = false;
-                              type = NutType.drink;
-                              unit = 'ml';
-                            });
-                          },
-                          colour: drinkClick == true
-                              ? theme.primaryColor
-                              : Colors.white,
-                          size: Size.small)
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 90,
-                        height: 30,
-                        child: TextFormField(
-                          initialValue: widget.nutrition?.energy.toString(),
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                            filled: true,
-                            suffixIcon: Text(widget.settings.energy.unit ==
-                                    EnergyUnit.calories
-                                ? 'kcal'
-                                : 'kJ'),
-                            suffixIconConstraints:
-                                const BoxConstraints(minWidth: 0, minHeight: 0),
-                            enabledBorder: UnderlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                width: 2,
-                                color: theme.primaryColor,
-                              ),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                width: 4,
-                                color: theme.primaryColor,
-                              ),
-                            ),
-                          ),
-                          validator: (value) {
-                            var val = int.tryParse(value!);
-                            if (val is int) {
-                              energy = val;
-                              return null;
-                            }
-                            return 'error';
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                    }
+                    return 'error';
+                  },
                 ),
                 Row(
                   children: [
@@ -191,27 +132,9 @@ class _NutritionInputState extends State<NutritionInput> {
                     SizedBox(
                       width: 195,
                       height: 30,
-                      child: TextFormField(
+                      child: InputField(
+                        suffix: Text(unit),
                         initialValue: widget.nutrition?.quantity.toString(),
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          filled: true,
-                          suffixIcon: Text(unit),
-                          enabledBorder: UnderlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: theme.primaryColor,
-                            ),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              width: 4,
-                              color: theme.primaryColor,
-                            ),
-                          ),
-                        ),
                         validator: (value) {
                           var val = int.tryParse(value!);
                           if (val is int) {
