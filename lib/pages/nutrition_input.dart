@@ -11,7 +11,7 @@ class NutritionInput extends StatefulWidget {
       {super.key, required this.settings, this.nutrition, required this.id});
 
   final Settings settings;
-  final nutrition;
+  final Nutrition? nutrition;
   final int id;
 
   @override
@@ -22,17 +22,15 @@ class _NutritionInputState extends State<NutritionInput> {
   @override
   void initState() {
     super.initState();
-    if (!(widget.nutrition == null)) {
-      if (widget.nutrition.type == NutType.food) {
-        type = NutType.food;
-        foodClick = true;
-        unit = 'g';
-      }
-      if (widget.nutrition.type == NutType.drink) {
-        type = NutType.drink;
-        drinkClick = true;
-        unit = 'ml';
-      }
+    if (widget.nutrition?.type == NutType.food) {
+      type = NutType.food;
+      foodClick = true;
+      unit = 'g';
+    }
+    if (widget.nutrition?.type == NutType.drink) {
+      type = NutType.drink;
+      drinkClick = true;
+      unit = 'ml';
     }
   }
 
