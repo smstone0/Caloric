@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:caloric/databases/nutrition.dart';
 import 'package:caloric/databases/settings.dart';
 
+import '../widgets/nutrition_card.dart';
+
 enum DropType { filter, sort }
 
 class NutritionPage extends StatelessWidget {
@@ -228,55 +230,6 @@ class NutritionCards extends StatelessWidget {
       children: cards.isNotEmpty
           ? cards
           : [const Text("You have not yet added any items")],
-    );
-  }
-}
-
-class NutCard extends StatelessWidget {
-  const NutCard({super.key, required this.nutrition, required this.settings});
-
-  final Nutrition nutrition;
-  final Settings settings;
-
-  @override
-  Widget build(BuildContext context) {
-    String energy;
-    if (settings.energy.unit == EnergyUnit.calories) {
-      energy = 'kcal';
-    } else {
-      energy = 'kJ';
-    }
-    return GreyCard(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(nutrition.item),
-              IconButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => NutritionInput(
-                            settings: settings,
-                            nutrition: nutrition,
-                            id: nutrition.id),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.edit))
-            ],
-          ),
-          const SizedBox(height: 25),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                  "${nutrition.energy}$energy per ${nutrition.quantity}${nutrition.unit}"),
-            ],
-          )
-        ],
-      ),
     );
   }
 }
