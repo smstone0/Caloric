@@ -102,6 +102,7 @@ class TodayPage extends StatelessWidget {
                           RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
+                              style: theme.textTheme.bodyMedium,
                               children: [
                                 TextSpan(
                                   text:
@@ -119,8 +120,7 @@ class TodayPage extends StatelessWidget {
                               onPressed: () {
                                 callback();
                               },
-                              colour:
-                                  Theme.of(context).cardColor.withOpacity(1),
+                              colour: theme.cardColor.withOpacity(1),
                               size: Size.large),
                         ],
                       ),

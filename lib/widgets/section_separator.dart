@@ -8,15 +8,10 @@ class SectionSeparator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 20),
-      child: SizedBox(
+      padding: const EdgeInsets.fromLTRB(60, 20, 60, 20),
+      child: Container(
         height: 1,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 60, right: 60),
-          child: Container(
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
+        color: Theme.of(context).primaryColor,
       ),
     );
   }

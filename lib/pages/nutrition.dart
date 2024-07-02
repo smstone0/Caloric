@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:caloric/databases/nutrition.dart';
 import 'package:caloric/databases/settings.dart';
 
+import '../widgets/nutrition_card.dart';
+
 enum DropType { filter, sort }
 
 class NutritionPage extends StatelessWidget {
@@ -15,66 +17,9 @@ class NutritionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).colorScheme.background));
-    return FutureBuilder<List<Nutrition>>(
-        future: NutritionDatabase().getNutrition(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            List<Nutrition> nutrition = snapshot.data!;
-            return NutritionPageContent(nutrition: nutrition);
-          }
-        });
-  }
-}
+    final ThemeData theme = Theme.of(context);
+    TextStyle style = DefaultTextStyle.of(context).style;
 
-class NutritionPageContent extends StatelessWidget {
-  const NutritionPageContent({super.key, required this.nutrition});
-
-  final List<Nutrition> nutrition;
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Settings>(
-        future: SettingsDatabase().getSettings(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            Settings settings = snapshot.data!;
-            return ListView(
-              children: [
-                const Heading(text: "Nutrition"),
-                RefineSearch(settings: settings, id: nutrition.length),
-                const SectionSeparator(),
-                NutritionCards(nutrition: nutrition, settings: settings),
-              ],
-            );
-          }
-        });
-  }
-}
-
-class RefineSearch extends StatelessWidget {
-  const RefineSearch({super.key, required this.settings, required this.id});
-
-  final Settings settings;
-  final int id;
-
-  @override
-  Widget build(BuildContext context) {
     List<String> filterList = [
       'Food',
       'Drink',
@@ -89,66 +34,109 @@ class RefineSearch extends StatelessWidget {
       'A-Z',
       'Z-A'
     ];
-    TextStyle style = DefaultTextStyle.of(context).style;
-    return GreyCard(
-        child: Wrap(
-      children: [
-        NutritionDropdown(
-            type: DropType.filter, list: filterList, display: 'Filter by'),
-        NutritionDropdown(
-            type: DropType.sort, list: sortList, display: 'Sort by'),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
-          // TODO: 46 x 80
-          child: IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) =>
-                      AddNutritionPage(settings: settings, id: id),
-                ),
-              );
-            },
-            icon: const Icon(Icons.add),
-            color: const Color.fromRGBO(205, 255, 182, 1),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
-          child: SizedBox(
-            width: 250,
-            height: 50,
-            child: TextField(
-              cursorColor: Colors.black,
-              decoration: InputDecoration(
-                filled: true,
-                hintText: "Search for item",
-                hintStyle: style,
-                prefixIcon: const Icon(Icons.search),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(45),
-                  borderSide: BorderSide(
-                    width: 1,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(45),
-                  borderSide: BorderSide(
-                    width: 2,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              ),
-              onSubmitted: (value) {},
-            ),
-          ),
-        ),
-      ],
-    ));
+
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: theme.colorScheme.background));
+    return FutureBuilder<List<Nutrition>>(
+        future: NutritionDatabase().getNutrition(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(color: theme.primaryColor),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            List<Nutrition> nutrition = snapshot.data!;
+            return FutureBuilder<Settings>(
+                future: SettingsDatabase().getSettings(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child:
+                          CircularProgressIndicator(color: theme.primaryColor),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    Settings settings = snapshot.data!;
+                    return ListView(
+                      children: [
+                        const Heading(text: "Nutrition"),
+                        GreyCard(
+                            child: Wrap(
+                          runSpacing: 5,
+                          children: [
+                            NutritionDropdown(
+                                type: DropType.filter,
+                                list: filterList,
+                                display: 'Filter by'),
+                            NutritionDropdown(
+                                type: DropType.sort,
+                                list: sortList,
+                                display: 'Sort by'),
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => NutritionInput(
+                                          settings: settings,
+                                          id: nutrition.length),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.add),
+                                color: settings.appearance ==
+                                            Appearance.light ||
+                                        settings.appearance ==
+                                                Appearance.system &&
+                                            MediaQuery.of(context)
+                                                    .platformBrightness ==
+                                                Brightness.light
+                                    ? Colors.black
+                                    : const Color.fromRGBO(205, 255, 182, 1)),
+                            SizedBox(
+                              height: 50,
+                              child: TextField(
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  hintText: "Search for item",
+                                  hintStyle: style,
+                                  prefixIcon: const Icon(Icons.search),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(45),
+                                    borderSide: BorderSide(
+                                      width: 1,
+                                      color: theme.primaryColor,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(45),
+                                    borderSide: BorderSide(
+                                      width: 2,
+                                      color: theme.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                                onSubmitted: (value) {},
+                              ),
+                            ),
+                          ],
+                        )),
+                        const SectionSeparator(),
+                        NutritionCards(
+                            nutrition: nutrition, settings: settings),
+                      ],
+                    );
+                  }
+                });
+          }
+        });
   }
 }
 
+//TODO: Combine settings and nutrition dropdowns
 class NutritionDropdown extends StatefulWidget {
   const NutritionDropdown(
       {super.key,
@@ -231,75 +219,17 @@ class NutritionCards extends StatelessWidget {
   final List<Nutrition> nutrition;
   final Settings settings;
 
-  List<NutCard> getCards(Settings settings) {
+  @override
+  Widget build(BuildContext context) {
     List<NutCard> cards = [];
     for (int i = 0; i < nutrition.length; i++) {
       cards.add(NutCard(nutrition: nutrition[i], settings: settings));
     }
-    return cards;
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    List<NutCard> nutCards = getCards(settings);
     return Column(
-      children: nutCards.isNotEmpty
-          ? nutCards
+      children: cards.isNotEmpty
+          ? cards
           : [const Text("You have not yet added any items")],
-    );
-  }
-}
-
-class NutCard extends StatelessWidget {
-  const NutCard({super.key, required this.nutrition, required this.settings});
-
-  final Nutrition nutrition;
-  final Settings settings;
-
-  @override
-  Widget build(BuildContext context) {
-    String energy;
-    if (settings.energy.unit == EnergyUnit.calories) {
-      energy = 'kcal';
-    } else {
-      energy = 'kJ';
-    }
-    return GreyCard(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 25),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(nutrition.item),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => AddNutritionPage(
-                                settings: settings,
-                                nutrition: nutrition,
-                                id: nutrition.id),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.edit))
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                    "${nutrition.energy}$energy per ${nutrition.quantity}${nutrition.unit}"),
-              ],
-            )
-          ],
-        ),
-      ),
     );
   }
 }
