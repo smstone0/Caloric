@@ -68,6 +68,7 @@ class _NutritionInputState extends State<NutritionInput> {
                   ],
                 ),
                 InputField(
+                  rightPadding: 50,
                   hintText: 'Enter name of item',
                   initialValue: widget.nutrition?.item,
                   validator: (value) {
@@ -78,6 +79,7 @@ class _NutritionInputState extends State<NutritionInput> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 20),
                 Row(
                   children: [
                     CustomButton(
@@ -112,6 +114,7 @@ class _NutritionInputState extends State<NutritionInput> {
                   ],
                 ),
                 InputField(
+                  rightPadding: 230,
                   initialValue: widget.nutrition?.energy.toString(),
                   suffix: Text(
                       widget.settings.energy.unit == EnergyUnit.calories
@@ -128,11 +131,13 @@ class _NutritionInputState extends State<NutritionInput> {
                 ),
                 Row(
                   children: [
-                    const Text("per "),
-                    SizedBox(
-                      width: 195,
-                      height: 30,
+                    const Padding(
+                      padding: EdgeInsets.only(top: 20, right: 5),
+                      child: Text("per "),
+                    ),
+                    Flexible(
                       child: InputField(
+                        rightPadding: 200,
                         suffix: Text(unit),
                         initialValue: widget.nutrition?.quantity.toString(),
                         validator: (value) {
@@ -147,6 +152,7 @@ class _NutritionInputState extends State<NutritionInput> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
                 CustomButton(
                     //TODO: Update main nutrition page
                     colour: theme.primaryColor,
