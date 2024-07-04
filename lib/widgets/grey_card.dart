@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:caloric/main.dart';
 
 class GreyCard extends StatelessWidget {
-  const GreyCard({super.key, required this.child});
+  const GreyCard({super.key, required this.child, this.topPadding});
 
   final Widget child;
+  final double? topPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +20,8 @@ class GreyCard extends StatelessWidget {
     }
     return Column(
       children: [
-        const SizedBox(
-          height: 20,
+        SizedBox(
+          height: topPadding ?? 20,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 20, right: 20),
@@ -30,7 +31,7 @@ class GreyCard extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
+                padding: const EdgeInsets.fromLTRB(20, 5, 20, 15),
                 child: child,
               ),
             ),

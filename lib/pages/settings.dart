@@ -1,7 +1,8 @@
+import 'package:caloric/widgets/section_title.dart';
+import 'package:caloric/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../main.dart';
-import '../widgets/grey_card.dart';
 import '../databases/settings.dart';
 import '../widgets/heading.dart';
 import 'package:caloric/widgets/section_separator.dart';
@@ -285,70 +286,6 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class SectionTitle extends StatelessWidget {
-  const SectionTitle({super.key, required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 35),
-      child: Text(title,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-    );
-  }
-}
-
-class SettingsCard extends StatelessWidget {
-  const SettingsCard({super.key, required this.children});
-
-  final List<(String, Widget)> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return GreyCard(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 300) {
-            return Column(
-                children: children.map<Widget>((value) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(value.$1),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 10, bottom: 10, right: 20),
-                    child: value.$2,
-                  )
-                ],
-              );
-            }).toList());
-          } else {
-            return Column(
-              children: children.map<Widget>((value) {
-                return Column(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Text(value.$1),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
-                      child: value.$2)
-                ]);
-              }).toList(),
-            );
-          }
-        },
       ),
     );
   }
