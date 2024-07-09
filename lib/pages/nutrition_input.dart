@@ -68,6 +68,8 @@ class _NutritionInputState extends State<NutritionInput> {
                   ],
                 ),
                 InputField(
+                  keyboardType: TextInputType.text,
+                  topPadding: 20,
                   rightPadding: 50,
                   hintText: 'Enter name of item',
                   initialValue: widget.nutrition?.item,
@@ -114,6 +116,8 @@ class _NutritionInputState extends State<NutritionInput> {
                   ],
                 ),
                 InputField(
+                  keyboardType: TextInputType.number,
+                  topPadding: 20,
                   rightPadding: 230,
                   initialValue: widget.nutrition?.energy.toString(),
                   suffix: Text(
@@ -137,6 +141,8 @@ class _NutritionInputState extends State<NutritionInput> {
                     ),
                     Flexible(
                       child: InputField(
+                        keyboardType: TextInputType.number,
+                        topPadding: 20,
                         rightPadding: 200,
                         suffix: Text(unit),
                         initialValue: widget.nutrition?.quantity.toString(),
