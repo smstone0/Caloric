@@ -15,15 +15,12 @@ class SettingsCard extends StatelessWidget {
           if (constraints.maxWidth > 300) {
             return Column(
                 children: children.map<Widget>((value) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(value.$1),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5, bottom: 5),
-                    child: value.$2,
-                  )
-                ],
+              return Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [Text(value.$1), value.$2],
+                ),
               );
             }).toList());
           } else {

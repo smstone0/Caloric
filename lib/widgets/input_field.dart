@@ -7,19 +7,32 @@ class InputField extends StatelessWidget {
       this.suffix,
       this.validator,
       this.hintText,
-      required this.rightPadding});
+      this.rightPadding,
+      this.topPadding,
+      this.leftPadding,
+      this.bottomPadding,
+      this.onEditingComplete,
+      this.controller,
+      required this.keyboardType});
 
   final String? initialValue;
   final Widget? suffix;
   final String? Function(String?)? validator;
   final String? hintText;
-  final double rightPadding;
+  final double? leftPadding, topPadding, rightPadding, bottomPadding;
+  final Function()? onEditingComplete;
+  final TextEditingController? controller;
+  final TextInputType keyboardType;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 20, right: rightPadding),
+      padding: EdgeInsets.fromLTRB(leftPadding ?? 0, topPadding ?? 0,
+          rightPadding ?? 0, bottomPadding ?? 0),
       child: TextFormField(
+        keyboardType: keyboardType,
+        controller: controller,
+        onEditingComplete: onEditingComplete,
         initialValue: initialValue,
         cursorColor: Colors.black,
         decoration: InputDecoration(

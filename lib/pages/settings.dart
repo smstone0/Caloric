@@ -1,3 +1,4 @@
+import 'package:caloric/widgets/input_field.dart';
 import 'package:caloric/widgets/section_title.dart';
 import 'package:caloric/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,12 @@ class _SettingsPageState extends State<SettingsPage> {
           return Text('Error: ${snapshot.error}');
         } else {
           Settings settings = snapshot.data!;
+          TextEditingController energyController = TextEditingController(
+              text: settings.energy.value.round().toString());
+          TextEditingController heightController = TextEditingController(
+              text: settings.height.value.round().toString());
+          TextEditingController weightController = TextEditingController(
+              text: settings.weight.value.round().toString());
           return ListView(
             children: [
               const Heading(text: "Settings"),
@@ -40,9 +47,23 @@ class _SettingsPageState extends State<SettingsPage> {
               SettingsCard(children: [
                 (
                   "Energy Goal",
-                  SettingsSlider(
-                    settings: settings,
-                    measurement: settings.energy,
+                  Expanded(
+                    child: InputField(
+                        keyboardType: TextInputType.number,
+                        controller: energyController,
+                        onEditingComplete: () {
+                          //TODO: Collapse tray, set to min/max if exceeded
+                          var energy = double.tryParse(energyController.text);
+                          if (energy is double) {
+                            settings.energy.value = energy;
+                            SettingsDatabase().updateSettings(settings);
+                          }
+                        },
+                        leftPadding: 150,
+                        //TODO: Suffix
+                        suffix: Text(settings.energy.unit == EnergyUnit.calories
+                            ? 'kcal'
+                            : 'kJ')),
                   ),
                 ),
                 (
@@ -62,10 +83,35 @@ class _SettingsPageState extends State<SettingsPage> {
               SettingsCard(children: [
                 (
                   "Height",
-                  SettingsSlider(
-                    settings: settings,
-                    measurement: settings.height,
-                  ),
+                  Builder(builder: (context) {
+                    if (settings.height.unit == HeightUnit.feet) {
+                      // return Row(
+                      //   children: [
+                      //     Expanded(child: InputField()),
+                      //     Expanded(
+                      //       child: InputField(),
+                      //     )
+                      //   ],
+                      // );
+                      return Text("Placeholder");
+                    }
+                    return Expanded(
+                      child: InputField(
+                        //TODO: Handle metres
+                        controller: heightController,
+                        keyboardType: TextInputType.number,
+                        leftPadding: 150,
+                        onEditingComplete: () {
+                          var height = double.tryParse(heightController.text);
+                          if (height is double) {
+                            settings.height.value = height;
+                            SettingsDatabase().updateSettings(settings);
+                          }
+                        },
+                        //TODO: Suffix
+                      ),
+                    );
+                  }),
                 ),
                 (
                   "Height Unit",
@@ -80,9 +126,21 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 (
                   "Weight",
-                  SettingsSlider(
-                    settings: settings,
-                    measurement: settings.weight,
+                  Expanded(
+                    child: InputField(
+                      //TODO: Handle stone
+                      controller: weightController,
+                      keyboardType: TextInputType.number,
+                      leftPadding: 150,
+                      onEditingComplete: () {
+                        var weight = double.tryParse(weightController.text);
+                        if (weight is double) {
+                          settings.weight.value = weight;
+                          SettingsDatabase().updateSettings(settings);
+                        }
+                      },
+                      //TODO: Suffix
+                    ),
                   ),
                 ),
                 (
@@ -117,56 +175,6 @@ class _SettingsPageState extends State<SettingsPage> {
         }
       },
     );
-  }
-}
-
-class SettingsSlider extends StatefulWidget {
-  final Settings settings;
-  final Measurement measurement;
-
-  const SettingsSlider({
-    super.key,
-    required this.settings,
-    required this.measurement,
-  });
-
-  @override
-  State<SettingsSlider> createState() => _SettingsSliderState();
-}
-
-class _SettingsSliderState extends State<SettingsSlider> {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        color: Theme.of(context).colorScheme.background,
-        elevation: 0,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Text(
-                widget.measurement.toString(),
-              ),
-            ),
-            Slider(
-              value: widget.measurement.value,
-              min: widget.measurement.min,
-              max: widget.measurement.max,
-              divisions: widget.measurement.divisions,
-              activeColor: Theme.of(context).primaryColor,
-              inactiveColor: Theme.of(context).cardColor,
-              onChanged: (double value) {
-                setState(() {
-                  widget.measurement.value = value;
-                });
-              },
-              onChangeEnd: (value) {
-                widget.measurement.value = value;
-                SettingsDatabase().updateSettings(widget.settings);
-              },
-            ),
-          ],
-        ));
   }
 }
 

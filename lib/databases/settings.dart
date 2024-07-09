@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+//TODO Refactor, get shortened name
+
 enum UnitSystem { metric, imperial }
 
 enum HeightUnit { metres, centimetres, feet, inches }
