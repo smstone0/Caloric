@@ -93,6 +93,7 @@ class _GenericDropdownState extends State<GenericDropdown> {
                                 : Colors.white)));
               }).toList(),
               value: orderedList.first,
+              borderRadius: BorderRadius.circular(10),
               style: DefaultTextStyle.of(context).style,
               dropdownColor: Theme.of(context).primaryColor,
               onChanged: (Enum? value) {
