@@ -3,7 +3,7 @@
     "short_name": "caloric",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#hexcode",
+    "background_color": "#ecdcfc",
     "theme_color": "#hexcode",
     "description": "A new Flutter project.",
     "orientation": "portrait-primary",
