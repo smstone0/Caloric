@@ -21,7 +21,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).colorScheme.background));
+        statusBarColor: Theme.of(context).colorScheme.surface));
     return FutureBuilder<Settings>(
       future: SettingsDatabase().getSettings(),
       builder: (context, snapshot) {
@@ -93,7 +93,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       //     )
                       //   ],
                       // );
-                      return Text("Placeholder");
+                      return const Text("Placeholder");
                     }
                     return Expanded(
                       child: InputField(
@@ -234,7 +234,7 @@ class _SettingsDropdownState extends State<SettingsDropdown> {
     }
 
     return Card(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 0,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
