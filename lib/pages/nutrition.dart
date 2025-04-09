@@ -36,7 +36,7 @@ class NutritionPage extends StatelessWidget {
     ];
 
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: theme.colorScheme.background));
+        SystemUiOverlayStyle(statusBarColor: theme.colorScheme.surface));
     return FutureBuilder<List<Nutrition>>(
         future: NutritionDatabase().getNutrition(),
         builder: (context, snapshot) {
@@ -166,7 +166,7 @@ class _NutritionDropdownState extends State<NutritionDropdown> {
     }
 
     return Card(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       elevation: 0,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
