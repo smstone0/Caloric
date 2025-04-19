@@ -1,3 +1,4 @@
+import 'package:caloric/main.dart';
 import 'package:caloric/widgets/generic_dropdown.dart';
 import 'package:caloric/widgets/input_field.dart';
 import 'package:caloric/widgets/section_title.dart';
@@ -68,14 +69,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 (
                   "Energy Unit",
-                  GenericDropdown(
-                      list: EnergyUnit.values,
-                      selection: settings.energy.unit,
-                      type: PropertyType.energy,
-                      settings: settings,
-                      rebuildPage: () {
-                        setState(() {});
-                      }),
+                  GenericDropdown<EnergyUnit>(
+                    list: EnergyUnit.values,
+                    selection: settings.energy.unit,
+                    onChanged: (newUnit) {
+                      settings.energy.unit = newUnit;
+                      SettingsDatabase().updateSettings(settings);
+                      setState(() {});
+                    },
+                  ),
                 )
               ]),
               const SectionSeparator(),
@@ -115,14 +117,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 (
                   "Height Unit",
-                  GenericDropdown(
+                    GenericDropdown<HeightUnit>(
                       list: HeightUnit.values,
                       selection: settings.height.unit,
-                      type: PropertyType.height,
-                      settings: settings,
-                      rebuildPage: () {
+                      onChanged: (newUnit) {
+                        settings.height.unit = newUnit;
+                        SettingsDatabase().updateSettings(settings);
                         setState(() {});
-                      }),
+                      },
+                    ),
                 ),
                 (
                   "Weight",
@@ -145,14 +148,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 (
                   "Weight Unit",
-                  GenericDropdown(
+                    GenericDropdown<WeightUnit>(
                       list: WeightUnit.values,
                       selection: settings.weight.unit,
-                      type: PropertyType.weight,
-                      settings: settings,
-                      rebuildPage: () {
+                      onChanged: (newUnit) {
+                        settings.weight.unit = newUnit;
+                        SettingsDatabase().updateSettings(settings);
                         setState(() {});
-                      }),
+                      },
+                    ),
                 )
               ]),
               const SectionSeparator(),
@@ -162,11 +166,16 @@ class _SettingsPageState extends State<SettingsPage> {
                   (
                     "Light/Dark Mode",
                     GenericDropdown<Appearance>(
-                        list: Appearance.values,
-                        selection: settings.appearance,
-                        type: PropertyType.appearance,
-                        settings: settings,
-                        rebuildPage: () {})
+                      list: Appearance.values,
+                      selection: settings.appearance,
+                      onChanged: (newUnit) {
+                        settings.appearance = newUnit;
+                        SettingsDatabase().updateSettings(settings);
+                        MyApp.of(context)!
+                        .changeTheme(settings.appearance.theme);
+                        setState(() {});
+                      },
+                    ),
                   )
                 ],
               )
