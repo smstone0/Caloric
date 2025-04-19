@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = const NutritionPage();
         break;
       case 2:
-        page = Placeholder();
+        page = const Placeholder();
         break;
       case 3:
         page = const SettingsPage();
@@ -131,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             child: Container(
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.surface,
               child: page,
             ),
           ),

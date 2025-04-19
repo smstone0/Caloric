@@ -1,3 +1,3 @@
 # Caloric
 
-A cross platform Flutter application for minimalistic, easy calorie counting.
+Cross-platform calorie counting app designed for minimalism and simplicity
