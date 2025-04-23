@@ -116,12 +116,12 @@ class TodayPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           CustomButton(
-                              widget: const Text("Update weight/height"),
-                              onPressed: () {
-                                callback();
-                              },
-                              colour: theme.cardColor.withOpacity(1),
-                              size: Size.large),
+                            widget: const Text("Update"),
+                            onPressed: () {
+                              callback();
+                            },
+                            colour: theme.cardColor.withOpacity(1),
+                          ),
                         ],
                       ),
                     ),

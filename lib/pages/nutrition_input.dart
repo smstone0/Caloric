@@ -85,34 +85,33 @@ class _NutritionInputState extends State<NutritionInput> {
                 Row(
                   children: [
                     CustomButton(
-                        widget: const Text("Food"),
-                        onPressed: () {
-                          setState(() {
-                            foodClick = true;
-                            drinkClick = false;
-                            type = NutType.food;
-                            unit = 'g';
-                          });
-                        },
-                        colour: foodClick == true
-                            ? theme.primaryColor
-                            : Colors.white,
-                        size: Size.small),
+                      widget: const Text("Food"),
+                      onPressed: () {
+                        setState(() {
+                          foodClick = true;
+                          drinkClick = false;
+                          type = NutType.food;
+                          unit = 'g';
+                        });
+                      },
+                      colour:
+                          foodClick == true ? theme.primaryColor : Colors.white,
+                    ),
                     const SizedBox(width: 5),
                     CustomButton(
-                        widget: const Text("Drink"),
-                        onPressed: () {
-                          setState(() {
-                            drinkClick = true;
-                            foodClick = false;
-                            type = NutType.drink;
-                            unit = 'ml';
-                          });
-                        },
-                        colour: drinkClick == true
-                            ? theme.primaryColor
-                            : Colors.white,
-                        size: Size.small)
+                      widget: const Text("Drink"),
+                      onPressed: () {
+                        setState(() {
+                          drinkClick = true;
+                          foodClick = false;
+                          type = NutType.drink;
+                          unit = 'ml';
+                        });
+                      },
+                      colour: drinkClick == true
+                          ? theme.primaryColor
+                          : Colors.white,
+                    )
                   ],
                 ),
                 InputField(
@@ -162,7 +161,6 @@ class _NutritionInputState extends State<NutritionInput> {
                 CustomButton(
                     //TODO: Update main nutrition page
                     colour: theme.primaryColor,
-                    size: Size.small,
                     onPressed: () {
                       if (_formKey.currentState!.validate() && foodClick ||
                           drinkClick) {
