@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/energy_ring.dart';
-import '../widgets/grey_card.dart';
+import '../widgets/generic_card.dart';
 import '../databases/settings.dart';
 import 'dart:math';
 import '../widgets/custom_button.dart';
@@ -62,7 +62,7 @@ class TodayPage extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    GreyCard(
+                    GenericCard(
                       child: Column(
                         children: [
                           Text("Nutrition for today",
@@ -96,7 +96,7 @@ class TodayPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    GreyCard(
+                    GenericCard(
                       child: Column(
                         children: [
                           RichText(

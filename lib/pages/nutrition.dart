@@ -1,6 +1,6 @@
 import 'package:caloric/main.dart';
 import 'package:caloric/pages/nutrition_input.dart';
-import 'package:caloric/widgets/grey_card.dart';
+import 'package:caloric/widgets/generic_card.dart';
 import 'package:caloric/widgets/section_separator.dart';
 import 'package:flutter/material.dart';
 import 'package:caloric/widgets/heading.dart';
@@ -63,7 +63,7 @@ class NutritionPage extends StatelessWidget {
                     return ListView(
                       children: [
                         const Heading(text: "Nutrition"),
-                        GreyCard(
+                        GenericCard(
                             child: Wrap(
                           runSpacing: 5,
                           children: [

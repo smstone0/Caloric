@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../databases/nutrition.dart';
 import '../databases/settings.dart';
 import '../pages/nutrition_input.dart';
-import 'grey_card.dart';
+import 'generic_card.dart';
 
 class NutCard extends StatelessWidget {
   const NutCard({super.key, required this.nutrition, required this.settings});
@@ -18,7 +18,7 @@ class NutCard extends StatelessWidget {
     } else {
       energy = 'kJ';
     }
-    return GreyCard(
+    return GenericCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

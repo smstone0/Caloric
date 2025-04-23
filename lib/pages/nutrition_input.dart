@@ -1,7 +1,7 @@
 import 'package:caloric/databases/nutrition.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/custom_button.dart';
-import 'package:caloric/widgets/grey_card.dart';
+import 'package:caloric/widgets/generic_card.dart';
 import 'package:caloric/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 
@@ -49,7 +49,7 @@ class _NutritionInputState extends State<NutritionInput> {
     return Material(
         child: ListView(
       children: [
-        GreyCard(
+        GenericCard(
           child: Form(
             key: _formKey,
             child: Column(
