@@ -1,3 +1,4 @@
+import 'package:caloric/widgets/day_breakdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/energy_ring.dart';
@@ -7,6 +8,7 @@ import 'dart:math';
 import '../widgets/custom_button.dart';
 import '../functions/datetime.dart';
 import '../functions/bmi.dart';
+import '../functions/current_date.dart';
 
 class TodayPage extends StatelessWidget {
   const TodayPage({super.key, required this.callback});
@@ -21,6 +23,7 @@ class TodayPage extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: theme.primaryColor));
     DateTime time = DateTime.now();
+    String currentDate = getCurrentDate();
     Color textColour = theme.primaryColor.computeLuminance() >= 0.5
         ? Colors.black
         : Colors.white;
@@ -62,40 +65,7 @@ class TodayPage extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    GenericCard(
-                      child: Column(
-                        children: [
-                          Text("Nutrition for today",
-                              style: theme.textTheme.bodyLarge),
-                          const SizedBox(height: 10),
-                          Wrap(
-                            spacing: 15,
-                            runSpacing: 15,
-                            alignment: WrapAlignment.center,
-                            children: [
-                              CustomButton(
-                                widget: const Text("Add"),
-                                onPressed: () {},
-                                colour: const Color.fromRGBO(205, 255, 182, 1),
-                                size: Size.medium,
-                              ),
-                              CustomButton(
-                                widget: const Text("View"),
-                                onPressed: () {},
-                                colour: const Color.fromRGBO(255, 212, 161, 1),
-                                size: Size.medium,
-                              ),
-                              CustomButton(
-                                widget: const Text("Remove"),
-                                onPressed: () {},
-                                colour: const Color.fromRGBO(229, 139, 139, 1),
-                                size: Size.medium,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                    DayBreakdown(date: currentDate),
                     GenericCard(
                       child: Column(
                         children: [
@@ -104,17 +74,27 @@ class TodayPage extends StatelessWidget {
                             text: TextSpan(
                               style: theme.textTheme.bodyMedium,
                               children: [
+                                const TextSpan(text: 'Your weight is '),
                                 TextSpan(
-                                  text:
-                                      "With a weight of ${settings.weight} and a height of ${settings.height}, your BMI is ",
-                                ),
+                                    text: '${settings.weight}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                                const TextSpan(text: '\nFor a height of '),
+                                TextSpan(
+                                    text: '${settings.height}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                                const TextSpan(
+                                    text: ', this means your BMI is '),
                                 TextSpan(
                                     text: bmi.toStringAsFixed(1),
-                                    style: TextStyle(color: getColourBMI(bmi))),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: getColourBMI(bmi))),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 5),
                           CustomButton(
                             widget: const Text("Update"),
                             onPressed: () {
