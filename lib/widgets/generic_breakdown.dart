@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:caloric/widgets/generic_card.dart';
-import 'package:caloric/functions/current_date.dart';
 
 class DayBreakdown extends StatelessWidget {
-  const DayBreakdown({super.key, required this.date});
+  const DayBreakdown({super.key, required this.dateDisplay, this.data});
 
-  final String date;
+  final String dateDisplay;
+  final List<dynamic>? data; //TODO: Change to correct type
 
   @override
   Widget build(BuildContext context) {
-    final String today = getCurrentDate();
     final ThemeData theme = Theme.of(context);
-    final data = true; //TODO: Get data from database
 
     return GenericCard(
       child: Column(
         children: [
           Row(
             children: [
-              Text(date == today ? 'Today\'s Nutrition' : date,
-                  style: theme.textTheme.titleMedium),
+              Text(dateDisplay, style: theme.textTheme.titleMedium),
             ],
           ),
           const Divider(),
@@ -27,7 +24,7 @@ class DayBreakdown extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: Column(
               children: [
-                true == true //TODO: Check data exists
+                true == true
                     ? Text("Nothing to show yet!",
                         style: theme.textTheme.bodyLarge!.copyWith(
                             color:
