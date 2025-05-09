@@ -15,8 +15,25 @@ class DayBreakdown extends StatelessWidget {
       child: Column(
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(dateDisplay, style: theme.textTheme.titleMedium),
+              Row(
+                children: [
+                  Text(dateDisplay, style: theme.textTheme.titleMedium),
+                  const SizedBox(width: 5),
+                  Icon(
+                    Icons.sort,
+                    size: 18,
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(Icons.remove, size: 18),
+                  const SizedBox(width: 5),
+                  Icon(Icons.add, size: 18),
+                ],
+              ),
             ],
           ),
           const Divider(),
