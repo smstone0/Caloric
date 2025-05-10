@@ -99,10 +99,10 @@ class _MyHomePageState extends State<MyHomePage> {
         );
         break;
       case 1:
-        page = const NutritionPage();
+        page = const Placeholder();
         break;
       case 2:
-        page = const Placeholder();
+        page = const NutritionPage();
         break;
       case 3:
         page = const SettingsPage();
@@ -115,9 +115,10 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: NavigationBar(
         indicatorColor: Theme.of(context).primaryColor.withGreen(200),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.fastfood), label: 'Nutrition'),
-          NavigationDestination(icon: Icon(Icons.history), label: 'History'),
+          NavigationDestination(icon: Icon(Icons.home), label: 'Today'),
+          NavigationDestination(
+              icon: Icon(Icons.calendar_month), label: 'Past'),
+          NavigationDestination(icon: Icon(Icons.fastfood), label: 'Items'),
           NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
         ],
         selectedIndex: selectedIndex,

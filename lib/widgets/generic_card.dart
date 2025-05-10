@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:caloric/main.dart';
 
-class GreyCard extends StatelessWidget {
-  const GreyCard({super.key, required this.child, this.topPadding});
+class GenericCard extends StatelessWidget {
+  const GenericCard({super.key, required this.child, this.topPadding});
 
   final Widget child;
   final double? topPadding;

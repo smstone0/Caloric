@@ -1,7 +1,7 @@
 import 'package:caloric/databases/nutrition.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/custom_button.dart';
-import 'package:caloric/widgets/grey_card.dart';
+import 'package:caloric/widgets/generic_card.dart';
 import 'package:caloric/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 
@@ -49,7 +49,7 @@ class _NutritionInputState extends State<NutritionInput> {
     return Material(
         child: ListView(
       children: [
-        GreyCard(
+        GenericCard(
           child: Form(
             key: _formKey,
             child: Column(
@@ -85,34 +85,33 @@ class _NutritionInputState extends State<NutritionInput> {
                 Row(
                   children: [
                     CustomButton(
-                        widget: const Text("Food"),
-                        onPressed: () {
-                          setState(() {
-                            foodClick = true;
-                            drinkClick = false;
-                            type = NutType.food;
-                            unit = 'g';
-                          });
-                        },
-                        colour: foodClick == true
-                            ? theme.primaryColor
-                            : Colors.white,
-                        size: Size.small),
+                      widget: const Text("Food"),
+                      onPressed: () {
+                        setState(() {
+                          foodClick = true;
+                          drinkClick = false;
+                          type = NutType.food;
+                          unit = 'g';
+                        });
+                      },
+                      colour:
+                          foodClick == true ? theme.primaryColor : Colors.white,
+                    ),
                     const SizedBox(width: 5),
                     CustomButton(
-                        widget: const Text("Drink"),
-                        onPressed: () {
-                          setState(() {
-                            drinkClick = true;
-                            foodClick = false;
-                            type = NutType.drink;
-                            unit = 'ml';
-                          });
-                        },
-                        colour: drinkClick == true
-                            ? theme.primaryColor
-                            : Colors.white,
-                        size: Size.small)
+                      widget: const Text("Drink"),
+                      onPressed: () {
+                        setState(() {
+                          drinkClick = true;
+                          foodClick = false;
+                          type = NutType.drink;
+                          unit = 'ml';
+                        });
+                      },
+                      colour: drinkClick == true
+                          ? theme.primaryColor
+                          : Colors.white,
+                    )
                   ],
                 ),
                 InputField(
@@ -162,7 +161,6 @@ class _NutritionInputState extends State<NutritionInput> {
                 CustomButton(
                     //TODO: Update main nutrition page
                     colour: theme.primaryColor,
-                    size: Size.small,
                     onPressed: () {
                       if (_formKey.currentState!.validate() && foodClick ||
                           drinkClick) {

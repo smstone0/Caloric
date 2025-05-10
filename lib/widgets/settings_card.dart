@@ -1,4 +1,4 @@
-import 'package:caloric/widgets/grey_card.dart';
+import 'package:caloric/widgets/generic_card.dart';
 import 'package:flutter/material.dart';
 
 class SettingsCard extends StatelessWidget {
@@ -8,7 +8,7 @@ class SettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GreyCard(
+    return GenericCard(
       topPadding: 5,
       child: LayoutBuilder(
         builder: (context, constraints) {

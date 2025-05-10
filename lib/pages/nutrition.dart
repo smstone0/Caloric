@@ -1,39 +1,30 @@
-import 'package:caloric/main.dart';
 import 'package:caloric/pages/nutrition_input.dart';
-import 'package:caloric/widgets/grey_card.dart';
+import 'package:caloric/widgets/generic_card.dart';
 import 'package:caloric/widgets/section_separator.dart';
 import 'package:flutter/material.dart';
 import 'package:caloric/widgets/heading.dart';
 import 'package:flutter/services.dart';
 import 'package:caloric/databases/nutrition.dart';
 import 'package:caloric/databases/settings.dart';
-
+import 'package:caloric/widgets/generic_dropdown.dart';
 import '../widgets/nutrition_card.dart';
 
-enum DropType { filter, sort }
+enum Sort { oldToNew, newToOld, lowToHigh, highToLow, aToZ, zToA }
 
-class NutritionPage extends StatelessWidget {
+class NutritionPage extends StatefulWidget {
   const NutritionPage({super.key});
+
+  @override
+  State<NutritionPage> createState() => _NutritionPageState();
+}
+
+class _NutritionPageState extends State<NutritionPage> {
+  Sort _selectedSort = Sort.newToOld;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     TextStyle style = DefaultTextStyle.of(context).style;
-
-    List<String> filterList = [
-      'Food',
-      'Drink',
-      'Less than x',
-      'More than x',
-    ];
-    List<String> sortList = [
-      'Oldest to newest',
-      'Newest to oldest',
-      'Low to high',
-      'High to low',
-      'A-Z',
-      'Z-A'
-    ];
 
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: theme.colorScheme.surface));
@@ -63,18 +54,19 @@ class NutritionPage extends StatelessWidget {
                     return ListView(
                       children: [
                         const Heading(text: "Nutrition"),
-                        GreyCard(
+                        GenericCard(
                             child: Wrap(
                           runSpacing: 5,
                           children: [
-                            NutritionDropdown(
-                                type: DropType.filter,
-                                list: filterList,
-                                display: 'Filter by'),
-                            NutritionDropdown(
-                                type: DropType.sort,
-                                list: sortList,
-                                display: 'Sort by'),
+                            GenericDropdown<Sort>(
+                              list: Sort.values,
+                              selection: _selectedSort,
+                              onChanged: (value) {
+                                //Sort cards
+                                _selectedSort = value;
+                                setState(() {});
+                              },
+                            ),
                             IconButton(
                                 onPressed: () {
                                   Navigator.of(context).push(
@@ -133,82 +125,6 @@ class NutritionPage extends StatelessWidget {
                 });
           }
         });
-  }
-}
-
-//TODO: Combine settings and nutrition dropdowns
-class NutritionDropdown extends StatefulWidget {
-  const NutritionDropdown(
-      {super.key,
-      required this.type,
-      required this.list,
-      required this.display});
-
-  final DropType type;
-  final String display;
-  final List<String> list;
-
-  @override
-  State<NutritionDropdown> createState() => _NutritionDropdownState();
-}
-
-class _NutritionDropdownState extends State<NutritionDropdown> {
-  @override
-  Widget build(BuildContext context) {
-    Color colour;
-    Brightness systemBrightness = MediaQuery.of(context).platformBrightness;
-    if (MyApp.of(context)!.getThemeMode() == ThemeMode.light ||
-        (MyApp.of(context)!.getThemeMode() == ThemeMode.system &&
-            systemBrightness == Brightness.light)) {
-      colour = Colors.black;
-    } else {
-      colour = Colors.white;
-    }
-
-    return Card(
-      color: Theme.of(context).colorScheme.surface,
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: SizedBox(
-          width: 110,
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton(
-              selectedItemBuilder: (BuildContext context) {
-                return widget.list.map<Widget>((String item) {
-                  return Center(
-                    child: Text(
-                      widget.display,
-                      style: TextStyle(
-                        color: colour,
-                      ),
-                    ),
-                  );
-                }).toList();
-              },
-              items: widget.list.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value,
-                        style: TextStyle(
-                            color: Theme.of(context)
-                                        .primaryColor
-                                        .computeLuminance() >=
-                                    0.5
-                                ? Colors.black
-                                : Colors.white)));
-              }).toList(),
-              value: widget.list.first,
-              style: DefaultTextStyle.of(context).style,
-              dropdownColor: Theme.of(context).primaryColor,
-              onChanged: (String? value) {
-                setState(() {});
-              },
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 
