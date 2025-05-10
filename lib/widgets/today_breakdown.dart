@@ -22,8 +22,8 @@ class TodayBreakdown extends StatelessWidget {
     Color textColour = theme.primaryColor.computeLuminance() >= 0.5
         ? Colors.black
         : Colors.white;
-
-    // TODO: Get today db data with currentDate
+    List<dynamic> data = []; // TODO: Get today's data from the database
+    int energyConsumed = 0; // TODO: Calculate energy consumed from today's data
 
     return Column(
       children: [
@@ -44,12 +44,12 @@ class TodayBreakdown extends StatelessWidget {
                     size: 140,
                     target: settings.energy.value,
                     type: settings.energy.unit,
-                    energyConsumed: 0), //TODO: Call calculate function passing in db data
+                    energyConsumed: 0),
               ),
             ],
           ),
         ),
-        DayBreakdown(dateDisplay: "Today's Nutrition")
+        GenericBreakdown(dateDisplay: "Today's Nutrition", data: data)
       ],
     );
   }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:caloric/widgets/generic_card.dart';
 
-class DayBreakdown extends StatelessWidget {
-  const DayBreakdown({super.key, required this.dateDisplay, this.data});
+class GenericBreakdown extends StatelessWidget {
+  const GenericBreakdown(
+      {super.key, required this.dateDisplay, required this.data});
 
   final String dateDisplay;
-  final List<dynamic>? data; //TODO: Change to correct type
+  final List<dynamic> data;
 
   @override
   Widget build(BuildContext context) {
@@ -20,18 +21,24 @@ class DayBreakdown extends StatelessWidget {
               Row(
                 children: [
                   Text(dateDisplay, style: theme.textTheme.titleMedium),
-                  const SizedBox(width: 5),
-                  Icon(
-                    Icons.sort,
-                    size: 18,
-                  ),
+                  IconButton(
+                      icon: Icon(
+                        Icons.sort,
+                        size: 18,
+                      ),
+                      onPressed: () {}),
                 ],
               ),
               Row(
                 children: [
-                  Icon(Icons.remove, size: 18),
-                  const SizedBox(width: 5),
-                  Icon(Icons.add, size: 18),
+                  IconButton(
+                    icon: Icon(Icons.remove, size: 18),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.add, size: 18),
+                    onPressed: () {},
+                  ),
                 ],
               ),
             ],
