@@ -30,12 +30,17 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
               Row(
                 children: [
                   Text(widget.dateDisplay, style: theme.textTheme.titleMedium),
-                  IconButton(
-                      icon: Icon(
-                        Icons.sort,
-                        size: 18,
-                      ),
-                      onPressed: () {}),
+                  Stack(
+                    children: [
+                      //TODO: Add dropdown menu for sorting
+                      IconButton(
+                          icon: Icon(
+                            Icons.sort,
+                            size: 18,
+                          ),
+                          onPressed: () {}),
+                    ],
+                  ),
                 ],
               ),
               Row(
