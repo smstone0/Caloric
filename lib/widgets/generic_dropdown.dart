@@ -29,7 +29,13 @@ class _GenericDropdownState<T extends Enum> extends State<GenericDropdown<T>> {
   }
 
   String capitalise(String text) {
-    return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
+    // Split text by camel case and capitalize each word
+    final words = text.replaceAllMapped(
+      RegExp(r'(?<=[a-z])(?=[A-Z])'),
+      (match) => ' ',
+    ).split(' ');
+
+    return words.map((word) => "${word[0].toUpperCase()}${word.substring(1).toLowerCase()}").join(' ');
   }
 
   @override
