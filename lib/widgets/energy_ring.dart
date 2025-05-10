@@ -32,9 +32,14 @@ class CalorieRing extends StatelessWidget {
             strokeWidth: 7,
           ),
         ),
-        Text("$energyConsumed/${target.round()}",
-            style: TextStyle(fontSize: 16.5, color: colour)),
-        Text("\n\n${type.name}", style: TextStyle(color: colour)),
+        Positioned(
+            child: Column(
+          children: [
+            Text("$energyConsumed/${target.round()}",
+                style: TextStyle(fontSize: 16.5, color: colour)),
+            Text(type.name, style: TextStyle(fontSize: 12, color: colour)),
+          ],
+        )),
       ],
     );
   }
