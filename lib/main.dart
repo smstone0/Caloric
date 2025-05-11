@@ -1,8 +1,9 @@
-import 'package:caloric/pages/nutrition.dart';
 import 'package:flutter/material.dart';
 import 'databases/settings.dart';
 import 'pages/today.dart';
 import 'pages/settings.dart';
+import 'pages/past.dart';
+import 'pages/nutrition.dart';
 
 void main() {
   runApp(const MyApp());
@@ -99,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
         );
         break;
       case 1:
-        page = const Placeholder();
+        page = const PastPage();
         break;
       case 2:
         page = const NutritionPage();
