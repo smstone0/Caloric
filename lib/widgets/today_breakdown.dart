@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/energy_ring.dart';
 import '../databases/settings.dart';
-import '../functions/datetime.dart';
-import '../functions/current_date.dart';
+import '../functions/dates.dart';
 
 class TodayBreakdown extends StatelessWidget {
   const TodayBreakdown({super.key, required this.settings});
@@ -22,7 +21,7 @@ class TodayBreakdown extends StatelessWidget {
     Color textColour = theme.primaryColor.computeLuminance() >= 0.5
         ? Colors.black
         : Colors.white;
-    List<dynamic> data = []; // TODO: Get today's data from the database
+    List<dynamic> data = []; // TODO: Get today's data from the database with currentDate
     int energyConsumed = 0; // TODO: Calculate energy consumed from today's data
 
     return Column(
