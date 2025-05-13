@@ -18,26 +18,20 @@ class GenericCard extends StatelessWidget {
     } else {
       colour = const Color.fromRGBO(217, 217, 217, 0.1);
     }
-    return Column(
-      children: [
-        SizedBox(
-          height: topPadding ?? 20,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Card(
-            elevation: 0,
-            color: colour,
-            child: SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 5, 20, 15),
-                child: child,
-              ),
-            ),
+    return Padding(
+      padding: EdgeInsets.only(top: topPadding ?? 20, left: 20, right: 20),
+      child: Card(
+        margin: const EdgeInsets.only(top: 0, bottom: 0, left: 4, right: 4),
+        elevation: 0,
+        color: colour,
+        child: SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 5, 20, 15),
+            child: child,
           ),
         ),
-      ],
+      ),
     );
   }
 }
