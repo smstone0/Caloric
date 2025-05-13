@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 
 /// Add or edit an existing nutrition item
 
-class NutritionInput extends StatefulWidget {
-  const NutritionInput(
+class AddItem extends StatefulWidget {
+  const AddItem(
       {super.key, required this.settings, this.nutrition, required this.id});
 
   final Settings settings;
@@ -16,10 +16,10 @@ class NutritionInput extends StatefulWidget {
   final int id;
 
   @override
-  State<NutritionInput> createState() => _NutritionInputState();
+  State<AddItem> createState() => _AddItemState();
 }
 
-class _NutritionInputState extends State<NutritionInput> {
+class _AddItemState extends State<AddItem> {
   @override
   void initState() {
     super.initState();

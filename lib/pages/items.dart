@@ -1,4 +1,4 @@
-import 'package:caloric/pages/nutrition_input.dart';
+import 'package:caloric/pages/add_item.dart';
 import 'package:caloric/widgets/generic_card.dart';
 import 'package:caloric/widgets/section_separator.dart';
 import 'package:flutter/material.dart';
@@ -7,18 +7,18 @@ import 'package:flutter/services.dart';
 import 'package:caloric/databases/nutrition.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/generic_dropdown.dart';
-import '../widgets/nutrition_card.dart';
+import '../widgets/item_card.dart';
 
 enum Sort { oldToNew, newToOld, lowToHigh, highToLow, aToZ, zToA }
 
-class NutritionPage extends StatefulWidget {
-  const NutritionPage({super.key});
+class ItemPage extends StatefulWidget {
+  const ItemPage({super.key});
 
   @override
-  State<NutritionPage> createState() => _NutritionPageState();
+  State<ItemPage> createState() => _ItemPageState();
 }
 
-class _NutritionPageState extends State<NutritionPage> {
+class _ItemPageState extends State<ItemPage> {
   Sort _selectedSort = Sort.newToOld;
 
   @override
@@ -71,7 +71,7 @@ class _NutritionPageState extends State<NutritionPage> {
                                 onPressed: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => NutritionInput(
+                                      builder: (context) => AddItem(
                                           settings: settings,
                                           id: nutrition.length),
                                     ),
@@ -117,8 +117,7 @@ class _NutritionPageState extends State<NutritionPage> {
                           ],
                         )),
                         const SectionSeparator(),
-                        NutritionCards(
-                            nutrition: nutrition, settings: settings),
+                        ItemCards(nutrition: nutrition, settings: settings),
                       ],
                     );
                   }
@@ -128,18 +127,17 @@ class _NutritionPageState extends State<NutritionPage> {
   }
 }
 
-class NutritionCards extends StatelessWidget {
-  const NutritionCards(
-      {super.key, required this.nutrition, required this.settings});
+class ItemCards extends StatelessWidget {
+  const ItemCards({super.key, required this.nutrition, required this.settings});
 
   final List<Nutrition> nutrition;
   final Settings settings;
 
   @override
   Widget build(BuildContext context) {
-    List<NutCard> cards = [];
+    List<ItemCard> cards = [];
     for (int i = 0; i < nutrition.length; i++) {
-      cards.add(NutCard(nutrition: nutrition[i], settings: settings));
+      cards.add(ItemCard(nutrition: nutrition[i], settings: settings));
     }
 
     return Column(

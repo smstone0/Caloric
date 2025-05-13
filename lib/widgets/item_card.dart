@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../databases/nutrition.dart';
 import '../databases/settings.dart';
-import '../pages/nutrition_input.dart';
+import '../pages/add_item.dart';
 import 'generic_card.dart';
 
-class NutCard extends StatelessWidget {
-  const NutCard({super.key, required this.nutrition, required this.settings});
+class ItemCard extends StatelessWidget {
+  const ItemCard({super.key, required this.nutrition, required this.settings});
 
   final Nutrition nutrition;
   final Settings settings;
@@ -33,7 +33,7 @@ class NutCard extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => NutritionInput(
+                        builder: (context) => AddItem(
                             settings: settings,
                             nutrition: nutrition,
                             id: nutrition.id),

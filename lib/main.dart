@@ -3,7 +3,7 @@ import 'databases/settings.dart';
 import 'pages/today.dart';
 import 'pages/settings.dart';
 import 'pages/past.dart';
-import 'pages/nutrition.dart';
+import 'pages/items.dart';
 
 void main() {
   runApp(const MyApp());
@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = const PastPage();
         break;
       case 2:
-        page = const NutritionPage();
+        page = const ItemPage();
         break;
       case 3:
         page = const SettingsPage();
