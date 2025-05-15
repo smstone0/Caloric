@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CalorieRing extends StatelessWidget {
-  const CalorieRing(
+class EnergyRing extends StatelessWidget {
+  const EnergyRing(
       {super.key,
       required this.size,
       required this.target,
