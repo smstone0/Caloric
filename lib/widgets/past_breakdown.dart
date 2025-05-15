@@ -21,23 +21,36 @@ class PastBreakdown extends StatelessWidget {
 
     return Column(
       children: [
-        Container(
-          color: theme.primaryColor,
-          child: Column(
-            children: [
-              const SizedBox(height: 10, width: double.infinity),
-              Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 20),
-                child: CalorieRing(
-                    size: 140,
+        SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 24, right: 24),
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+              child: Container(
+                color: theme.primaryColor,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20, bottom: 20),
+                  child: EnergyRing(
+                    size: 100,
                     target: settings.energy.value,
                     type: settings.energy.unit,
-                    energyConsumed: 0),
+                    energyConsumed: 0,
+                  ),
+                ),
               ),
-            ],
+            ),
           ),
         ),
-        GenericBreakdown(dateDisplay: displayDate(date), data: data)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 25),
+          child: GenericBreakdown(
+              dateDisplay: displayDate(date),
+              data: data,
+              topRadius: 0,
+              topPadding: 0),
+        ),
       ],
     );
   }

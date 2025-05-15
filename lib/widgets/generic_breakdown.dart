@@ -5,10 +5,16 @@ enum Sort { oldToNew, newToOld, lowToHigh, highToLow, aToZ, zToA }
 
 class GenericBreakdown extends StatefulWidget {
   const GenericBreakdown(
-      {super.key, required this.dateDisplay, required this.data});
+      {super.key,
+      required this.dateDisplay,
+      required this.data,
+      this.topRadius,
+      this.topPadding});
 
   final String dateDisplay;
   final List<dynamic> data;
+  final double? topRadius;
+  final double? topPadding;
 
   @override
   State<GenericBreakdown> createState() => _GenericBreakdownState();
@@ -22,6 +28,8 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
     final ThemeData theme = Theme.of(context);
 
     return GenericCard(
+      topRadius: widget.topRadius,
+      topPadding: widget.topPadding,
       child: Column(
         children: [
           Row(

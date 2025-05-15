@@ -21,7 +21,8 @@ class TodayBreakdown extends StatelessWidget {
     Color textColour = theme.primaryColor.computeLuminance() >= 0.5
         ? Colors.black
         : Colors.white;
-    List<dynamic> data = []; // TODO: Get today's data from the database with currentDate
+    List<dynamic> data =
+        []; // TODO: Get today's data from the database with currentDate
     int energyConsumed = 0; // TODO: Calculate energy consumed from today's data
 
     return Column(
@@ -39,7 +40,7 @@ class TodayBreakdown extends StatelessWidget {
                       theme.textTheme.bodyLarge!.copyWith(color: textColour)),
               Padding(
                 padding: const EdgeInsets.only(top: 20, bottom: 20),
-                child: CalorieRing(
+                child: EnergyRing(
                     size: 140,
                     target: settings.energy.value,
                     type: settings.energy.unit,
