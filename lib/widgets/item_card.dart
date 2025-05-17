@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import '../databases/nutrition.dart';
+import '../databases/items.dart';
 import '../databases/settings.dart';
-import '../pages/add_item.dart';
 import 'generic_card.dart';
 
 class ItemCard extends StatelessWidget {
-  const ItemCard({super.key, required this.nutrition, required this.settings});
+  const ItemCard({super.key, required this.item, required this.settings});
 
-  final Nutrition nutrition;
+  final Item item;
   final Settings settings;
 
   @override
@@ -26,34 +25,19 @@ class ItemCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                nutrition.item,
+                item.itemName,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              IconButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => AddItem(
-                            settings: settings,
-                            nutrition: nutrition,
-                            id: nutrition.id),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.edit))
             ],
           ),
-          Text(nutrition.type.name),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text("Added on ${nutrition.creationDate}"),
               Column(
                 children: [
-                  //TODO: Optional add/remove to day button
                   Text(
-                      "${nutrition.energy}$energy per ${nutrition.quantity}${nutrition.unit}"),
+                      "${item.kcalPer100Unit}$energy per 100 ${item.unit?.name}"),
                 ],
               ),
             ],

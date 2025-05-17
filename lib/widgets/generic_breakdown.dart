@@ -81,31 +81,38 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: Column(
               children: [
-                false == true
+                widget.data.isEmpty
                     ? Text("Nothing to show yet!",
                         style: theme.textTheme.bodyLarge!.copyWith(
                             color:
                                 theme.colorScheme.onSurface.withOpacity(0.5)))
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    : Column(
                         children: [
-                          //TODO: Loop through db data with builder
-                          Text("Breakfast", style: theme.textTheme.bodyLarge),
-                          Row(
-                            children: [
-                              Text("Calories",
-                                  style: theme.textTheme.bodyLarge),
-                              Visibility(
-                                visible: _removeSelected,
-                                maintainSize: true,
-                                maintainAnimation: true,
-                                maintainState: true,
-                                child: IconButton(
-                                  icon: Icon(Icons.remove, size: 18),
-                                  onPressed: () {},
+                          ...widget.data.map(
+                            (item) => Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    "${item.amount} ${item.recordedByUnit} ${item.itemName}",
+                                    style: theme.textTheme.bodyLarge),
+                                Row(
+                                  children: [
+                                    Text("${item.totalKcal} kcal",
+                                        style: theme.textTheme.bodyLarge),
+                                    Visibility(
+                                      visible: _removeSelected,
+                                      maintainSize: true,
+                                      maintainAnimation: true,
+                                      maintainState: true,
+                                      child: IconButton(
+                                        icon: Icon(Icons.remove, size: 18),
+                                        onPressed: () {},
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              )
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),
