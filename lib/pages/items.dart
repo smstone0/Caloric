@@ -4,7 +4,7 @@ import 'package:caloric/widgets/section_separator.dart';
 import 'package:flutter/material.dart';
 import 'package:caloric/widgets/heading.dart';
 import 'package:flutter/services.dart';
-import 'package:caloric/databases/nutrition.dart';
+import 'package:caloric/databases/items.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/generic_dropdown.dart';
 import '../widgets/item_card.dart';
@@ -28,8 +28,8 @@ class _ItemPageState extends State<ItemPage> {
 
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: theme.colorScheme.surface));
-    return FutureBuilder<List<Nutrition>>(
-        future: NutritionDatabase().getNutrition(),
+    return FutureBuilder<List<Item>>(
+        future: ItemDatabase().getItems(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -38,7 +38,7 @@ class _ItemPageState extends State<ItemPage> {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            List<Nutrition> nutrition = snapshot.data!;
+            List<Item> items = snapshot.data!;
             return FutureBuilder<Settings>(
                 future: SettingsDatabase().getSettings(),
                 builder: (context, snapshot) {
@@ -71,9 +71,8 @@ class _ItemPageState extends State<ItemPage> {
                                 onPressed: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => AddItem(
-                                          settings: settings,
-                                          id: nutrition.length),
+                                      builder: (context) =>
+                                          AddItem(settings: settings),
                                     ),
                                   );
                                 },
@@ -117,33 +116,15 @@ class _ItemPageState extends State<ItemPage> {
                           ],
                         )),
                         const SectionSeparator(),
-                        ItemCards(nutrition: nutrition, settings: settings),
+                        if (items.isEmpty)
+                          const Text("You have not yet added any items"),
+                        ...items.map(
+                            (item) => ItemCard(settings: settings, item: item)),
                       ],
                     );
                   }
                 });
           }
         });
-  }
-}
-
-class ItemCards extends StatelessWidget {
-  const ItemCards({super.key, required this.nutrition, required this.settings});
-
-  final List<Nutrition> nutrition;
-  final Settings settings;
-
-  @override
-  Widget build(BuildContext context) {
-    List<ItemCard> cards = [];
-    for (int i = 0; i < nutrition.length; i++) {
-      cards.add(ItemCard(nutrition: nutrition[i], settings: settings));
-    }
-
-    return Column(
-      children: cards.isNotEmpty
-          ? cards
-          : [const Text("You have not yet added any items")],
-    );
   }
 }

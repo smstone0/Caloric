@@ -1,19 +1,15 @@
-import 'package:caloric/databases/nutrition.dart';
+import 'package:caloric/databases/items.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/generic_card.dart';
 import 'package:caloric/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-
-/// Add or edit an existing nutrition item
+import '../functions/dates.dart';
 
 class AddItem extends StatefulWidget {
-  const AddItem(
-      {super.key, required this.settings, this.nutrition, required this.id});
+  const AddItem({super.key, required this.settings});
 
   final Settings settings;
-  final Nutrition? nutrition;
-  final int id;
 
   @override
   State<AddItem> createState() => _AddItemState();
@@ -23,21 +19,9 @@ class _AddItemState extends State<AddItem> {
   @override
   void initState() {
     super.initState();
-    if (widget.nutrition?.type == NutType.food) {
-      type = NutType.food;
-      foodClick = true;
-      unit = 'g';
-    }
-    if (widget.nutrition?.type == NutType.drink) {
-      type = NutType.drink;
-      drinkClick = true;
-      unit = 'ml';
-    }
   }
 
-  bool foodClick = false;
-  bool drinkClick = false;
-  late NutType type;
+  late Unit type;
   String unit = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late String itemName;
@@ -57,8 +41,7 @@ class _AddItemState extends State<AddItem> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(widget.nutrition == null ? "Add item" : "Edit item",
-                        style: theme.textTheme.titleMedium),
+                    Text("Save new item", style: theme.textTheme.titleMedium),
                     IconButton(
                       onPressed: () {
                         Navigator.pop(context);
@@ -72,7 +55,6 @@ class _AddItemState extends State<AddItem> {
                   topPadding: 20,
                   rightPadding: 50,
                   hintText: 'Enter name of item',
-                  initialValue: widget.nutrition?.item,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter an item name';
@@ -82,43 +64,10 @@ class _AddItemState extends State<AddItem> {
                   },
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    CustomButton(
-                      widget: const Text("Food"),
-                      onPressed: () {
-                        setState(() {
-                          foodClick = true;
-                          drinkClick = false;
-                          type = NutType.food;
-                          unit = 'g';
-                        });
-                      },
-                      colour:
-                          foodClick == true ? theme.primaryColor : Colors.white,
-                    ),
-                    const SizedBox(width: 5),
-                    CustomButton(
-                      widget: const Text("Drink"),
-                      onPressed: () {
-                        setState(() {
-                          drinkClick = true;
-                          foodClick = false;
-                          type = NutType.drink;
-                          unit = 'ml';
-                        });
-                      },
-                      colour: drinkClick == true
-                          ? theme.primaryColor
-                          : Colors.white,
-                    )
-                  ],
-                ),
                 InputField(
                   keyboardType: TextInputType.number,
                   topPadding: 20,
                   rightPadding: 230,
-                  initialValue: widget.nutrition?.energy.toString(),
                   suffix: Text(
                       widget.settings.energy.unit == EnergyUnit.calories
                           ? 'kcal'
@@ -144,7 +93,6 @@ class _AddItemState extends State<AddItem> {
                         topPadding: 20,
                         rightPadding: 200,
                         suffix: Text(unit),
-                        initialValue: widget.nutrition?.quantity.toString(),
                         validator: (value) {
                           var val = int.tryParse(value!);
                           if (val is int) {
@@ -159,26 +107,20 @@ class _AddItemState extends State<AddItem> {
                 ),
                 const SizedBox(height: 20),
                 CustomButton(
-                    //TODO: Update main nutrition page
                     colour: theme.primaryColor,
                     onPressed: () {
-                      if (_formKey.currentState!.validate() && foodClick ||
-                          drinkClick) {
-                        DateTime time = DateTime.now();
-                        NutritionDatabase().insertNutrition(Nutrition(
-                            id: widget.id,
-                            item: itemName,
-                            energy: energy,
-                            type: type,
-                            quantity: portion,
-                            unit: unit,
-                            creationDate:
-                                '${time.day}/${time.month}/${time.year}'));
+                      if (_formKey.currentState!.validate()) {
+                        ItemDatabase().insertItem(Item(
+                            id: 1, //TODO: Update to auto increment
+                            itemName: itemName,
+                            dateSaved: getCurrentDate(),
+                            kcalPer100Unit: 100,
+                            unit: Unit.g,
+                            customUnitName: "A custom unit",
+                            kcalPerCustomUnit: 100));
                       }
                     },
-                    widget: widget.nutrition == null
-                        ? const Text("Add")
-                        : const Text("Edit"))
+                    widget: const Text("Add"))
               ],
             ),
           ),
