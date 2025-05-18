@@ -6,7 +6,7 @@ import '../functions/dates.dart';
 enum Unit { g, ml }
 
 class Item {
-  final int id;
+  final int? id;
   String itemName;
   String dateSaved;
   int? kcalPer100Unit;
@@ -15,7 +15,7 @@ class Item {
   int? kcalPerCustomUnit;
 
   Item({
-    required this.id,
+    this.id,
     required this.itemName,
     required this.dateSaved,
     this.kcalPer100Unit,
@@ -26,7 +26,6 @@ class Item {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'itemName': itemName,
       'dateSaved': dateSaved,
       'kcalPer100': kcalPer100Unit,
@@ -43,7 +42,7 @@ class ItemDatabase {
       join(await getDatabasesPath(), 'item_database.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE item(id INTEGER PRIMARY KEY, itemName TEXT, dateSaved TEXT, kcalPer100 INTEGER, unit INTEGER, customUnitName TEXT, kcalPerCustomUnit INTEGER)',
+          'CREATE TABLE item(id INTEGER PRIMARY KEY AUTOINCREMENT, itemName TEXT, dateSaved TEXT, kcalPer100 INTEGER, unit INTEGER, customUnitName TEXT, kcalPerCustomUnit INTEGER)',
         );
         //TODO: Remove this sample data
         await db.insert('item', {

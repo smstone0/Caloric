@@ -111,7 +111,6 @@ class _AddItemState extends State<AddItem> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         ItemDatabase().insertItem(Item(
-                            id: 1, //TODO: Update to auto increment
                             itemName: itemName,
                             dateSaved: getCurrentDate(),
                             kcalPer100Unit: 100,

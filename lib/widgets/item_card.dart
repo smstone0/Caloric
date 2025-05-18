@@ -11,7 +11,9 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     String energy;
+
     if (settings.energy.unit == EnergyUnit.calories) {
       energy = 'kcal';
     } else {
@@ -26,7 +28,7 @@ class ItemCard extends StatelessWidget {
             children: [
               Text(
                 item.itemName,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium,
               ),
             ],
           ),
