@@ -72,7 +72,7 @@ class _ItemPageState extends State<ItemPage> {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          AddItem(settings: settings),
+                                          AddItem(unit: settings.energy.unit),
                                     ),
                                   );
                                 },

@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import '../functions/dates.dart';
 
 class AddItem extends StatefulWidget {
-  const AddItem({super.key, required this.settings});
+  const AddItem({super.key, required this.unit});
 
-  final Settings settings;
+  final EnergyUnit unit;
 
   @override
   State<AddItem> createState() => _AddItemState();
@@ -29,6 +29,7 @@ class _AddItemState extends State<AddItem> {
 
   @override
   Widget build(BuildContext context) {
+    final unitLabel = widget.unit == EnergyUnit.calories ? 'kcal' : 'kJ';
     final ThemeData theme = Theme.of(context);
     return Material(
         child: ListView(
@@ -37,6 +38,7 @@ class _AddItemState extends State<AddItem> {
           child: Form(
             key: _formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,9 +54,7 @@ class _AddItemState extends State<AddItem> {
                 ),
                 InputField(
                   keyboardType: TextInputType.text,
-                  topPadding: 20,
-                  rightPadding: 50,
-                  hintText: 'Enter name of item',
+                  hintText: 'Item name',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter an item name';
@@ -64,39 +64,66 @@ class _AddItemState extends State<AddItem> {
                   },
                 ),
                 const SizedBox(height: 20),
-                InputField(
-                  keyboardType: TextInputType.number,
-                  topPadding: 20,
-                  rightPadding: 230,
-                  suffix: Text(
-                      widget.settings.energy.unit == EnergyUnit.calories
-                          ? 'kcal'
-                          : 'kJ'),
-                  validator: (value) {
-                    var val = int.tryParse(value!);
-                    if (val is int) {
-                      energy = val;
-                      return null;
-                    }
-                    return 'error';
-                  },
-                ),
+                Text("Enter at least one of the following:",
+                    style: theme.textTheme.labelLarge),
+                const SizedBox(height: 20),
+                Text("By ml/g", style: theme.textTheme.titleMedium),
                 Row(
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 20, right: 5),
-                      child: Text("per "),
-                    ),
-                    Flexible(
+                    Expanded(
                       child: InputField(
                         keyboardType: TextInputType.number,
-                        topPadding: 20,
-                        rightPadding: 200,
-                        suffix: Text(unit),
+                        validator: (value) {
+                          var val = int.tryParse(value!);
+                          if (val is int) {
+                            energy = val;
+                            return null;
+                          }
+                          return 'error';
+                        },
+                      ),
+                    ),
+                    Text('$unitLabel per'),
+                    Expanded(
+                      child: InputField(
+                        keyboardType: TextInputType.number,
                         validator: (value) {
                           var val = int.tryParse(value!);
                           if (val is int) {
                             portion = val;
+                            return null;
+                          }
+                          return 'error';
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Text("Custom", style: theme.textTheme.titleMedium),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InputField(
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          var val = int.tryParse(value!);
+                          if (val is int) {
+                            energy = val;
+                            return null;
+                          }
+                          return 'error';
+                        },
+                      ),
+                    ),
+                    Text('$unitLabel per'),
+                    Expanded(
+                      child: InputField(
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          var val = int.tryParse(value!);
+                          if (val is int) {
+                            energy = val;
                             return null;
                           }
                           return 'error';

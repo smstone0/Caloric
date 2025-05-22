@@ -4,31 +4,25 @@ class InputField extends StatelessWidget {
   const InputField(
       {super.key,
       this.initialValue,
-      this.suffix,
       this.validator,
       this.hintText,
-      this.rightPadding,
-      this.topPadding,
-      this.leftPadding,
-      this.bottomPadding,
       this.onEditingComplete,
       this.controller,
+      this.width,
       required this.keyboardType});
 
   final String? initialValue;
-  final Widget? suffix;
   final String? Function(String?)? validator;
   final String? hintText;
-  final double? leftPadding, topPadding, rightPadding, bottomPadding;
   final Function()? onEditingComplete;
   final TextEditingController? controller;
+  final double? width;
   final TextInputType keyboardType;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(leftPadding ?? 0, topPadding ?? 0,
-          rightPadding ?? 0, bottomPadding ?? 0),
+    return SizedBox(
+      width: width ?? MediaQuery.of(context).size.width * 0.8,
       child: TextFormField(
         keyboardType: keyboardType,
         controller: controller,
@@ -40,9 +34,6 @@ class InputField extends StatelessWidget {
           hintStyle: const TextStyle(
               color: Colors.white, fontWeight: FontWeight.normal),
           filled: true,
-          suffixIcon: suffix,
-          suffixIconConstraints:
-              const BoxConstraints(minWidth: 0, minHeight: 0),
           enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
