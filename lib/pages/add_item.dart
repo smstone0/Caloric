@@ -2,6 +2,7 @@ import 'package:caloric/databases/items.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/generic_card.dart';
+import 'package:caloric/widgets/generic_dropdown.dart';
 import 'package:caloric/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import '../functions/dates.dart';
@@ -24,13 +25,15 @@ class _AddItemState extends State<AddItem> {
   late Unit type;
   String unit = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late String itemName;
-  late int energy, portion;
+  late String itemName, customUnitName;
+  late int energy, amount, customEnergy;
+  Unit selectedUnit = Unit.g;
 
   @override
   Widget build(BuildContext context) {
     final unitLabel = widget.unit == EnergyUnit.calories ? 'kcal' : 'kJ';
     final ThemeData theme = Theme.of(context);
+
     return Material(
         child: ListView(
       children: [
@@ -52,7 +55,9 @@ class _AddItemState extends State<AddItem> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 10),
                 InputField(
+                  width: 150,
                   keyboardType: TextInputType.text,
                   hintText: 'Item name',
                   validator: (value) {
@@ -63,16 +68,18 @@ class _AddItemState extends State<AddItem> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
                 Text("Enter at least one of the following:",
                     style: theme.textTheme.labelLarge),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Text("By ml/g", style: theme.textTheme.titleMedium),
                 Row(
                   children: [
-                    Expanded(
+                    SizedBox(
+                      width: 60,
                       child: InputField(
                         keyboardType: TextInputType.number,
+                        hintText: '0',
                         validator: (value) {
                           var val = int.tryParse(value!);
                           if (val is int) {
@@ -83,19 +90,34 @@ class _AddItemState extends State<AddItem> {
                         },
                       ),
                     ),
-                    Text('$unitLabel per'),
-                    Expanded(
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 5),
+                      child: Text('$unitLabel per'),
+                    ),
+                    SizedBox(
+                      width: 60,
                       child: InputField(
                         keyboardType: TextInputType.number,
+                        hintText: '0',
                         validator: (value) {
                           var val = int.tryParse(value!);
                           if (val is int) {
-                            portion = val;
+                            amount = val;
                             return null;
                           }
                           return 'error';
                         },
                       ),
+                    ),
+                    GenericDropdown<Unit>(
+                      capitalise: false,
+                      list: Unit.values,
+                      selection: selectedUnit,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedUnit = value;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -103,27 +125,33 @@ class _AddItemState extends State<AddItem> {
                 Text("Custom", style: theme.textTheme.titleMedium),
                 Row(
                   children: [
-                    Expanded(
+                    SizedBox(
+                      width: 60,
                       child: InputField(
                         keyboardType: TextInputType.number,
+                        hintText: '0',
                         validator: (value) {
                           var val = int.tryParse(value!);
                           if (val is int) {
-                            energy = val;
+                            customEnergy = val;
                             return null;
                           }
                           return 'error';
                         },
                       ),
                     ),
-                    Text('$unitLabel per'),
-                    Expanded(
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 5),
+                      child: Text('$unitLabel per'),
+                    ),
+                    SizedBox(
+                      width: 150,
                       child: InputField(
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.text,
+                        hintText: 'custom name',
                         validator: (value) {
-                          var val = int.tryParse(value!);
-                          if (val is int) {
-                            energy = val;
+                          if (!(value == null || value.isEmpty)) {
+                            customUnitName = value;
                             return null;
                           }
                           return 'error';
@@ -133,20 +161,24 @@ class _AddItemState extends State<AddItem> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                CustomButton(
-                    colour: theme.primaryColor,
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        ItemDatabase().insertItem(Item(
-                            itemName: itemName,
-                            dateSaved: getCurrentDate(),
-                            kcalPer100Unit: 100,
-                            unit: Unit.g,
-                            customUnitName: "A custom unit",
-                            kcalPerCustomUnit: 100));
-                      }
-                    },
-                    widget: const Text("Add"))
+                Center(
+                  child: CustomButton(
+                      colour: theme.primaryColor,
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          ItemDatabase().insertItem(
+                            Item(
+                                itemName: itemName,
+                                dateSaved: getCurrentDate(),
+                                kcalPer100Unit: energy,
+                                unit: selectedUnit,
+                                customUnitName: customUnitName,
+                                kcalPerCustomUnit: customEnergy),
+                          );
+                        }
+                      },
+                      widget: const Text("Add")),
+                )
               ],
             ),
           ),

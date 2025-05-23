@@ -40,6 +40,10 @@ class InputField extends StatelessWidget {
           focusedBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
+          errorBorder: UnderlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
         ),
         validator: validator,
       ),
