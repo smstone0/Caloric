@@ -25,9 +25,21 @@ class _AddItemState extends State<AddItem> {
   late Unit type;
   String unit = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late String itemName, customUnitName;
-  late int energy, amount, customEnergy;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _energyController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _customEnergyController = TextEditingController();
+  final TextEditingController _customUnitController = TextEditingController();
   Unit selectedUnit = Unit.g;
+
+  bool _isValidInput() {
+    if (_nameController.text.trim().isEmpty) return false;
+    final hasByUnit = _energyController.text.trim().isNotEmpty &&
+        _amountController.text.trim().isNotEmpty;
+    final hasCustom = _customEnergyController.text.trim().isNotEmpty &&
+        _customUnitController.text.trim().isNotEmpty;
+    return hasByUnit || hasCustom;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +63,7 @@ class _AddItemState extends State<AddItem> {
                       width: 150,
                       keyboardType: TextInputType.text,
                       hintText: 'Item name',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a name';
-                        }
-                        itemName = value;
-                        return null;
-                      },
+                      controller: _nameController,
                     ),
                     const SizedBox(height: 25),
                     Text("Enter at least one of the following:",
@@ -71,13 +77,7 @@ class _AddItemState extends State<AddItem> {
                           child: InputField(
                             keyboardType: TextInputType.number,
                             hintText: '0',
-                            validator: (value) {
-                              var val = int.tryParse(value!);
-                              if (val is int) {
-                                energy = val;
-                                return null;
-                              }
-                            },
+                            controller: _energyController,
                           ),
                         ),
                         Padding(
@@ -89,13 +89,7 @@ class _AddItemState extends State<AddItem> {
                           child: InputField(
                             keyboardType: TextInputType.number,
                             hintText: '0',
-                            validator: (value) {
-                              var val = int.tryParse(value!);
-                              if (val is int) {
-                                amount = val;
-                                return null;
-                              }
-                            },
+                            controller: _amountController,
                           ),
                         ),
                         GenericDropdown<Unit>(
@@ -119,13 +113,7 @@ class _AddItemState extends State<AddItem> {
                           child: InputField(
                             keyboardType: TextInputType.number,
                             hintText: '0',
-                            validator: (value) {
-                              var val = int.tryParse(value!);
-                              if (val is int) {
-                                customEnergy = val;
-                                return null;
-                              }
-                            },
+                            controller: _customEnergyController,
                           ),
                         ),
                         Padding(
@@ -137,12 +125,7 @@ class _AddItemState extends State<AddItem> {
                           child: InputField(
                             keyboardType: TextInputType.text,
                             hintText: 'custom name',
-                            validator: (value) {
-                              if (!(value == null || value.isEmpty)) {
-                                customUnitName = value;
-                                return null;
-                              }
-                            },
+                            controller: _customUnitController,
                           ),
                         ),
                       ],
@@ -152,24 +135,52 @@ class _AddItemState extends State<AddItem> {
                       child: CustomButton(
                           colour: theme.primaryColor,
                           onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              ItemDatabase().insertItem(
-                                Item(
-                                    itemName: itemName,
-                                    dateSaved: getCurrentDate(),
-                                    kcalPer100Unit: energy,
-                                    unit: selectedUnit,
-                                    customUnitName: customUnitName,
-                                    kcalPerCustomUnit: customEnergy),
-                              );
-
+                            String itemName = _nameController.text.trim();
+                            int? energy =
+                                int.tryParse(_energyController.text.trim());
+                            int? amount =
+                                int.tryParse(_amountController.text.trim());
+                            int? customEnergy = int.tryParse(
+                                _customEnergyController.text.trim());
+                            String? customUnitName =
+                                _customUnitController.text.trim();
+                            if (!_isValidInput()) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                    content: Text('Item added successfully!')),
+                                    content: Text(
+                                        'Please fill in at least one energy field')),
                               );
-
-                              _formKey.currentState!.reset();
+                              return;
                             }
+                            int? kcalPer100Unit;
+                            if (energy != null &&
+                                amount != null &&
+                                amount > 0) {
+                              kcalPer100Unit =
+                                  ((energy / amount) * 100).round();
+                            } else {
+                              kcalPer100Unit = null;
+                            }
+                            ItemDatabase().insertItem(
+                              Item(
+                                  itemName: itemName,
+                                  dateSaved: getCurrentDate(),
+                                  kcalPer100Unit: kcalPer100Unit,
+                                  unit: selectedUnit,
+                                  customUnitName: customUnitName,
+                                  kcalPerCustomUnit: customEnergy),
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Item added successfully!')),
+                            );
+
+                            _nameController.clear();
+                            _energyController.clear();
+                            _amountController.clear();
+                            _customEnergyController.clear();
+                            _customUnitController.clear();
                           },
                           widget: const Text("Add")),
                     )
