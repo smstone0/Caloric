@@ -12,13 +12,9 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    String energy;
+    final unitLabel =
+        settings.energy.unit == EnergyUnit.calories ? 'kcal' : 'kJ';
 
-    if (settings.energy.unit == EnergyUnit.calories) {
-      energy = 'kcal';
-    } else {
-      energy = 'kJ';
-    }
     return GenericCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,13 +29,22 @@ class ItemCard extends StatelessWidget {
             ],
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                      "${item.kcalPer100Unit}$energy per 100 ${item.unit?.name}"),
+                  if (item.kcalPer100Unit != null && item.kcalPer100Unit! > 0)
+                    Text(
+                      "${item.kcalPer100Unit}$unitLabel per 100${item.unit?.name}",
+                      style: theme.textTheme.bodyLarge,
+                    ),
+                  if (item.customUnitName != null &&
+                      item.customUnitName!.isNotEmpty)
+                    Text(
+                      "${item.kcalPerCustomUnit}$unitLabel per ${item.customUnitName}",
+                      style: theme.textTheme.bodyLarge,
+                    ),
                 ],
               ),
             ],
