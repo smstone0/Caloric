@@ -8,6 +8,7 @@ import 'package:caloric/databases/items.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/generic_dropdown.dart';
 import '../widgets/item_card.dart';
+import 'package:caloric/functions/item_sorting.dart';
 
 enum Sort { oldToNew, newToOld, lowToHigh, highToLow, aToZ, zToA }
 
@@ -19,8 +20,17 @@ class ItemPage extends StatefulWidget {
 }
 
 class _ItemPageState extends State<ItemPage> {
+  @override
+  void initState() {
+    super.initState();
+    _items = ItemDatabase().getItems();
+    _settings = SettingsDatabase().getSettings();
+  }
+
   Sort _selectedSort = Sort.newToOld;
   bool _removeSelected = false;
+  late Future<List<Item>> _items;
+  late Future<Settings> _settings;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +40,7 @@ class _ItemPageState extends State<ItemPage> {
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: theme.colorScheme.surface));
     return FutureBuilder<List<Item>>(
-        future: ItemDatabase().getItems(),
+        future: _items,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -40,8 +50,9 @@ class _ItemPageState extends State<ItemPage> {
             return Text('Error: ${snapshot.error}');
           } else {
             List<Item> items = snapshot.data!;
+            items = getSortedItems(items, _selectedSort);
             return FutureBuilder<Settings>(
-                future: SettingsDatabase().getSettings(),
+                future: _settings,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
@@ -67,9 +78,9 @@ class _ItemPageState extends State<ItemPage> {
                                   list: Sort.values,
                                   selection: _selectedSort,
                                   onChanged: (value) {
-                                    //Sort cards
-                                    _selectedSort = value;
-                                    setState(() {});
+                                    setState(() {
+                                      _selectedSort = value;
+                                    });
                                   },
                                 ),
                                 Row(
