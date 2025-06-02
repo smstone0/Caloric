@@ -31,6 +31,7 @@ class _ItemPageState extends State<ItemPage> {
   bool _removeSelected = false;
   late Future<List<Item>> _items;
   late Future<Settings> _settings;
+  String _searchValue = "";
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +52,14 @@ class _ItemPageState extends State<ItemPage> {
           } else {
             List<Item> items = snapshot.data!;
             items = getSortedItems(items, _selectedSort);
+            if (_searchValue.isNotEmpty) {
+              items = items
+                  .where((item) => item.itemName
+                      .toLowerCase()
+                      .trim()
+                      .contains(_searchValue.toLowerCase().trim()))
+                  .toList();
+            }
             return FutureBuilder<Settings>(
                 future: _settings,
                 builder: (context, snapshot) {
@@ -141,7 +150,11 @@ class _ItemPageState extends State<ItemPage> {
                                     ),
                                   ),
                                 ),
-                                onSubmitted: (value) {},
+                                onChanged: (value) {
+                                  setState(() {
+                                    _searchValue = value;
+                                  });
+                                },
                               ),
                             ),
                           ],

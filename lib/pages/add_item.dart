@@ -148,7 +148,7 @@ class _AddItemState extends State<AddItem> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                     content: Text(
-                                        'Please fill in at least one energy field')),
+                                        'Please fill in an item name and at least one energy field')),
                               );
                               return;
                             }
