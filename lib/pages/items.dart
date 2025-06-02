@@ -118,7 +118,11 @@ class _ItemPageState extends State<ItemPage> {
                                             builder: (context) => AddItem(
                                                 unit: settings.energy.unit),
                                           ),
-                                        );
+                                        ).then((value) {
+                                          setState(() {
+                                            _items = ItemDatabase().getItems();
+                                          });
+                                        });
                                       },
                                       icon: const Icon(Icons.add, size: 18),
                                     ),
