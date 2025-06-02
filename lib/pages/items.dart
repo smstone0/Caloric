@@ -20,6 +20,7 @@ class ItemPage extends StatefulWidget {
 
 class _ItemPageState extends State<ItemPage> {
   Sort _selectedSort = Sort.newToOld;
+  bool _removeSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -58,36 +59,55 @@ class _ItemPageState extends State<ItemPage> {
                             child: Wrap(
                           runSpacing: 5,
                           children: [
-                            GenericDropdown<Sort>(
-                              list: Sort.values,
-                              selection: _selectedSort,
-                              onChanged: (value) {
-                                //Sort cards
-                                _selectedSort = value;
-                                setState(() {});
-                              },
-                            ),
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          AddItem(unit: settings.energy.unit),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                GenericDropdown<Sort>(
+                                  list: Sort.values,
+                                  selection: _selectedSort,
+                                  onChanged: (value) {
+                                    //Sort cards
+                                    _selectedSort = value;
+                                    setState(() {});
+                                  },
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: _removeSelected
+                                            ? Color(0xFFE58B8B)
+                                            : null,
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(Icons.remove, size: 18),
+                                        visualDensity: VisualDensity.compact,
+                                        onPressed: () {
+                                          setState(() {
+                                            _removeSelected = !_removeSelected;
+                                          });
+                                        },
+                                      ),
                                     ),
-                                  );
-                                },
-                                icon: const Icon(Icons.add),
-                                color: settings.appearance ==
-                                            Appearance.light ||
-                                        settings.appearance ==
-                                                Appearance.system &&
-                                            MediaQuery.of(context)
-                                                    .platformBrightness ==
-                                                Brightness.light
-                                    ? Colors.black
-                                    : const Color.fromRGBO(205, 255, 182, 1)),
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => AddItem(
+                                                unit: settings.energy.unit),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.add, size: 18),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                             SizedBox(
-                              height: 50,
+                              height: 45,
                               child: TextField(
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
