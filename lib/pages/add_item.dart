@@ -147,8 +147,11 @@ class _AddItemState extends State<AddItem> {
                             if (!_isValidInput()) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                    content: Text(
-                                        'Please fill in an item name and at least one energy field')),
+                                  duration: const Duration(milliseconds: 3500),
+                                  backgroundColor: theme.primaryColor,
+                                  content: Text(
+                                      'Please fill in an item name and at least one energy field'),
+                                ),
                               );
                               return;
                             }
@@ -173,6 +176,8 @@ class _AddItemState extends State<AddItem> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
+                                  duration: const Duration(milliseconds: 1500),
+                                  backgroundColor: theme.primaryColor,
                                   content: Text('Item added successfully!')),
                             );
 
