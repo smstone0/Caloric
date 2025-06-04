@@ -4,10 +4,15 @@ import '../databases/settings.dart';
 import 'generic_card.dart';
 
 class ItemCard extends StatelessWidget {
-  const ItemCard({super.key, required this.item, required this.settings});
+  const ItemCard(
+      {super.key,
+      required this.item,
+      required this.settings,
+      this.removeSelected = false});
 
   final Item item;
   final Settings settings;
+  final bool removeSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +31,22 @@ class ItemCard extends StatelessWidget {
                 item.itemName,
                 style: theme.textTheme.titleMedium,
               ),
+              Visibility(
+                visible: removeSelected,
+                maintainSize: true,
+                maintainAnimation: true,
+                maintainState: true,
+                child: IconButton(
+                  visualDensity: VisualDensity.compact,
+                  icon: Icon(Icons.remove, size: 18),
+                  onPressed: () {
+                    if (item.id != null) {
+                      ItemDatabase().deleteItem(item.id!);
+                      //TODO: Refresh the list of items
+                    }
+                  },
+                ),
+              )
             ],
           ),
           Row(

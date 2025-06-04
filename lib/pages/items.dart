@@ -113,12 +113,14 @@ class _ItemPageState extends State<ItemPage> {
                                     ),
                                     IconButton(
                                       onPressed: () {
-                                        Navigator.of(context).push(
+                                        Navigator.of(context)
+                                            .push(
                                           MaterialPageRoute(
                                             builder: (context) => AddItem(
                                                 unit: settings.energy.unit),
                                           ),
-                                        ).then((value) {
+                                        )
+                                            .then((value) {
                                           setState(() {
                                             _items = ItemDatabase().getItems();
                                           });
@@ -165,9 +167,14 @@ class _ItemPageState extends State<ItemPage> {
                         )),
                         const SectionSeparator(),
                         if (items.isEmpty)
-                          const Text("You have not yet added any items"),
-                        ...items.map(
-                            (item) => ItemCard(settings: settings, item: item)),
+                          Center(
+                            child:
+                                const Text("You have not yet added any items"),
+                          ),
+                        ...items.map((item) => ItemCard(
+                            settings: settings,
+                            item: item,
+                            removeSelected: _removeSelected))
                       ],
                     );
                   }
