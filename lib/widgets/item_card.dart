@@ -8,11 +8,13 @@ class ItemCard extends StatelessWidget {
       {super.key,
       required this.item,
       required this.settings,
-      this.removeSelected = false});
+      this.removeSelected = false,
+      this.onRemove});
 
   final Item item;
   final Settings settings;
   final bool removeSelected;
+  final VoidCallback? onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,9 @@ class ItemCard extends StatelessWidget {
                   onPressed: () {
                     if (item.id != null) {
                       ItemDatabase().deleteItem(item.id!);
-                      //TODO: Refresh the list of items
+                      if (onRemove != null) {
+                        onRemove!();
+                      }
                     }
                   },
                 ),

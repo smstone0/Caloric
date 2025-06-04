@@ -174,7 +174,12 @@ class _ItemPageState extends State<ItemPage> {
                         ...items.map((item) => ItemCard(
                             settings: settings,
                             item: item,
-                            removeSelected: _removeSelected))
+                            removeSelected: _removeSelected,
+                            onRemove: () {
+                              setState(() {
+                                _items = ItemDatabase().getItems();
+                              });
+                            })),
                       ],
                     );
                   }
