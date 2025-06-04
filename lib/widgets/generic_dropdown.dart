@@ -6,11 +6,13 @@ class GenericDropdown<T extends Enum> extends StatefulWidget {
     required this.list,
     required this.selection,
     required this.onChanged,
+    this.capitalise = true,
   });
 
   final List<T> list;
   final T selection;
   final ValueChanged<T> onChanged;
+  final bool capitalise;
 
   @override
   State<GenericDropdown<T>> createState() => _GenericDropdownState<T>();
@@ -30,12 +32,17 @@ class _GenericDropdownState<T extends Enum> extends State<GenericDropdown<T>> {
 
   String capitalise(String text) {
     // Split text by camel case and capitalize each word
-    final words = text.replaceAllMapped(
-      RegExp(r'(?<=[a-z])(?=[A-Z])'),
-      (match) => ' ',
-    ).split(' ');
+    final words = text
+        .replaceAllMapped(
+          RegExp(r'(?<=[a-z])(?=[A-Z])'),
+          (match) => ' ',
+        )
+        .split(' ');
 
-    return words.map((word) => "${word[0].toUpperCase()}${word.substring(1).toLowerCase()}").join(' ');
+    return words
+        .map((word) =>
+            "${word[0].toUpperCase()}${word.substring(1).toLowerCase()}")
+        .join(' ');
   }
 
   @override
@@ -52,7 +59,6 @@ class _GenericDropdownState<T extends Enum> extends State<GenericDropdown<T>> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: SizedBox(
-          width: 110,
           child: DropdownButtonHideUnderline(
             child: DropdownButton<T>(
               value: orderedList.first,
@@ -62,7 +68,7 @@ class _GenericDropdownState<T extends Enum> extends State<GenericDropdown<T>> {
                 return orderedList.map((item) {
                   return Center(
                     child: Text(
-                      capitalise(item.name),
+                      widget.capitalise ? capitalise(item.name) : item.name,
                       style: TextStyle(color: baseColor),
                     ),
                   );
@@ -72,7 +78,7 @@ class _GenericDropdownState<T extends Enum> extends State<GenericDropdown<T>> {
                 return DropdownMenuItem<T>(
                   value: value,
                   child: Text(
-                    capitalise(value.name),
+                    widget.capitalise ? capitalise(value.name) : value.name,
                     style: TextStyle(
                       color: theme.primaryColor.computeLuminance() >= 0.5
                           ? Colors.black

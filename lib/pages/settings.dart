@@ -48,23 +48,27 @@ class _SettingsPageState extends State<SettingsPage> {
               SettingsCard(children: [
                 (
                   "Energy Goal",
-                  Expanded(
-                    child: InputField(
-                        keyboardType: TextInputType.number,
-                        controller: energyController,
-                        onEditingComplete: () {
-                          //TODO: Collapse tray, set to min/max if exceeded
-                          var energy = double.tryParse(energyController.text);
-                          if (energy is double) {
-                            settings.energy.value = energy;
-                            SettingsDatabase().updateSettings(settings);
-                          }
-                        },
-                        leftPadding: 150,
-                        //TODO: Suffix
-                        suffix: Text(settings.energy.unit == EnergyUnit.calories
-                            ? 'kcal'
-                            : 'kJ')),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InputField(
+                          keyboardType: TextInputType.number,
+                          controller: energyController,
+                          onEditingComplete: () {
+                            //TODO: Collapse tray, set to min/max if exceeded
+                            var energy = double.tryParse(energyController.text);
+                            if (energy is double) {
+                              settings.energy.value = energy;
+                              SettingsDatabase().updateSettings(settings);
+                            }
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 5),
+                      Text(settings.energy.unit == EnergyUnit.calories
+                          ? 'kcal'
+                          : 'kJ')
+                    ],
                   ),
                 ),
                 (
@@ -102,7 +106,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         //TODO: Handle metres
                         controller: heightController,
                         keyboardType: TextInputType.number,
-                        leftPadding: 150,
                         onEditingComplete: () {
                           var height = double.tryParse(heightController.text);
                           if (height is double) {
@@ -117,15 +120,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 (
                   "Height Unit",
-                    GenericDropdown<HeightUnit>(
-                      list: HeightUnit.values,
-                      selection: settings.height.unit,
-                      onChanged: (newUnit) {
-                        settings.height.unit = newUnit;
-                        SettingsDatabase().updateSettings(settings);
-                        setState(() {});
-                      },
-                    ),
+                  GenericDropdown<HeightUnit>(
+                    list: HeightUnit.values,
+                    selection: settings.height.unit,
+                    onChanged: (newUnit) {
+                      settings.height.unit = newUnit;
+                      SettingsDatabase().updateSettings(settings);
+                      setState(() {});
+                    },
+                  ),
                 ),
                 (
                   "Weight",
@@ -134,7 +137,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       //TODO: Handle stone
                       controller: weightController,
                       keyboardType: TextInputType.number,
-                      leftPadding: 150,
                       onEditingComplete: () {
                         var weight = double.tryParse(weightController.text);
                         if (weight is double) {
@@ -148,15 +150,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 (
                   "Weight Unit",
-                    GenericDropdown<WeightUnit>(
-                      list: WeightUnit.values,
-                      selection: settings.weight.unit,
-                      onChanged: (newUnit) {
-                        settings.weight.unit = newUnit;
-                        SettingsDatabase().updateSettings(settings);
-                        setState(() {});
-                      },
-                    ),
+                  GenericDropdown<WeightUnit>(
+                    list: WeightUnit.values,
+                    selection: settings.weight.unit,
+                    onChanged: (newUnit) {
+                      settings.weight.unit = newUnit;
+                      SettingsDatabase().updateSettings(settings);
+                      setState(() {});
+                    },
+                  ),
                 )
               ]),
               const SectionSeparator(),
@@ -172,7 +174,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         settings.appearance = newUnit;
                         SettingsDatabase().updateSettings(settings);
                         MyApp.of(context)!
-                        .changeTheme(settings.appearance.theme);
+                            .changeTheme(settings.appearance.theme);
                         setState(() {});
                       },
                     ),

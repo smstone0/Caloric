@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import '../functions/dates.dart';
 
 class DayEntry {
-  final int id;
+  final int? id;
   String itemName;
   String dateLogged;
   String? recordedByUnit; // e.g. g, ml, slice
@@ -11,7 +11,7 @@ class DayEntry {
   int totalKcal;
 
   DayEntry({
-    required this.id,
+    this.id,
     required this.itemName,
     required this.dateLogged,
     this.recordedByUnit,
@@ -21,7 +21,6 @@ class DayEntry {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'itemName': itemName,
       'dateLogged': dateLogged,
       'recordedByUnit': recordedByUnit,
@@ -37,8 +36,9 @@ class DayEntryDatabase {
       join(await getDatabasesPath(), 'day_entry_database.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE day_entry(id INTEGER PRIMARY KEY, itemName TEXT, dateLogged TEXT, recordedByUnit TEXT, amount REAL, totalKcal INTEGER)',
+          'CREATE TABLE day_entry(id INTEGER PRIMARY KEY AUTOINCREMENT, itemName TEXT, dateLogged TEXT, recordedByUnit TEXT, amount REAL, totalKcal INTEGER)',
         );
+        //TODO: Remove this sample data
         await db.insert('day_entry', {
           'itemName': 'Sample Item',
           'dateLogged': getCurrentDate(),

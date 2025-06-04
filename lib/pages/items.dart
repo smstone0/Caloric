@@ -8,6 +8,7 @@ import 'package:caloric/databases/items.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/generic_dropdown.dart';
 import '../widgets/item_card.dart';
+import 'package:caloric/functions/item_sorting.dart';
 
 enum Sort { oldToNew, newToOld, lowToHigh, highToLow, aToZ, zToA }
 
@@ -19,7 +20,18 @@ class ItemPage extends StatefulWidget {
 }
 
 class _ItemPageState extends State<ItemPage> {
+  @override
+  void initState() {
+    super.initState();
+    _items = ItemDatabase().getItems();
+    _settings = SettingsDatabase().getSettings();
+  }
+
   Sort _selectedSort = Sort.newToOld;
+  bool _removeSelected = false;
+  late Future<List<Item>> _items;
+  late Future<Settings> _settings;
+  String _searchValue = "";
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +41,7 @@ class _ItemPageState extends State<ItemPage> {
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: theme.colorScheme.surface));
     return FutureBuilder<List<Item>>(
-        future: ItemDatabase().getItems(),
+        future: _items,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -39,8 +51,17 @@ class _ItemPageState extends State<ItemPage> {
             return Text('Error: ${snapshot.error}');
           } else {
             List<Item> items = snapshot.data!;
+            items = getSortedItems(items, _selectedSort);
+            if (_searchValue.isNotEmpty) {
+              items = items
+                  .where((item) => item.itemName
+                      .toLowerCase()
+                      .trim()
+                      .contains(_searchValue.toLowerCase().trim()))
+                  .toList();
+            }
             return FutureBuilder<Settings>(
-                future: SettingsDatabase().getSettings(),
+                future: _settings,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
@@ -58,36 +79,61 @@ class _ItemPageState extends State<ItemPage> {
                             child: Wrap(
                           runSpacing: 5,
                           children: [
-                            GenericDropdown<Sort>(
-                              list: Sort.values,
-                              selection: _selectedSort,
-                              onChanged: (value) {
-                                //Sort cards
-                                _selectedSort = value;
-                                setState(() {});
-                              },
-                            ),
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          AddItem(settings: settings),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                GenericDropdown<Sort>(
+                                  list: Sort.values,
+                                  selection: _selectedSort,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedSort = value;
+                                    });
+                                  },
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: _removeSelected
+                                            ? Color(0xFFE58B8B)
+                                            : null,
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(Icons.remove, size: 18),
+                                        visualDensity: VisualDensity.compact,
+                                        onPressed: () {
+                                          setState(() {
+                                            _removeSelected = !_removeSelected;
+                                          });
+                                        },
+                                      ),
                                     ),
-                                  );
-                                },
-                                icon: const Icon(Icons.add),
-                                color: settings.appearance ==
-                                            Appearance.light ||
-                                        settings.appearance ==
-                                                Appearance.system &&
-                                            MediaQuery.of(context)
-                                                    .platformBrightness ==
-                                                Brightness.light
-                                    ? Colors.black
-                                    : const Color.fromRGBO(205, 255, 182, 1)),
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .push(
+                                          MaterialPageRoute(
+                                            builder: (context) => AddItem(
+                                                unit: settings.energy.unit),
+                                          ),
+                                        )
+                                            .then((value) {
+                                          setState(() {
+                                            _items = ItemDatabase().getItems();
+                                          });
+                                        });
+                                      },
+                                      icon: const Icon(Icons.add, size: 18),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                             SizedBox(
-                              height: 50,
+                              height: 45,
                               child: TextField(
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
@@ -110,16 +156,30 @@ class _ItemPageState extends State<ItemPage> {
                                     ),
                                   ),
                                 ),
-                                onSubmitted: (value) {},
+                                onChanged: (value) {
+                                  setState(() {
+                                    _searchValue = value;
+                                  });
+                                },
                               ),
                             ),
                           ],
                         )),
                         const SectionSeparator(),
                         if (items.isEmpty)
-                          const Text("You have not yet added any items"),
-                        ...items.map(
-                            (item) => ItemCard(settings: settings, item: item)),
+                          Center(
+                            child:
+                                const Text("You have not yet added any items"),
+                          ),
+                        ...items.map((item) => ItemCard(
+                            settings: settings,
+                            item: item,
+                            removeSelected: _removeSelected,
+                            onRemove: () {
+                              setState(() {
+                                _items = ItemDatabase().getItems();
+                              });
+                            })),
                       ],
                     );
                   }
