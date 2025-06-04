@@ -1,5 +1,7 @@
+import 'package:caloric/databases/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:caloric/widgets/generic_card.dart';
+import 'package:caloric/pages/add_day_entry.dart';
 
 enum Sort { oldToNew, newToOld, lowToHigh, highToLow, aToZ, zToA }
 
@@ -7,11 +9,13 @@ class GenericBreakdown extends StatefulWidget {
   const GenericBreakdown(
       {super.key,
       required this.dateDisplay,
+      required this.date,
       required this.data,
       this.topRadius,
       this.topPadding});
 
   final String dateDisplay;
+  final String date;
   final List<dynamic> data;
   final double? topRadius;
   final double? topPadding;
@@ -70,7 +74,15 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                   ),
                   IconButton(
                     icon: Icon(Icons.add, size: 18),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AddDayEntry(
+                              unit: EnergyUnit.calories,
+                              date: widget.date), //TODO: Placeholder unit
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

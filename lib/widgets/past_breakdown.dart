@@ -47,6 +47,7 @@ class PastBreakdown extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 25),
           child: GenericBreakdown(
               dateDisplay: displayDate(date),
+              date: getDate(date),
               data: data,
               topRadius: 0,
               topPadding: 0),

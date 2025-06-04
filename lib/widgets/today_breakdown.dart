@@ -61,7 +61,10 @@ class TodayBreakdown extends StatelessWidget {
                     ],
                   ),
                 ),
-                GenericBreakdown(dateDisplay: "Today's Nutrition", data: data)
+                GenericBreakdown(
+                    dateDisplay: "Today's Nutrition",
+                    data: data,
+                    date: currentDate)
               ],
             );
           }

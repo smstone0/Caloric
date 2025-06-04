@@ -6,6 +6,11 @@ String getCurrentDate() {
   return formatter.format(now);
 }
 
+String getDate(DateTime date) {
+  final formatter = DateFormat('dd-MM-yyyy');
+  return formatter.format(date);
+}
+
 String getTimeOfDay() {
   DateTime time = DateTime.now();
   if (time.hour >= 0 && time.hour < 12) {
