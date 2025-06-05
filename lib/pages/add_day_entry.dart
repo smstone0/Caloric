@@ -9,10 +9,15 @@ import 'package:flutter/material.dart';
 import '../functions/dates.dart';
 
 class AddDayEntry extends StatefulWidget {
-  const AddDayEntry({super.key, required this.unit, required this.date});
+  const AddDayEntry(
+      {super.key,
+      required this.unit,
+      required this.date,
+      required this.displayDate});
 
   final EnergyUnit unit;
   final String date;
+  final String displayDate;
 
   @override
   State<AddDayEntry> createState() => _AddDayEntryState();
@@ -50,7 +55,7 @@ class _AddDayEntryState extends State<AddDayEntry> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("Log item for ${widget.date}",
+          title: Text("Log Item for ${widget.displayDate}",
               style: theme.textTheme.titleMedium),
         ),
         body: ListView(

@@ -78,8 +78,10 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => AddDayEntry(
-                              unit: EnergyUnit.calories,
-                              date: widget.date), //TODO: Placeholder unit
+                              unit:
+                                  EnergyUnit.calories, //TODO: Placeholder unit
+                              displayDate: widget.dateDisplay,
+                              date: widget.date),
                         ),
                       );
                     },
