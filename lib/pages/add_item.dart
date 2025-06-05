@@ -133,7 +133,6 @@ class _AddItemState extends State<AddItem> {
                     const SizedBox(height: 20),
                     Center(
                       child: CustomButton(
-                          colour: theme.primaryColor,
                           onPressed: () {
                             String itemName = _nameController.text.trim();
                             int? energy =

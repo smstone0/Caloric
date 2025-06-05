@@ -61,154 +61,180 @@ class _AddDayEntryState extends State<AddDayEntry> {
         body: ListView(
           children: [
             GenericCard(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    InputField(
-                      width: 150,
-                      keyboardType: TextInputType.text,
-                      hintText: 'Item name',
-                      controller: _nameController,
-                    ),
-                    const SizedBox(height: 25),
-                    Text("Enter at least one of the following:",
-                        style: theme.textTheme.labelLarge),
-                    const SizedBox(height: 10),
-                    Text("By ml/g", style: theme.textTheme.titleMedium),
-                    Row(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          width: 60,
-                          child: InputField(
-                            keyboardType: TextInputType.number,
-                            hintText: '0',
-                            controller: _energyController,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5, right: 5),
-                          child: Text('$unitLabel per'),
+                        CustomButton(
+                          widget: Text('Add new'),
+                          onPressed: () => {},
                         ),
                         SizedBox(
-                          width: 60,
-                          child: InputField(
-                            keyboardType: TextInputType.number,
-                            hintText: '0',
-                            controller: _amountController,
-                          ),
+                          width: 10,
                         ),
-                        GenericDropdown<Unit>(
-                          capitalise: false,
-                          list: Unit.values,
-                          selection: selectedUnit,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedUnit = value;
-                            });
-                          },
+                        CustomButton(
+                          widget: Text('Choose from items'),
+                          onPressed: () => {},
+                          isSecondary: true,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    Text("Custom", style: theme.textTheme.titleMedium),
-                    Row(
+                  ),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: 60,
-                          child: InputField(
-                            keyboardType: TextInputType.number,
-                            hintText: '0',
-                            controller: _customEnergyController,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5, right: 5),
-                          child: Text('$unitLabel per'),
-                        ),
-                        SizedBox(
+                        const SizedBox(height: 10),
+                        InputField(
                           width: 150,
-                          child: InputField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'custom name',
-                            controller: _customUnitController,
-                          ),
+                          keyboardType: TextInputType.text,
+                          hintText: 'Item name',
+                          controller: _nameController,
                         ),
+                        const SizedBox(height: 25),
+                        Text("Enter at least one of the following:",
+                            style: theme.textTheme.labelLarge),
+                        const SizedBox(height: 10),
+                        Text("By ml/g", style: theme.textTheme.titleMedium),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 60,
+                              child: InputField(
+                                keyboardType: TextInputType.number,
+                                hintText: '0',
+                                controller: _energyController,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5, right: 5),
+                              child: Text('$unitLabel per'),
+                            ),
+                            SizedBox(
+                              width: 60,
+                              child: InputField(
+                                keyboardType: TextInputType.number,
+                                hintText: '0',
+                                controller: _amountController,
+                              ),
+                            ),
+                            GenericDropdown<Unit>(
+                              capitalise: false,
+                              list: Unit.values,
+                              selection: selectedUnit,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedUnit = value;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text("Custom", style: theme.textTheme.titleMedium),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 60,
+                              child: InputField(
+                                keyboardType: TextInputType.number,
+                                hintText: '0',
+                                controller: _customEnergyController,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5, right: 5),
+                              child: Text('$unitLabel per'),
+                            ),
+                            SizedBox(
+                              width: 150,
+                              child: InputField(
+                                keyboardType: TextInputType.text,
+                                hintText: 'custom name',
+                                controller: _customUnitController,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: CustomButton(
+                              onPressed: () {
+                                String itemName = _nameController.text.trim();
+                                int? energy =
+                                    int.tryParse(_energyController.text.trim());
+                                int? amount =
+                                    int.tryParse(_amountController.text.trim());
+                                int? customEnergy = int.tryParse(
+                                    _customEnergyController.text.trim());
+                                String? customUnitName =
+                                    _customUnitController.text.trim();
+                                if (!_isValidInput()) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      duration:
+                                          const Duration(milliseconds: 3500),
+                                      backgroundColor: theme.primaryColor,
+                                      content: Text(
+                                          'Please fill in an item name and at least one energy field'),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                int? kcalPer100Unit;
+                                if (energy != null &&
+                                    amount != null &&
+                                    amount > 0) {
+                                  kcalPer100Unit =
+                                      ((energy / amount) * 100).round();
+                                } else {
+                                  kcalPer100Unit = null;
+                                }
+                                ItemDatabase().insertItem(
+                                  Item(
+                                      itemName: itemName,
+                                      dateSaved: getCurrentDate(),
+                                      kcalPer100Unit: kcalPer100Unit,
+                                      unit: selectedUnit,
+                                      customUnitName: customUnitName,
+                                      kcalPerCustomUnit: customEnergy),
+                                );
+
+                                // DayEntryDatabase().insertDayEntry(
+                                //   DayEntry(
+                                //       dateLogged: widget.date,
+                                //       itemName: itemName,
+                                //       recordedByUnit: 'g', // Placeholder
+                                //       amount: 100, // Placeholder
+                                //       totalKcal: 100 // Placeholder
+                                //       ),
+                                // );
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      duration:
+                                          const Duration(milliseconds: 1500),
+                                      backgroundColor: theme.primaryColor,
+                                      content:
+                                          Text('Item added successfully!')),
+                                );
+
+                                _nameController.clear();
+                                _energyController.clear();
+                                _amountController.clear();
+                                _customEnergyController.clear();
+                                _customUnitController.clear();
+                              },
+                              widget: const Text("Add")),
+                        )
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    Center(
-                      child: CustomButton(
-                          colour: theme.primaryColor,
-                          onPressed: () {
-                            String itemName = _nameController.text.trim();
-                            int? energy =
-                                int.tryParse(_energyController.text.trim());
-                            int? amount =
-                                int.tryParse(_amountController.text.trim());
-                            int? customEnergy = int.tryParse(
-                                _customEnergyController.text.trim());
-                            String? customUnitName =
-                                _customUnitController.text.trim();
-                            if (!_isValidInput()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  duration: const Duration(milliseconds: 3500),
-                                  backgroundColor: theme.primaryColor,
-                                  content: Text(
-                                      'Please fill in an item name and at least one energy field'),
-                                ),
-                              );
-                              return;
-                            }
-                            int? kcalPer100Unit;
-                            if (energy != null &&
-                                amount != null &&
-                                amount > 0) {
-                              kcalPer100Unit =
-                                  ((energy / amount) * 100).round();
-                            } else {
-                              kcalPer100Unit = null;
-                            }
-                            ItemDatabase().insertItem(
-                              Item(
-                                  itemName: itemName,
-                                  dateSaved: getCurrentDate(),
-                                  kcalPer100Unit: kcalPer100Unit,
-                                  unit: selectedUnit,
-                                  customUnitName: customUnitName,
-                                  kcalPerCustomUnit: customEnergy),
-                            );
-
-                            // DayEntryDatabase().insertDayEntry(
-                            //   DayEntry(
-                            //       dateLogged: widget.date,
-                            //       itemName: itemName,
-                            //       recordedByUnit: 'g', // Placeholder
-                            //       amount: 100, // Placeholder
-                            //       totalKcal: 100 // Placeholder
-                            //       ),
-                            // );
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  duration: const Duration(milliseconds: 1500),
-                                  backgroundColor: theme.primaryColor,
-                                  content: Text('Item added successfully!')),
-                            );
-
-                            _nameController.clear();
-                            _energyController.clear();
-                            _amountController.clear();
-                            _customEnergyController.clear();
-                            _customUnitController.clear();
-                          },
-                          widget: const Text("Add")),
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],

@@ -70,7 +70,6 @@ class TodayPage extends StatelessWidget {
                         onPressed: () {
                           callback();
                         },
-                        colour: theme.cardColor.withOpacity(1),
                       ),
                     ],
                   ),
