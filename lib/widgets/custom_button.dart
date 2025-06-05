@@ -27,7 +27,7 @@ class CustomButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             side: BorderSide(
               color: isSecondary ? primaryColour : Colors.transparent,
-              width: 2,
+              width: 3,
             ),
           ),
         ),

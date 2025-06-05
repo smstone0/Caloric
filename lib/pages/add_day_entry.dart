@@ -8,6 +8,8 @@ import 'package:caloric/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import '../functions/dates.dart';
 
+enum TabType { addNew, chooseFromItems }
+
 class AddDayEntry extends StatefulWidget {
   const AddDayEntry(
       {super.key,
@@ -38,6 +40,7 @@ class _AddDayEntryState extends State<AddDayEntry> {
   final TextEditingController _customEnergyController = TextEditingController();
   final TextEditingController _customUnitController = TextEditingController();
   Unit selectedUnit = Unit.g;
+  TabType _tabType = TabType.addNew;
 
   bool _isValidInput() {
     if (_nameController.text.trim().isEmpty) return false;
@@ -70,15 +73,24 @@ class _AddDayEntryState extends State<AddDayEntry> {
                       children: [
                         CustomButton(
                           widget: Text('Add new'),
-                          onPressed: () => {},
+                          onPressed: () => {
+                            setState(() {
+                              _tabType = TabType.addNew;
+                            })
+                          },
+                          isSecondary: !(_tabType == TabType.addNew),
                         ),
                         SizedBox(
                           width: 10,
                         ),
                         CustomButton(
                           widget: Text('Choose from items'),
-                          onPressed: () => {},
-                          isSecondary: true,
+                          onPressed: () => {
+                            setState(() {
+                              _tabType = TabType.chooseFromItems;
+                            })
+                          },
+                          isSecondary: !(_tabType == TabType.chooseFromItems),
                         ),
                       ],
                     ),
