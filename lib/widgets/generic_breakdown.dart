@@ -21,6 +21,8 @@ class GenericBreakdown extends StatefulWidget {
   final double? topRadius;
   final double? topPadding;
 
+  //TODO: Disable delete button if no items are available
+
   @override
   State<GenericBreakdown> createState() => _GenericBreakdownState();
 }

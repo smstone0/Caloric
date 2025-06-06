@@ -1,4 +1,5 @@
 import 'package:caloric/databases/settings.dart';
+import 'package:caloric/functions/calculate_energy.dart';
 import 'package:caloric/widgets/generic_breakdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,9 @@ class TodayBreakdown extends StatelessWidget {
 
   final Settings settings;
 
+  //TODO: Store db data and energy as a state variable to avoid multiple db calls
+  //TODO: Update on addition to day and update energy count on deletion
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -18,13 +22,10 @@ class TodayBreakdown extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: theme.primaryColor));
     DateTime time = DateTime.now();
-    String currentDate = getCurrentDate();
+    String currentDate = getStringCurrentDate();
     Color textColour = theme.primaryColor.computeLuminance() >= 0.5
         ? Colors.black
         : Colors.white;
-    List<dynamic> data =
-        []; // TODO: Get today's data from the database with currentDate
-    int energyConsumed = 0; // TODO: Calculate energy consumed from today's data
 
     return FutureBuilder<List<DayEntry>>(
         future: DayEntryDatabase().getDayEntriesForDate(currentDate),
@@ -37,6 +38,7 @@ class TodayBreakdown extends StatelessWidget {
             return Text('Error: ${snapshot.error}');
           } else {
             List<DayEntry> data = snapshot.data!;
+            int totalEnergy = calculateEnergy(data);
             return Column(
               children: [
                 Container(
@@ -56,7 +58,7 @@ class TodayBreakdown extends StatelessWidget {
                             size: 140,
                             target: settings.energy.value,
                             type: settings.energy.unit,
-                            energyConsumed: 0),
+                            energyConsumed: totalEnergy),
                       ),
                     ],
                   ),
