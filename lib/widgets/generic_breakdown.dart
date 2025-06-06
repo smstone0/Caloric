@@ -107,11 +107,15 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                    "${item.amount} ${item.recordedByUnit} ${item.itemName}",
+                                    "${item.amount ?? ''} "
+                                            "${item.recordedByUnit ?? ''} "
+                                            "${item.itemName ?? ''}"
+                                        .trim(),
                                     style: theme.textTheme.bodyLarge),
                                 Row(
                                   children: [
-                                    Text("${item.totalKcal} kcal",
+                                    Text(
+                                        "${item.totalKcal != null ? item.totalKcal.toString() : ''} kcal",
                                         style: theme.textTheme.bodyLarge),
                                     Visibility(
                                       visible: _removeSelected,
