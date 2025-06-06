@@ -1,3 +1,4 @@
+import 'package:caloric/databases/day_entry.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:caloric/widgets/generic_card.dart';
@@ -124,7 +125,13 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                                       maintainState: true,
                                       child: IconButton(
                                         icon: Icon(Icons.remove, size: 18),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          setState(() {
+                                            widget.data.remove(item);
+                                          });
+                                          DayEntryDatabase()
+                                              .deleteDayEntry(item.id!);
+                                        },
                                       ),
                                     )
                                   ],
