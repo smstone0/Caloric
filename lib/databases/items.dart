@@ -47,7 +47,7 @@ class ItemDatabase {
         //TODO: Remove this sample data
         await db.insert('item', {
           'itemName': 'Sample Item',
-          'dateSaved': getCurrentDate(),
+          'dateSaved': getStringCurrentDate(),
           'kcalPer100': 100,
           'unit': Unit.g.index,
           'customUnitName': null,

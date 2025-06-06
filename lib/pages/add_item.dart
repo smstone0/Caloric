@@ -166,7 +166,7 @@ class _AddItemState extends State<AddItem> {
                             ItemDatabase().insertItem(
                               Item(
                                   itemName: itemName,
-                                  dateSaved: getCurrentDate(),
+                                  dateSaved: getStringCurrentDate(),
                                   kcalPer100Unit: kcalPer100Unit,
                                   unit: selectedUnit,
                                   customUnitName: customUnitName,

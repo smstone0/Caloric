@@ -1,12 +1,12 @@
 import 'package:intl/intl.dart';
 
-String getCurrentDate() {
+String getStringCurrentDate() {
   final now = DateTime.now();
   final formatter = DateFormat('dd-MM-yyyy');
   return formatter.format(now);
 }
 
-String getDate(DateTime date) {
+String getStringDate(DateTime date) {
   final formatter = DateFormat('dd-MM-yyyy');
   return formatter.format(date);
 }

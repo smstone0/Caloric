@@ -41,7 +41,7 @@ class DayEntryDatabase {
         //TODO: Remove this sample data
         await db.insert('day_entry', {
           'itemName': 'Sample Item',
-          'dateLogged': getCurrentDate(),
+          'dateLogged': getStringCurrentDate(),
           'recordedByUnit': null,
           'amount': null,
           'totalKcal': 100,
