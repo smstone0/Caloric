@@ -12,12 +12,14 @@ class GenericBreakdown extends StatefulWidget {
       required this.dateDisplay,
       required this.date,
       required this.data,
+      required this.refetchData,
       this.topRadius,
       this.topPadding});
 
   final String dateDisplay;
   final String date;
   final List<dynamic> data;
+  final VoidCallback refetchData;
   final double? topRadius;
   final double? topPadding;
 
@@ -70,6 +72,7 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                         visualDensity: VisualDensity.compact,
                         onPressed: () {
                           setState(() {
+                            //TODO: Handle remove selected in parent widget and convert this to stateless?
                             _removeSelected = !_removeSelected;
                           });
                         },
@@ -79,7 +82,8 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                   IconButton(
                     icon: Icon(Icons.add, size: 18),
                     onPressed: () {
-                      Navigator.of(context).push(
+                      Navigator.of(context)
+                          .push(
                         MaterialPageRoute(
                           builder: (context) => AddDayEntry(
                               unit:
@@ -87,7 +91,10 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                               displayDate: widget.dateDisplay,
                               date: widget.date),
                         ),
-                      );
+                      )
+                          .then((value) {
+                        widget.refetchData();
+                      });
                     },
                   ),
                 ],
@@ -129,11 +136,9 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                                       child: IconButton(
                                         icon: Icon(Icons.remove, size: 18),
                                         onPressed: () {
-                                          setState(() {
-                                            widget.data.remove(item);
-                                          });
                                           DayEntryDatabase()
                                               .deleteDayEntry(item.id!);
+                                          widget.refetchData();
                                         },
                                       ),
                                     )

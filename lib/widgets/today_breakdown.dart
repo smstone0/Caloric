@@ -7,13 +7,25 @@ import '../widgets/energy_ring.dart';
 import '../functions/dates.dart';
 import '../databases/day_entry.dart';
 
-class TodayBreakdown extends StatelessWidget {
+class TodayBreakdown extends StatefulWidget {
   const TodayBreakdown({super.key, required this.settings});
 
   final Settings settings;
 
-  //TODO: Store db data and energy as a state variable to avoid multiple db calls
-  //TODO: Update on addition to day and update energy count on deletion
+  @override
+  State<TodayBreakdown> createState() => _TodayBreakdownState();
+}
+
+class _TodayBreakdownState extends State<TodayBreakdown> {
+  @override
+  void initState() {
+    super.initState();
+    _currentDate = getStringCurrentDate();
+    _dayEntries = DayEntryDatabase().getDayEntriesForDate(_currentDate);
+  }
+
+  late Future<List<DayEntry>> _dayEntries;
+  late String _currentDate;
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +34,15 @@ class TodayBreakdown extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: theme.primaryColor));
     DateTime time = DateTime.now();
-    String currentDate = getStringCurrentDate();
     Color textColour = theme.primaryColor.computeLuminance() >= 0.5
         ? Colors.black
         : Colors.white;
 
+
+        //TODO: Update future builder to have more consistent loading UI with loaded
+
     return FutureBuilder<List<DayEntry>>(
-        future: DayEntryDatabase().getDayEntriesForDate(currentDate),
+        future: _dayEntries,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -56,17 +70,24 @@ class TodayBreakdown extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 20, bottom: 20),
                         child: EnergyRing(
                             size: 140,
-                            target: settings.energy.value,
-                            type: settings.energy.unit,
+                            target: widget.settings.energy.value,
+                            type: widget.settings.energy.unit,
                             energyConsumed: totalEnergy),
                       ),
                     ],
                   ),
                 ),
                 GenericBreakdown(
-                    dateDisplay: "Today's Nutrition",
-                    data: data,
-                    date: currentDate)
+                  dateDisplay: "Today's Nutrition",
+                  data: data,
+                  date: _currentDate,
+                  refetchData: () {
+                    setState(() {
+                      _dayEntries =
+                          DayEntryDatabase().getDayEntriesForDate(_currentDate);
+                    });
+                  },
+                ),
               ],
             );
           }

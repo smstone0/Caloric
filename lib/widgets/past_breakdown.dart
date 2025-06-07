@@ -7,24 +7,37 @@ import 'package:caloric/widgets/generic_breakdown.dart';
 import '../functions/dates.dart';
 import '../functions/calculate_energy.dart';
 
-class PastBreakdown extends StatelessWidget {
+class PastBreakdown extends StatefulWidget {
   const PastBreakdown({super.key, required this.settings, required this.date});
-
-  //TODO: Store db data and energy as a state variable to avoid multiple db calls
-  //TODO: Update on addition to day and update energy count on deletion
 
   final Settings settings;
   final DateTime date;
+
+  @override
+  State<PastBreakdown> createState() => _PastBreakdownState();
+}
+
+class _PastBreakdownState extends State<PastBreakdown> {
+  @override
+  void initState() {
+    super.initState();
+    _stringDate = getStringDate(widget.date);
+    _dayEntries = DayEntryDatabase().getDayEntriesForDate(_stringDate);
+  }
+
+  late Future<List<DayEntry>> _dayEntries;
+  late String _stringDate;
+
+  //TODO: Update future builder to have more consistent loading UI with loaded
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: theme.colorScheme.surface));
-    String stringDate = getStringDate(date);
 
     return FutureBuilder<List<DayEntry>>(
-        future: DayEntryDatabase().getDayEntriesForDate(stringDate),
+        future: _dayEntries,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -51,8 +64,8 @@ class PastBreakdown extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 20, bottom: 20),
                           child: EnergyRing(
                             size: 100,
-                            target: settings.energy.value,
-                            type: settings.energy.unit,
+                            target: widget.settings.energy.value,
+                            type: widget.settings.energy.unit,
                             energyConsumed: totalEnergy,
                           ),
                         ),
@@ -63,11 +76,18 @@ class PastBreakdown extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 25),
                   child: GenericBreakdown(
-                      dateDisplay: displayDate(date),
-                      date: getStringDate(date),
-                      data: data,
-                      topRadius: 0,
-                      topPadding: 0),
+                    dateDisplay: displayDate(widget.date),
+                    date: _stringDate,
+                    data: data,
+                    topRadius: 0,
+                    topPadding: 0,
+                    refetchData: () => {
+                      setState(() {
+                        _dayEntries = DayEntryDatabase()
+                            .getDayEntriesForDate(_stringDate);
+                      })
+                    },
+                  ),
                 ),
               ],
             );
