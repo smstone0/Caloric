@@ -21,8 +21,6 @@ class GenericBreakdown extends StatefulWidget {
   final double? topRadius;
   final double? topPadding;
 
-  //TODO: Disable delete button if no items are available
-
   @override
   State<GenericBreakdown> createState() => _GenericBreakdownState();
 }
@@ -65,14 +63,17 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                       color: _removeSelected ? Color(0xFFE58B8B) : null,
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: IconButton(
-                      icon: Icon(Icons.remove, size: 18),
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () {
-                        setState(() {
-                          _removeSelected = !_removeSelected;
-                        });
-                      },
+                    child: Visibility(
+                      visible: widget.data.isNotEmpty,
+                      child: IconButton(
+                        icon: Icon(Icons.remove, size: 18),
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {
+                          setState(() {
+                            _removeSelected = !_removeSelected;
+                          });
+                        },
+                      ),
                     ),
                   ),
                   IconButton(
