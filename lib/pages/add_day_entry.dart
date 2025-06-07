@@ -4,6 +4,7 @@ import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/generic_card.dart';
 import 'package:caloric/widgets/input_field.dart';
+import 'package:caloric/widgets/item_card.dart';
 import 'package:flutter/material.dart';
 
 enum TabType { quickAddition, chooseFromItems }
@@ -27,8 +28,12 @@ class _AddDayEntryState extends State<AddDayEntry> {
   @override
   void initState() {
     super.initState();
+    _items = ItemDatabase().getItems();
+    _settings = SettingsDatabase().getSettings();
   }
 
+  late Future<List<Item>> _items;
+  late Future<Settings> _settings;
   late Unit type;
   String unit = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -65,10 +70,10 @@ class _AddDayEntryState extends State<AddDayEntry> {
                       children: [
                         CustomButton(
                           widget: Text('Choose from items'),
-                          onPressed: () => {
+                          onPressed: () {
                             setState(() {
                               _tabType = TabType.chooseFromItems;
-                            })
+                            });
                           },
                           isSecondary: !(_tabType == TabType.chooseFromItems),
                         ),
@@ -77,10 +82,10 @@ class _AddDayEntryState extends State<AddDayEntry> {
                         // ),
                         CustomButton(
                           widget: Text('Quick addition'),
-                          onPressed: () => {
+                          onPressed: () {
                             setState(() {
                               _tabType = TabType.quickAddition;
-                            })
+                            });
                           },
                           isSecondary: !(_tabType == TabType.quickAddition),
                         ),
@@ -94,35 +99,91 @@ class _AddDayEntryState extends State<AddDayEntry> {
                       children: [
                         const SizedBox(height: 20),
                         Visibility(
-                            visible: _tabType == TabType.quickAddition,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                InputField(
-                                  width: 150,
-                                  keyboardType: TextInputType.text,
-                                  hintText: 'Item name',
-                                  controller: _loggedNameController,
-                                ),
-                                const SizedBox(height: 25),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 60,
-                                      child: InputField(
-                                        keyboardType: TextInputType.number,
-                                        hintText: '0',
-                                        controller: _loggedEnergyController,
-                                      ),
+                          visible: _tabType == TabType.quickAddition,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InputField(
+                                width: 150,
+                                keyboardType: TextInputType.text,
+                                hintText: 'Item name',
+                                controller: _loggedNameController,
+                              ),
+                              const SizedBox(height: 25),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 60,
+                                    child: InputField(
+                                      keyboardType: TextInputType.number,
+                                      hintText: '0',
+                                      controller: _loggedEnergyController,
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5),
-                                      child: Text(unitLabel),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Text(unitLabel),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: _tabType == TabType.chooseFromItems,
+                          child: FutureBuilder<Settings>(
+                            future: _settings,
+                            builder: (context, settingsSnapshot) {
+                              if (settingsSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                      color: theme.primaryColor),
+                                );
+                              } else if (settingsSnapshot.hasError) {
+                                return Text('Error: ${settingsSnapshot.error}');
+                              } else {
+                                final settings = settingsSnapshot.data!;
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    FutureBuilder<List<Item>>(
+                                      future: _items,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                                color: theme.primaryColor),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          List<Item> items = snapshot.data!;
+                                          return Column(
+                                            children: [
+                                              if (items.isEmpty)
+                                                const Center(
+                                                  child: Text(
+                                                      "You have not yet added any items"),
+                                                ),
+                                                
+                                              ...items.map((item) => ItemCard(
+                                                  settings: settings,
+                                                  item: item,
+                                                  )),
+                                            ],
+                                          );
+                                        }
+                                      },
                                     ),
                                   ],
-                                ),
-                              ],
-                            )),
+                                );
+                              }
+                            },
+                          ),
+                        ),
                         const SizedBox(height: 20),
                         Center(
                           child: CustomButton(
