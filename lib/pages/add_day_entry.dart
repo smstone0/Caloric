@@ -42,6 +42,7 @@ class _AddDayEntryState extends State<AddDayEntry> {
   final TextEditingController _loggedNameController = TextEditingController();
   final TextEditingController _loggedEnergyController = TextEditingController();
   Unit selectedLoggedUnit = Unit.g;
+  int? _selectedItemId;
 
   bool _isValidInput() {
     return _loggedNameController.text.trim().isNotEmpty &&
@@ -168,11 +169,22 @@ class _AddDayEntryState extends State<AddDayEntry> {
                                                   child: Text(
                                                       "You have not yet added any items"),
                                                 ),
-                                                
-                                              ...items.map((item) => ItemCard(
-                                                  settings: settings,
-                                                  item: item,
-                                                  )),
+                                              ...items.map(
+                                                  (item) => GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            _selectedItemId =
+                                                                item.id;
+                                                          });
+                                                        },
+                                                        child: ItemCard(
+                                                          settings: settings,
+                                                          item: item,
+                                                          isSelected:
+                                                              _selectedItemId ==
+                                                                  item.id,
+                                                        ),
+                                                      )),
                                             ],
                                           );
                                         }

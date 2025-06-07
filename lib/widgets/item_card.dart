@@ -9,12 +9,14 @@ class ItemCard extends StatelessWidget {
       required this.item,
       required this.settings,
       this.removeSelected = false,
+      this.isSelected = false,
       this.onRemove});
 
   final Item item;
   final Settings settings;
   final bool removeSelected;
   final VoidCallback? onRemove;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,7 @@ class ItemCard extends StatelessWidget {
         settings.energy.unit == EnergyUnit.calories ? 'kcal' : 'kJ';
 
     return GenericCard(
+      isSelected: isSelected,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
