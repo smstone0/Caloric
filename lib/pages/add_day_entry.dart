@@ -3,6 +3,7 @@ import 'package:caloric/databases/items.dart';
 import 'package:caloric/databases/settings.dart';
 import 'package:caloric/widgets/custom_button.dart';
 import 'package:caloric/widgets/generic_card.dart';
+import 'package:caloric/widgets/generic_dropdown.dart';
 import 'package:caloric/widgets/input_field.dart';
 import 'package:caloric/widgets/item_card.dart';
 import 'package:flutter/material.dart';
@@ -37,12 +38,13 @@ class _AddDayEntryState extends State<AddDayEntry> {
   late Unit type;
   String unit = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  Unit selectedUnit = Unit.g;
   TabType _tabType = TabType.chooseFromItems;
   final TextEditingController _loggedNameController = TextEditingController();
   final TextEditingController _loggedEnergyController = TextEditingController();
-  Unit selectedLoggedUnit = Unit.g;
+  final TextEditingController _loggedAmountController = TextEditingController();
+  String selectedLoggedUnit = "";
   int? _selectedItemId;
+  List<String> selectedUnits = [];
 
   bool _isValidInput() {
     return _loggedNameController.text.trim().isNotEmpty &&
@@ -164,27 +166,67 @@ class _AddDayEntryState extends State<AddDayEntry> {
                                           List<Item> items = snapshot.data!;
                                           return Column(
                                             children: [
+                                              //TODO: Search, add and filter
                                               if (items.isEmpty)
                                                 const Center(
                                                   child: Text(
                                                       "You have not yet added any items"),
                                                 ),
                                               ...items.map(
-                                                  (item) => GestureDetector(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            _selectedItemId =
-                                                                item.id;
-                                                          });
-                                                        },
-                                                        child: ItemCard(
-                                                          settings: settings,
-                                                          item: item,
-                                                          isSelected:
-                                                              _selectedItemId ==
-                                                                  item.id,
-                                                        ),
-                                                      )),
+                                                (item) => GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _selectedItemId = item.id;
+                                                      selectedUnits =
+                                                          ItemDatabase()
+                                                              .getUnits(item);
+                                                      selectedLoggedUnit =
+                                                          selectedUnits[0];
+                                                    });
+                                                  },
+                                                  child: ItemCard(
+                                                    settings: settings,
+                                                    item: item,
+                                                    isSelected:
+                                                        _selectedItemId ==
+                                                            item.id,
+                                                  ),
+                                                ),
+                                              ),
+                                              //TODO: Above is scrollable, below is static
+                                              SizedBox(height: 20),
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 60,
+                                                    child: InputField(
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      hintText: '0',
+                                                      controller:
+                                                          _loggedAmountController,
+                                                    ),
+                                                  ),
+                                                  Visibility(
+                                                    visible: selectedUnits
+                                                        .isNotEmpty,
+                                                    child:
+                                                        GenericDropdown<String>(
+                                                      capitalise: false,
+                                                      list: selectedUnits,
+                                                      selection:
+                                                          selectedLoggedUnit,
+                                                      onChanged:
+                                                          (String value) {
+                                                        setState(() {
+                                                          selectedLoggedUnit =
+                                                              value;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
                                             ],
                                           );
                                         }
@@ -200,6 +242,8 @@ class _AddDayEntryState extends State<AddDayEntry> {
                         Center(
                           child: CustomButton(
                               onPressed: () {
+                                //TODO: Logic for choose from items
+                                
                                 String itemName =
                                     _loggedNameController.text.trim();
                                 int? energy = int.tryParse(

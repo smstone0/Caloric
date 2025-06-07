@@ -83,6 +83,17 @@ class ItemDatabase {
     });
   }
 
+  List<String> getUnits(Item item) {
+    List<String> units = [];
+    if (item.unit != null) {
+      units.add(item.unit!.toString().split('.').last);
+    }
+    if (item.customUnitName != null && item.customUnitName!.isNotEmpty) {
+      units.add(item.customUnitName!);
+    }
+    return units;
+  }
+
   Future<void> updateItem(Item item) async {
     final db = await openDatabaseConnection();
     await db.update(

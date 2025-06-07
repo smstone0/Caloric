@@ -163,6 +163,7 @@ class _AddItemState extends State<AddItem> {
                             } else {
                               kcalPer100Unit = null;
                             }
+                            //TODO: Fix bug where half a pair added (e.g. missing unit count but grams added) if validation passes
                             ItemDatabase().insertItem(
                               Item(
                                   itemName: itemName,
