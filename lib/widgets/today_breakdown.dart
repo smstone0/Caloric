@@ -1,4 +1,5 @@
 import 'package:caloric/databases/settings.dart';
+import 'package:caloric/functions/calculate_energy.dart';
 import 'package:caloric/widgets/generic_breakdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,10 +7,25 @@ import '../widgets/energy_ring.dart';
 import '../functions/dates.dart';
 import '../databases/day_entry.dart';
 
-class TodayBreakdown extends StatelessWidget {
+class TodayBreakdown extends StatefulWidget {
   const TodayBreakdown({super.key, required this.settings});
 
   final Settings settings;
+
+  @override
+  State<TodayBreakdown> createState() => _TodayBreakdownState();
+}
+
+class _TodayBreakdownState extends State<TodayBreakdown> {
+  @override
+  void initState() {
+    super.initState();
+    _currentDate = getStringCurrentDate();
+    _dayEntries = DayEntryDatabase().getDayEntriesForDate(_currentDate);
+  }
+
+  late Future<List<DayEntry>> _dayEntries;
+  late String _currentDate;
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +34,15 @@ class TodayBreakdown extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: theme.primaryColor));
     DateTime time = DateTime.now();
-    String currentDate = getCurrentDate();
     Color textColour = theme.primaryColor.computeLuminance() >= 0.5
         ? Colors.black
         : Colors.white;
-    List<dynamic> data =
-        []; // TODO: Get today's data from the database with currentDate
-    int energyConsumed = 0; // TODO: Calculate energy consumed from today's data
+
+
+        //TODO: Update future builder to have more consistent loading UI with loaded
 
     return FutureBuilder<List<DayEntry>>(
-        future: DayEntryDatabase().getDayEntriesForDate(currentDate),
+        future: _dayEntries,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -37,6 +52,7 @@ class TodayBreakdown extends StatelessWidget {
             return Text('Error: ${snapshot.error}');
           } else {
             List<DayEntry> data = snapshot.data!;
+            int totalEnergy = calculateEnergy(data);
             return Column(
               children: [
                 Container(
@@ -54,14 +70,24 @@ class TodayBreakdown extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 20, bottom: 20),
                         child: EnergyRing(
                             size: 140,
-                            target: settings.energy.value,
-                            type: settings.energy.unit,
-                            energyConsumed: 0),
+                            target: widget.settings.energy.value,
+                            type: widget.settings.energy.unit,
+                            energyConsumed: totalEnergy),
                       ),
                     ],
                   ),
                 ),
-                GenericBreakdown(dateDisplay: "Today's Nutrition", data: data)
+                GenericBreakdown(
+                  dateDisplay: "Today's Nutrition",
+                  data: data,
+                  date: _currentDate,
+                  refetchData: () {
+                    setState(() {
+                      _dayEntries =
+                          DayEntryDatabase().getDayEntriesForDate(_currentDate);
+                    });
+                  },
+                ),
               ],
             );
           }

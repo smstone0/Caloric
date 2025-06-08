@@ -81,6 +81,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       SettingsDatabase().updateSettings(settings);
                       setState(() {});
                     },
+                    displayLabel: (value) {
+                      return value == EnergyUnit.calories
+                          ? "Calories"
+                          : "Joules";
+                    },
                   ),
                 )
               ]),
@@ -128,6 +133,18 @@ class _SettingsPageState extends State<SettingsPage> {
                       SettingsDatabase().updateSettings(settings);
                       setState(() {});
                     },
+                    displayLabel: (value) {
+                      switch (value) {
+                        case HeightUnit.centimetres:
+                          return "Centimetres";
+                        case HeightUnit.metres:
+                          return "Metres";
+                        case HeightUnit.feet:
+                          return "Feet";
+                        case HeightUnit.inches:
+                          return "Inches";
+                      }
+                    },
                   ),
                 ),
                 (
@@ -158,6 +175,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       SettingsDatabase().updateSettings(settings);
                       setState(() {});
                     },
+                    displayLabel: (value) {
+                      switch (value) {
+                        case WeightUnit.kilograms:
+                          return "Kilograms";
+                        case WeightUnit.pounds:
+                          return "Pounds";
+                        case WeightUnit.stone:
+                          return "Stone";
+                      }
+                    },
                   ),
                 )
               ]),
@@ -176,6 +203,16 @@ class _SettingsPageState extends State<SettingsPage> {
                         MyApp.of(context)!
                             .changeTheme(settings.appearance.theme);
                         setState(() {});
+                      },
+                      displayLabel: (value) {
+                        switch (value) {
+                          case Appearance.light:
+                            return "Light";
+                          case Appearance.dark:
+                            return "Dark";
+                          case Appearance.system:
+                            return "System";
+                        }
                       },
                     ),
                   )

@@ -3,11 +3,16 @@ import 'package:caloric/main.dart';
 
 class GenericCard extends StatelessWidget {
   const GenericCard(
-      {super.key, required this.child, this.topPadding, this.topRadius});
+      {super.key,
+      required this.child,
+      this.topPadding,
+      this.topRadius,
+      this.isSelected = false});
 
   final Widget child;
   final double? topPadding;
   final double? topRadius;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +31,9 @@ class GenericCard extends StatelessWidget {
         margin: const EdgeInsets.only(top: 0, bottom: 0, left: 4, right: 4),
         elevation: 0,
         shape: RoundedRectangleBorder(
+          side: isSelected
+              ? BorderSide(color: Theme.of(context).primaryColor, width: 2)
+              : BorderSide.none,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(topRadius ?? 10),
               topRight: Radius.circular(topRadius ?? 10),

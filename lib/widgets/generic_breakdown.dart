@@ -1,5 +1,8 @@
+import 'package:caloric/databases/day_entry.dart';
+import 'package:caloric/databases/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:caloric/widgets/generic_card.dart';
+import 'package:caloric/pages/add_day_entry.dart';
 
 enum Sort { oldToNew, newToOld, lowToHigh, highToLow, aToZ, zToA }
 
@@ -7,12 +10,16 @@ class GenericBreakdown extends StatefulWidget {
   const GenericBreakdown(
       {super.key,
       required this.dateDisplay,
+      required this.date,
       required this.data,
+      required this.refetchData,
       this.topRadius,
       this.topPadding});
 
   final String dateDisplay;
+  final String date;
   final List<dynamic> data;
+  final VoidCallback refetchData;
   final double? topRadius;
   final double? topPadding;
 
@@ -58,19 +65,37 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                       color: _removeSelected ? Color(0xFFE58B8B) : null,
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: IconButton(
-                      icon: Icon(Icons.remove, size: 18),
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () {
-                        setState(() {
-                          _removeSelected = !_removeSelected;
-                        });
-                      },
+                    child: Visibility(
+                      visible: widget.data.isNotEmpty,
+                      child: IconButton(
+                        icon: Icon(Icons.remove, size: 18),
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {
+                          setState(() {
+                            //TODO: Handle remove selected in parent widget and convert this to stateless?
+                            _removeSelected = !_removeSelected;
+                          });
+                        },
+                      ),
                     ),
                   ),
                   IconButton(
                     icon: Icon(Icons.add, size: 18),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(
+                        MaterialPageRoute(
+                          builder: (context) => AddDayEntry(
+                              unit:
+                                  EnergyUnit.calories, //TODO: Placeholder unit
+                              displayDate: widget.dateDisplay,
+                              date: widget.date),
+                        ),
+                      )
+                          .then((value) {
+                        widget.refetchData();
+                      });
+                    },
                   ),
                 ],
               ),
@@ -93,11 +118,15 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                    "${item.amount} ${item.recordedByUnit} ${item.itemName}",
+                                    "${item.amount != null ? (item.amount % 1 == 0 ? item.amount.toInt() : item.amount) : ''} "
+                                            "${item.recordedByUnit ?? ''} ${(item.amount != null ? 'of ' : '')}"
+                                            "${item.itemName ?? ''}"
+                                        .trim(),
                                     style: theme.textTheme.bodyLarge),
                                 Row(
                                   children: [
-                                    Text("${item.totalKcal} kcal",
+                                    Text(
+                                        "${item.totalKcal != null ? item.totalKcal.toString() : ''} kcal",
                                         style: theme.textTheme.bodyLarge),
                                     Visibility(
                                       visible: _removeSelected,
@@ -106,7 +135,11 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                                       maintainState: true,
                                       child: IconButton(
                                         icon: Icon(Icons.remove, size: 18),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          DayEntryDatabase()
+                                              .deleteDayEntry(item.id!);
+                                          widget.refetchData();
+                                        },
                                       ),
                                     )
                                   ],

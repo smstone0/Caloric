@@ -133,7 +133,6 @@ class _AddItemState extends State<AddItem> {
                     const SizedBox(height: 20),
                     Center(
                       child: CustomButton(
-                          colour: theme.primaryColor,
                           onPressed: () {
                             String itemName = _nameController.text.trim();
                             int? energy =
@@ -164,10 +163,11 @@ class _AddItemState extends State<AddItem> {
                             } else {
                               kcalPer100Unit = null;
                             }
+                            //TODO: Fix bug where half a pair added (e.g. missing unit count but grams added) if validation passes
                             ItemDatabase().insertItem(
                               Item(
                                   itemName: itemName,
-                                  dateSaved: getCurrentDate(),
+                                  dateSaved: getStringCurrentDate(),
                                   kcalPer100Unit: kcalPer100Unit,
                                   unit: selectedUnit,
                                   customUnitName: customUnitName,

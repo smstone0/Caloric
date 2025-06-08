@@ -47,7 +47,7 @@ class ItemDatabase {
         //TODO: Remove this sample data
         await db.insert('item', {
           'itemName': 'Sample Item',
-          'dateSaved': getCurrentDate(),
+          'dateSaved': getStringCurrentDate(),
           'kcalPer100': 100,
           'unit': Unit.g.index,
           'customUnitName': null,
@@ -81,6 +81,17 @@ class ItemDatabase {
         kcalPerCustomUnit: maps[i]['kcalPerCustomUnit'],
       );
     });
+  }
+
+  List<String> getUnits(Item item) {
+    List<String> units = [];
+    if (item.unit != null) {
+      units.add(item.unit!.toString().split('.').last);
+    }
+    if (item.customUnitName != null && item.customUnitName!.isNotEmpty) {
+      units.add(item.customUnitName!);
+    }
+    return units;
   }
 
   Future<void> updateItem(Item item) async {

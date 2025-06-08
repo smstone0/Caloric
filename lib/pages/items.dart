@@ -91,6 +91,22 @@ class _ItemPageState extends State<ItemPage> {
                                       _selectedSort = value;
                                     });
                                   },
+                                  displayLabel: (value) {
+                                    switch (value) {
+                                      case Sort.oldToNew:
+                                        return "Old to New";
+                                      case Sort.newToOld:
+                                        return "New to Old";
+                                      case Sort.lowToHigh:
+                                        return "Low to High";
+                                      case Sort.highToLow:
+                                        return "High to Low";
+                                      case Sort.aToZ:
+                                        return "A to Z";
+                                      case Sort.zToA:
+                                        return "Z to A";
+                                    }
+                                  },
                                 ),
                                 Row(
                                   children: [
