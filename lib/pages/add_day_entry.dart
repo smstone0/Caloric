@@ -42,13 +42,24 @@ class _AddDayEntryState extends State<AddDayEntry> {
   final TextEditingController _loggedNameController = TextEditingController();
   final TextEditingController _loggedEnergyController = TextEditingController();
   final TextEditingController _loggedAmountController = TextEditingController();
-  String selectedLoggedUnit = "";
-  int? _selectedItemId;
-  List<String> selectedUnits = [];
+  String _selectedLoggedUnit = "";
+  List<String> _selectedUnits = [];
+  Item? _selectedItem;
 
   bool _isValidInput() {
     return _loggedNameController.text.trim().isNotEmpty &&
         _loggedEnergyController.text.trim().isNotEmpty;
+  }
+
+  int calculateTotalKcal(double amount) {
+    int total = 0;
+    if (_selectedItem == null) return total;
+    if (_selectedLoggedUnit != 'g' && _selectedLoggedUnit != 'ml') {
+      total = (amount * (_selectedItem!.kcalPerCustomUnit ?? 0)).round();
+    } else {
+      total = ((amount / 100) * (_selectedItem!.kcalPer100Unit ?? 0)).round();
+    }
+    return total;
   }
 
   @override
@@ -176,20 +187,19 @@ class _AddDayEntryState extends State<AddDayEntry> {
                                                 (item) => GestureDetector(
                                                   onTap: () {
                                                     setState(() {
-                                                      _selectedItemId = item.id;
-                                                      selectedUnits =
+                                                      _selectedItem = item;
+                                                      _selectedUnits =
                                                           ItemDatabase()
                                                               .getUnits(item);
-                                                      selectedLoggedUnit =
-                                                          selectedUnits[0];
+                                                      _selectedLoggedUnit =
+                                                          _selectedUnits[0];
                                                     });
                                                   },
                                                   child: ItemCard(
                                                     settings: settings,
                                                     item: item,
                                                     isSelected:
-                                                        _selectedItemId ==
-                                                            item.id,
+                                                        item == _selectedItem,
                                                   ),
                                                 ),
                                               ),
@@ -208,18 +218,18 @@ class _AddDayEntryState extends State<AddDayEntry> {
                                                     ),
                                                   ),
                                                   Visibility(
-                                                    visible: selectedUnits
+                                                    visible: _selectedUnits
                                                         .isNotEmpty,
                                                     child:
                                                         GenericDropdown<String>(
                                                       capitalise: false,
-                                                      list: selectedUnits,
+                                                      list: _selectedUnits,
                                                       selection:
-                                                          selectedLoggedUnit,
+                                                          _selectedLoggedUnit,
                                                       onChanged:
                                                           (String value) {
                                                         setState(() {
-                                                          selectedLoggedUnit =
+                                                          _selectedLoggedUnit =
                                                               value;
                                                         });
                                                       },
@@ -242,33 +252,71 @@ class _AddDayEntryState extends State<AddDayEntry> {
                         Center(
                           child: CustomButton(
                               onPressed: () {
-                                //TODO: Logic for choose from items
-                                
+                                double? amount = double.tryParse(
+                                    _loggedAmountController.text.trim());
                                 String itemName =
                                     _loggedNameController.text.trim();
                                 int? energy = int.tryParse(
                                     _loggedEnergyController.text.trim());
 
-                                if (!_isValidInput()) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      duration:
-                                          const Duration(milliseconds: 3500),
-                                      backgroundColor: theme.primaryColor,
-                                      content: Text(
-                                          'Please fill in an item name and an energy value'),
+                                if (_tabType == TabType.chooseFromItems) {
+                                  if (_selectedItem == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        duration:
+                                            const Duration(milliseconds: 3500),
+                                        backgroundColor: theme.primaryColor,
+                                        content: Text(
+                                            'Please select an item from the list'),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  if (amount == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        duration:
+                                            const Duration(milliseconds: 3500),
+                                        backgroundColor: theme.primaryColor,
+                                        content: Text(
+                                            'Please enter an amount for the item'),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  DayEntryDatabase().insertDayEntry(
+                                    DayEntry(
+                                      dateLogged: widget.date,
+                                      itemName: _selectedItem!.itemName,
+                                      totalKcal: calculateTotalKcal(
+                                          amount), //TODO: Calculate energy from item amount against per 100 kcal or per portion
+                                      amount: amount,
+                                      recordedByUnit: _selectedLoggedUnit,
                                     ),
                                   );
-                                  return;
-                                }
+                                } else {
+                                  if (!_isValidInput()) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        duration:
+                                            const Duration(milliseconds: 3500),
+                                        backgroundColor: theme.primaryColor,
+                                        content: Text(
+                                            'Please fill in an item name and an energy value'),
+                                      ),
+                                    );
+                                    return;
+                                  }
 
-                                DayEntryDatabase().insertDayEntry(
-                                  DayEntry(
-                                    dateLogged: widget.date,
-                                    itemName: itemName,
-                                    totalKcal: energy ?? 0,
-                                  ),
-                                );
+                                  DayEntryDatabase().insertDayEntry(
+                                    DayEntry(
+                                      dateLogged: widget.date,
+                                      itemName: itemName,
+                                      totalKcal: energy ?? 0,
+                                    ),
+                                  );
+                                }
 
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -281,6 +329,9 @@ class _AddDayEntryState extends State<AddDayEntry> {
 
                                 _loggedNameController.clear();
                                 _loggedEnergyController.clear();
+                                _loggedAmountController.clear();
+                                _selectedLoggedUnit = "";
+                                _selectedUnits.clear();
                               },
                               widget: const Text("Add")),
                         )
