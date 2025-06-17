@@ -20,11 +20,22 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   @override
+  void initState() {
+    super.initState();
+    _settings = SettingsDatabase().getSettings();
+  }
+
+  late Future<Settings> _settings;
+  TextEditingController energyController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+  TextEditingController heightController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: Theme.of(context).colorScheme.surface));
     return FutureBuilder<Settings>(
-      future: SettingsDatabase().getSettings(),
+      future: _settings,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -35,11 +46,11 @@ class _SettingsPageState extends State<SettingsPage> {
           return Text('Error: ${snapshot.error}');
         } else {
           Settings settings = snapshot.data!;
-          TextEditingController energyController = TextEditingController(
+          energyController = TextEditingController(
               text: settings.energy.value.round().toString());
-          TextEditingController heightController = TextEditingController(
+          heightController = TextEditingController(
               text: settings.height.value.round().toString());
-          TextEditingController weightController = TextEditingController(
+          weightController = TextEditingController(
               text: settings.weight.value.round().toString());
           return ListView(
             children: [

@@ -19,6 +19,8 @@ class EnergyRing extends StatelessWidget {
         ? Colors.black
         : Colors.white;
 
+    double progress = (target != 0) ? (energyConsumed / target) : 0;
+
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -26,7 +28,7 @@ class EnergyRing extends StatelessWidget {
           width: size,
           height: size,
           child: CircularProgressIndicator(
-            value: energyConsumed / target,
+            value: progress,
             backgroundColor: Colors.white,
             color: Colors.green,
             strokeWidth: 7,
