@@ -32,9 +32,11 @@ class ItemCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                item.itemName,
-                style: theme.textTheme.titleMedium,
+              Expanded(
+                child: Text(
+                  item.itemName,
+                  style: theme.textTheme.titleMedium,
+                ),
               ),
               Visibility(
                 visible: removeSelected,

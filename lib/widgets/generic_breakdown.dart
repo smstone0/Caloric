@@ -117,12 +117,14 @@ class _GenericBreakdownState extends State<GenericBreakdown> {
                             (item) => Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                    "${item.amount != null ? (item.amount % 1 == 0 ? item.amount.toInt() : item.amount) : ''} "
-                                            "${item.recordedByUnit ?? ''} ${(item.amount != null ? 'of ' : '')}"
-                                            "${item.itemName ?? ''}"
-                                        .trim(),
-                                    style: theme.textTheme.bodyLarge),
+                                Expanded(
+                                  child: Text(
+                                      "${item.itemName ?? ''}"
+                                              "${item.amount != null ? ' (${item.amount % 1 == 0 ? item.amount.toInt().toString() : item.amount.toString()}' : ''}"
+                                              " ${item.recordedByUnit ?? ''}${item.amount != null ? ')' : ''}"
+                                          .trim(),
+                                      style: theme.textTheme.bodyLarge),
+                                ),
                                 Row(
                                   children: [
                                     Text(

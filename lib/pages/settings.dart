@@ -176,14 +176,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       setState(() {});
                     },
                     displayLabel: (value) {
-                      switch (value) {
-                        case WeightUnit.kilograms:
-                          return "Kilograms";
-                        case WeightUnit.pounds:
-                          return "Pounds";
-                        case WeightUnit.stone:
-                          return "Stone";
-                      }
+                      return value.name;
                     },
                   ),
                 )
@@ -205,14 +198,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         setState(() {});
                       },
                       displayLabel: (value) {
-                        switch (value) {
-                          case Appearance.light:
-                            return "Light";
-                          case Appearance.dark:
-                            return "Dark";
-                          case Appearance.system:
-                            return "System";
-                        }
+                        return value.name;
                       },
                     ),
                   )
