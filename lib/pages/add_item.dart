@@ -101,6 +101,9 @@ class _AddItemState extends State<AddItem> {
                               selectedUnit = value;
                             });
                           },
+                          displayLabel: (value) {
+                            return value.name;
+                          },
                         ),
                       ],
                     ),
