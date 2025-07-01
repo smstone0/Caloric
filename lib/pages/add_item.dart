@@ -102,12 +102,7 @@ class _AddItemState extends State<AddItem> {
                             });
                           },
                           displayLabel: (value) {
-                            switch (value) {
-                              case Unit.g:
-                                return "g";
-                              case Unit.ml:
-                                return "ml";
-                            }
+                            return value.name;
                           },
                         ),
                       ],
